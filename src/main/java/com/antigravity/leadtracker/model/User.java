@@ -40,6 +40,15 @@ public class User {
     @Column
     private String location;
 
+    @Column
+    private String phone;
+
+    @Column(columnDefinition = "TEXT")
+    private String bio;
+
+    @Column(name = "iec_code")
+    private String iecCode = "IEC-IN998877";
+
     @Column(precision = 3, scale = 2)
     private BigDecimal rating = BigDecimal.valueOf(5.00);
 
@@ -122,6 +131,30 @@ public class User {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getBio() {
+        return bio;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
+    }
+
+    public String getIecCode() {
+        return iecCode;
+    }
+
+    public void setIecCode(String iecCode) {
+        this.iecCode = iecCode;
     }
 
     public BigDecimal getRating() {

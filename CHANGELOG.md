@@ -5,28 +5,25 @@ All notable changes to Project Antigravity will be documented in this file.
 ## [Unreleased]
 
 ### Added
-- **Expanded Commodity Export Catalog & Buyer Matching**:
-  - Added 6 core Indian export commodities to `app/page.tsx`:
-    1. 🪷 **Bihar Organic Foxnuts / Makhana** (`HS-1904`)
-    2. 🧅 **Nashik Red Onions & Dehydrated Flakes** (`HS-0703`)
-    3. 🥚 **Fresh Table Eggs & Egg Powder** (`HS-0407`)
-    4. 🥔 **Cold Storage Potatoes** (`HS-0701`)
-    5. 🥩 **APEDA Halal Frozen Buffalo Meat & Mutton** (`HS-0202`)
-    6. ⚙️ **Industrial CNC Machinery & Hydraulic Pumps** (`HS-8479`)
-  - Updated category filter pills: `Makhana & Superfoods`, `Fresh Produce`, `Poultry & Eggs`, `Meat Exports`, `Machinery & Engineering`.
-  - Updated AI Buyer Lead Discovery modal with mock buyer profiles in Poland, Netherlands, Australia, Oman, China, and USA.
+- **Multi-Role User & Supplier Dashboard (`/dashboard`)**:
+  - Dedicated Dashboard page [`app/dashboard/page.tsx`](file:///C:/Users/fardi/Documents/antigravity/joyful-raman/app/dashboard/page.tsx) with Overview KPI Analytics, My Listed Export Products (Makhana, Onions, Eggs, Potatoes, Meat, Machinery), and Account & Profile Settings.
+  - Interactive status activation toggle for listed export commodities.
+  - Profile settings editor with company name, IEC trade registration code (`IEC-IN09887766`), phone number, location, and bio.
+  - Updated landing page header [`app/page.tsx`](file:///C:/Users/fardi/Documents/antigravity/joyful-raman/app/page.tsx) with a direct link to **📊 My Dashboard**.
 
-- **Python FastAPI Compute Engine Update**:
-  - Upgraded [`src/main/python/compute_agent.py`](file:///C:/Users/fardi/Documents/antigravity/joyful-raman/src/main/python/compute_agent.py) with buyer datasets for Makhana, Onions, Eggs, Potatoes, Meat, and Machinery.
-  - Updated [`src/main/python/test_compute_agent.py`](file:///C:/Users/fardi/Documents/antigravity/joyful-raman/src/main/python/test_compute_agent.py).
+- **Enterprise Spring Boot 3 Backend**:
+  - Updated [`User.java`](file:///C:/Users/fardi/Documents/antigravity/joyful-raman/src/main/java/com/antigravity/leadtracker/model/User.java) with `phone`, `bio`, and `iecCode`.
+  - Created `UserProfileDTO`.
+  - Created [`UserService.java`](file:///C:/Users/fardi/Documents/antigravity/joyful-raman/src/main/java/com/antigravity/leadtracker/service/UserService.java) & `UserServiceImpl.java` for profile management and user-specific listings.
+  - Created [`UserController.java`](file:///C:/Users/fardi/Documents/antigravity/joyful-raman/src/main/java/com/antigravity/leadtracker/controller/UserController.java) with `/api/users/me` and `/api/users/me/listings` endpoints.
 
-- **Database Architect (DBA Persona)**:
-  - Flyway migration script [`V5__Add_Agri_Makhana_Meat_Machinery_Products.sql`](file:///C:/Users/fardi/Documents/antigravity/joyful-raman/src/main/resources/db/migration/V5__Add_Agri_Makhana_Meat_Machinery_Products.sql).
+- **DBA (Data Architect) Persona**:
+  - Flyway migration script [`V6__Add_User_Profile_Settings.sql`](file:///C:/Users/fardi/Documents/antigravity/joyful-raman/src/main/resources/db/migration/V6__Add_User_Profile_Settings.sql).
 
 - **QA Gatekeeper Persona**:
-  - Updated JUnit 5 unit tests [`ProductServiceTest.java`](file:///C:/Users/fardi/Documents/antigravity/joyful-raman/src/test/java/com/antigravity/leadtracker/service/ProductServiceTest.java).
+  - JUnit 5 / Mockito unit tests [`UserServiceTest.java`](file:///C:/Users/fardi/Documents/antigravity/joyful-raman/src/test/java/com/antigravity/leadtracker/service/UserServiceTest.java) and [`UserControllerTest.java`](file:///C:/Users/fardi/Documents/antigravity/joyful-raman/src/test/java/com/antigravity/leadtracker/controller/UserControllerTest.java).
 
-- **India Cross-Border Import/Export Trade Lead Engine (`app/page.tsx`)**:
-  - Connected India exporters with 6 global destination corridors (Poland, Netherlands, Australia, Oman, China, USA).
+- **Expanded Commodity Export Catalog**:
+  - Added Makhana, Onions, Eggs, Potatoes, Meat, and Machinery Goods to export catalog & buyer lead matcher.
 
 - Initialized workspace with `AGENCY_CONSTITUTION.md` standing instruction set.

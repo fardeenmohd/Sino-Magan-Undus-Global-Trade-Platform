@@ -442,6 +442,12 @@ export default function ExpandedTradeCatalogPage() {
 
           <div className="flex items-center gap-3">
             <Link
+              href="/dashboard"
+              className="px-3 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-cyan-400 font-semibold text-xs sm:text-sm border border-slate-800 transition-colors duration-200 cursor-pointer flex items-center gap-1.5"
+            >
+              <span>📊 My Dashboard</span>
+            </Link>
+            <Link
               href="/login"
               className="px-3.5 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-200 font-semibold text-xs sm:text-sm border border-slate-800 transition-colors duration-200 cursor-pointer"
             >
