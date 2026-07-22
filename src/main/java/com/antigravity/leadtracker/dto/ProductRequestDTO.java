@@ -7,6 +7,10 @@ public class ProductRequestDTO {
     private String title;
     private String description;
     private String category;
+    private String hsCode;
+    private String originCountry;
+    private String destinationCountry;
+    private BigDecimal tariffRate;
     private BigDecimal price;
     private String unit;
     private Long listedByUserId;
@@ -15,10 +19,14 @@ public class ProductRequestDTO {
     public ProductRequestDTO() {
     }
 
-    public ProductRequestDTO(String title, String description, String category, BigDecimal price, String unit, Long listedByUserId, String imageUrl) {
+    public ProductRequestDTO(String title, String description, String category, String hsCode, String originCountry, String destinationCountry, BigDecimal tariffRate, BigDecimal price, String unit, Long listedByUserId, String imageUrl) {
         this.title = title;
         this.description = description;
         this.category = category;
+        this.hsCode = hsCode;
+        this.originCountry = originCountry;
+        this.destinationCountry = destinationCountry;
+        this.tariffRate = tariffRate;
         this.price = price;
         this.unit = unit;
         this.listedByUserId = listedByUserId;
@@ -47,6 +55,38 @@ public class ProductRequestDTO {
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public String getHsCode() {
+        return hsCode;
+    }
+
+    public void setHsCode(String hsCode) {
+        this.hsCode = hsCode;
+    }
+
+    public String getOriginCountry() {
+        return originCountry;
+    }
+
+    public void setOriginCountry(String originCountry) {
+        this.originCountry = originCountry;
+    }
+
+    public String getDestinationCountry() {
+        return destinationCountry;
+    }
+
+    public void setDestinationCountry(String destinationCountry) {
+        this.destinationCountry = destinationCountry;
+    }
+
+    public BigDecimal getTariffRate() {
+        return tariffRate;
+    }
+
+    public void setTariffRate(BigDecimal tariffRate) {
+        this.tariffRate = tariffRate;
     }
 
     public BigDecimal getPrice() {

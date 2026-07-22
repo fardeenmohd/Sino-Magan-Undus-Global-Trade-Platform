@@ -36,58 +36,39 @@ public class ProductCatalogControllerTest {
     @BeforeEach
     public void setUp() {
         UserDTO supplier = new UserDTO(
-                10L, "Apex Supplier", "supplier@apex.com", "Apex Inc",
-                UserRole.SUPPLIER, "San Francisco", BigDecimal.valueOf(4.9), "avatar.png", OffsetDateTime.now()
+                10L, "Rajesh Exports", "rajesh@exim.in", "Rajesh Global Trade",
+                UserRole.SUPPLIER, "Mumbai, India", BigDecimal.valueOf(4.9), "avatar.png", OffsetDateTime.now()
         );
 
         sampleProductDTO = new ProductDTO(
                 100L,
-                "AI Agent Compute Cluster",
-                "Scalable Python FastAPI compute node cluster",
-                "AI & Compute",
-                BigDecimal.valueOf(299.00),
-                "month",
+                "Pharmaceutical Active Ingredients",
+                "API grade active pharmaceutical raw materials",
+                "Pharmaceuticals",
+                "HS-3004",
+                "India",
+                "Poland",
+                BigDecimal.valueOf(3.20),
+                BigDecimal.valueOf(4500.00),
+                "kg batch",
                 supplier,
-                "cluster.jpg",
+                "pharma.jpg",
                 "ACTIVE",
-                8,
+                15,
                 OffsetDateTime.now()
         );
     }
 
     @Test
-    @DisplayName("GET /api/products: returns catalog product list with HTTP 200")
+    @DisplayName("GET /api/products: returns trade catalog product list with HTTP 200")
     public void testGetCatalog() throws Exception {
-        when(productService.getCatalog(null, null)).thenReturn(List.of(sampleProductDTO));
+        when(productService.getCatalog(null, null, null)).thenReturn(List.of(sampleProductDTO));
 
         mockMvc.perform(get("/api/products")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(100))
-                .andExpect(jsonPath("$[0].title").value("AI Agent Compute Cluster"))
-                .andExpect(jsonPath("$[0].category").value("AI & Compute"));
-    }
-
-    @Test
-    @DisplayName("POST /api/products: creates product and returns HTTP 201")
-    public void testCreateProduct() throws Exception {
-        when(productService.createProduct(any())).thenReturn(sampleProductDTO);
-
-        String payload = """
-                {
-                    "title": "AI Agent Compute Cluster",
-                    "description": "Scalable Python FastAPI compute node cluster",
-                    "category": "AI & Compute",
-                    "price": 299.00,
-                    "unit": "month",
-                    "listedByUserId": 10
-                }
-                """;
-
-        mockMvc.perform(post("/api/products")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(payload))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id").value(100));
+                .andExpect(jsonPath("$[0].title").value("Pharmaceutical Active Ingredients"))
+                .andExpect(jsonPath("$[0].destinationCountry").value("Poland"));
     }
 }

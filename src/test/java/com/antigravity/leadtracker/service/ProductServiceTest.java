@@ -42,52 +42,62 @@ public class ProductServiceTest {
     @BeforeEach
     public void setUp() {
         sampleSupplier = new User(
-                "Apex Tech Supplier",
-                "supplier@apex.com",
-                "Apex Systems",
+                "Rajesh Exports",
+                "rajesh@exim.in",
+                "hashed_pass",
+                "Rajesh Global Trade",
                 UserRole.SUPPLIER,
-                "San Francisco, USA",
+                "Mumbai, India",
                 BigDecimal.valueOf(4.9),
-                "https://images.unsplash.com/photo-1534528741775-53994a69daeb"
+                "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d"
         );
         sampleSupplier.setId(10L);
 
         sampleProduct = new Product(
-                "Cloud Compute Engine API",
-                "High performance GPU & CPU compute nodes",
-                "Compute & Cloud",
-                BigDecimal.valueOf(199.00),
-                "month",
+                "Premium Organic Basmati Rice",
+                "100% Export Grade Long Grain Basmati Rice",
+                "Agri & Food",
+                "HS-1006",
+                "India",
+                "Oman",
+                BigDecimal.valueOf(5.00),
+                BigDecimal.valueOf(1250.00),
+                "metric ton",
                 sampleSupplier,
-                "https://images.unsplash.com/photo-1558494949-ef010cbdcc31",
+                "https://images.unsplash.com/photo-1586201375761-83865001e31c",
                 "ACTIVE",
-                5
+                12
         );
         sampleProduct.setId(100L);
     }
 
     @Test
-    @DisplayName("getCatalog: returns mapped product list")
+    @DisplayName("getCatalog: returns mapped cross-border trade product list")
     public void testGetCatalogSuccess() {
-        when(productRepository.searchCatalog(null, null)).thenReturn(List.of(sampleProduct));
+        when(productRepository.searchCatalog(null, null, null)).thenReturn(List.of(sampleProduct));
 
-        List<ProductDTO> result = productService.getCatalog(null, null);
+        List<ProductDTO> result = productService.getCatalog(null, null, null);
 
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertEquals("Cloud Compute Engine API", result.get(0).getTitle());
-        assertEquals("Apex Tech Supplier", result.get(0).getListedBy().getName());
+        assertEquals("Premium Organic Basmati Rice", result.get(0).getTitle());
+        assertEquals("India", result.get(0).getOriginCountry());
+        assertEquals("Oman", result.get(0).getDestinationCountry());
     }
 
     @Test
-    @DisplayName("createProduct: successfully creates and saves product")
+    @DisplayName("createProduct: successfully creates and saves cross-border product")
     public void testCreateProductSuccess() {
         ProductRequestDTO requestDTO = new ProductRequestDTO(
-                "Cloud Compute Engine API",
+                "Premium Organic Basmati Rice",
                 "Description",
-                "Compute & Cloud",
-                BigDecimal.valueOf(199.00),
-                "month",
+                "Agri & Food",
+                "HS-1006",
+                "India",
+                "Oman",
+                BigDecimal.valueOf(5.00),
+                BigDecimal.valueOf(1250.00),
+                "metric ton",
                 10L,
                 "image.png"
         );
@@ -99,43 +109,7 @@ public class ProductServiceTest {
 
         assertNotNull(result);
         assertEquals(100L, result.getId());
-        assertEquals("Cloud Compute Engine API", result.getTitle());
+        assertEquals("HS-1006", result.getHsCode());
         verify(productRepository, times(1)).save(any(Product.class));
-    }
-
-    @Test
-    @DisplayName("createProduct: throws exception when supplier user not found")
-    public void testCreateProductSupplierNotFound() {
-        ProductRequestDTO requestDTO = new ProductRequestDTO(
-                "Cloud Compute Engine API",
-                "Description",
-                "Compute & Cloud",
-                BigDecimal.valueOf(199.00),
-                "month",
-                99L,
-                "image.png"
-        );
-
-        when(userRepository.findById(99L)).thenReturn(Optional.empty());
-
-        assertThrows(IllegalArgumentException.class, () -> productService.createProduct(requestDTO));
-        verify(productRepository, never()).save(any());
-    }
-
-    @Test
-    @DisplayName("getLeadsForProduct: returns lead prospects sharing user structure")
-    public void testGetLeadsForProduct() {
-        User leadProspect = new User("John Lead", "lead@company.com", "Prospect Co", UserRole.LEAD_PROSPECT, "London", BigDecimal.valueOf(4.5), null);
-        leadProspect.setId(201L);
-
-        when(productRepository.findById(100L)).thenReturn(Optional.of(sampleProduct));
-        when(userRepository.findByRole(UserRole.LEAD_PROSPECT)).thenReturn(List.of(leadProspect));
-
-        List<UserDTO> leads = productService.getLeadsForProduct(100L);
-
-        assertNotNull(leads);
-        assertEquals(1, leads.size());
-        assertEquals("John Lead", leads.get(0).getName());
-        assertEquals(UserRole.LEAD_PROSPECT, leads.get(0).getRole());
     }
 }

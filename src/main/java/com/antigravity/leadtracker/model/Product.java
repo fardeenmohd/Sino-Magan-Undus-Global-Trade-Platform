@@ -32,6 +32,18 @@ public class Product {
     @Column(nullable = false)
     private String category;
 
+    @Column(name = "hs_code", nullable = false)
+    private String hsCode = "HS-8471";
+
+    @Column(name = "origin_country", nullable = false)
+    private String originCountry = "India";
+
+    @Column(name = "destination_country", nullable = false)
+    private String destinationCountry = "United States";
+
+    @Column(name = "tariff_rate", nullable = false, precision = 5, scale = 2)
+    private BigDecimal tariffRate = BigDecimal.valueOf(4.50);
+
     @Column(nullable = false, precision = 15, scale = 2)
     private BigDecimal price = BigDecimal.ZERO;
 
@@ -60,10 +72,14 @@ public class Product {
     public Product() {
     }
 
-    public Product(String title, String description, String category, BigDecimal price, String unit, User listedBy, String imageUrl, String status, Integer leadCount) {
+    public Product(String title, String description, String category, String hsCode, String originCountry, String destinationCountry, BigDecimal tariffRate, BigDecimal price, String unit, User listedBy, String imageUrl, String status, Integer leadCount) {
         this.title = title;
         this.description = description;
         this.category = category;
+        this.hsCode = hsCode != null ? hsCode : "HS-8471";
+        this.originCountry = originCountry != null ? originCountry : "India";
+        this.destinationCountry = destinationCountry != null ? destinationCountry : "United States";
+        this.tariffRate = tariffRate != null ? tariffRate : BigDecimal.valueOf(4.50);
         this.price = price != null ? price : BigDecimal.ZERO;
         this.unit = unit != null ? unit : "unit";
         this.listedBy = listedBy;
@@ -114,6 +130,38 @@ public class Product {
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public String getHsCode() {
+        return hsCode;
+    }
+
+    public void setHsCode(String hsCode) {
+        this.hsCode = hsCode;
+    }
+
+    public String getOriginCountry() {
+        return originCountry;
+    }
+
+    public void setOriginCountry(String originCountry) {
+        this.originCountry = originCountry;
+    }
+
+    public String getDestinationCountry() {
+        return destinationCountry;
+    }
+
+    public void setDestinationCountry(String destinationCountry) {
+        this.destinationCountry = destinationCountry;
+    }
+
+    public BigDecimal getTariffRate() {
+        return tariffRate;
+    }
+
+    public void setTariffRate(BigDecimal tariffRate) {
+        this.tariffRate = tariffRate;
     }
 
     public BigDecimal getPrice() {

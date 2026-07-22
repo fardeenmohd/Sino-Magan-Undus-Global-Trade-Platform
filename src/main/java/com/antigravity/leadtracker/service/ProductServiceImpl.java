@@ -28,11 +28,12 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ProductDTO> getCatalog(String category, String query) {
+    public List<ProductDTO> getCatalog(String category, String destination, String query) {
         String cleanCategory = (category != null && !category.isBlank() && !category.equalsIgnoreCase("ALL")) ? category.trim() : null;
+        String cleanDestination = (destination != null && !destination.isBlank() && !destination.equalsIgnoreCase("ALL")) ? destination.trim() : null;
         String cleanQuery = (query != null && !query.isBlank()) ? query.trim() : null;
 
-        List<Product> products = productRepository.searchCatalog(cleanCategory, cleanQuery);
+        List<Product> products = productRepository.searchCatalog(cleanCategory, cleanDestination, cleanQuery);
         return products.stream().map(this::mapToProductDTO).toList();
     }
 
@@ -63,6 +64,10 @@ public class ProductServiceImpl implements ProductService {
                 requestDTO.getTitle(),
                 requestDTO.getDescription() != null ? requestDTO.getDescription() : "",
                 requestDTO.getCategory(),
+                requestDTO.getHsCode() != null ? requestDTO.getHsCode() : "HS-8471",
+                requestDTO.getOriginCountry() != null ? requestDTO.getOriginCountry() : "India",
+                requestDTO.getDestinationCountry() != null ? requestDTO.getDestinationCountry() : "United States",
+                requestDTO.getTariffRate() != null ? requestDTO.getTariffRate() : BigDecimal.valueOf(4.50),
                 requestDTO.getPrice() != null ? requestDTO.getPrice() : BigDecimal.ZERO,
                 requestDTO.getUnit() != null ? requestDTO.getUnit() : "unit",
                 supplier,
@@ -81,7 +86,6 @@ public class ProductServiceImpl implements ProductService {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new IllegalArgumentException("Product not found with id: " + productId));
 
-        // Retrieve matched lead prospects (sharing the same User structure)
         List<User> prospectLeads = userRepository.findByRole(UserRole.LEAD_PROSPECT);
         return prospectLeads.stream().map(this::mapToUserDTO).toList();
     }
@@ -92,6 +96,10 @@ public class ProductServiceImpl implements ProductService {
                 product.getTitle(),
                 product.getDescription(),
                 product.getCategory(),
+                product.getHsCode(),
+                product.getOriginCountry(),
+                product.getDestinationCountry(),
+                product.getTariffRate(),
                 product.getPrice(),
                 product.getUnit(),
                 mapToUserDTO(product.getListedBy()),

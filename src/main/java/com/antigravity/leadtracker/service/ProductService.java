@@ -7,7 +7,7 @@ import com.antigravity.leadtracker.dto.UserDTO;
 import java.util.List;
 
 public interface ProductService {
-    List<ProductDTO> getCatalog(String category, String query);
+    List<ProductDTO> getCatalog(String category, String destination, String query);
     ProductDTO getProductById(Long id);
     ProductDTO createProduct(ProductRequestDTO requestDTO);
     List<UserDTO> getLeadsForProduct(Long productId);

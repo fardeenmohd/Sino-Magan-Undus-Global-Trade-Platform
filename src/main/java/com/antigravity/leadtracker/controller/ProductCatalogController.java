@@ -31,8 +31,9 @@ public class ProductCatalogController {
     @GetMapping
     public ResponseEntity<List<ProductDTO>> getCatalog(
             @RequestParam(required = false) String category,
+            @RequestParam(required = false) String destination,
             @RequestParam(required = false) String query) {
-        List<ProductDTO> products = productService.getCatalog(category, query);
+        List<ProductDTO> products = productService.getCatalog(category, destination, query);
         return ResponseEntity.ok(products);
     }
 
