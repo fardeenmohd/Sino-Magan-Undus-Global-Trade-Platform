@@ -2,7 +2,6 @@ package com.antigravity.leadtracker.service;
 
 import com.antigravity.leadtracker.dto.ProductDTO;
 import com.antigravity.leadtracker.dto.ProductRequestDTO;
-import com.antigravity.leadtracker.dto.UserDTO;
 import com.antigravity.leadtracker.model.Product;
 import com.antigravity.leadtracker.model.User;
 import com.antigravity.leadtracker.model.UserRole;
@@ -37,79 +36,79 @@ public class ProductServiceTest {
     private ProductServiceImpl productService;
 
     private User sampleSupplier;
-    private Product sampleProduct;
+    private Product makhanaProduct;
 
     @BeforeEach
     public void setUp() {
         sampleSupplier = new User(
-                "Rajesh Exports",
-                "rajesh@exim.in",
+                "Bihar Exim Foods",
+                "makhana@bihar-exim.in",
                 "hashed_pass",
-                "Rajesh Global Trade",
+                "Bihar Organic Superfoods",
                 UserRole.SUPPLIER,
-                "Mumbai, India",
+                "Patna, India",
                 BigDecimal.valueOf(4.9),
                 "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d"
         );
         sampleSupplier.setId(10L);
 
-        sampleProduct = new Product(
-                "Premium Organic Basmati Rice",
-                "100% Export Grade Long Grain Basmati Rice",
-                "Agri & Food",
-                "HS-1006",
+        makhanaProduct = new Product(
+                "Bihar Premium Organic Foxnuts (Makhana HS 1904)",
+                "Export grade popped gorgon nuts for superfood distributors.",
+                "Makhana & Superfoods",
+                "HS-1904",
                 "India",
-                "Oman",
-                BigDecimal.valueOf(5.00),
-                BigDecimal.valueOf(1250.00),
-                "metric ton",
+                "United States",
+                BigDecimal.valueOf(3.50),
+                BigDecimal.valueOf(14.50),
+                "kg",
                 sampleSupplier,
-                "https://images.unsplash.com/photo-1586201375761-83865001e31c",
+                "makhana.jpg",
                 "ACTIVE",
-                12
+                28
         );
-        sampleProduct.setId(100L);
+        makhanaProduct.setId(201L);
     }
 
     @Test
-    @DisplayName("getCatalog: returns mapped cross-border trade product list")
+    @DisplayName("getCatalog: returns mapped Makhana superfood product list")
     public void testGetCatalogSuccess() {
-        when(productRepository.searchCatalog(null, null, null)).thenReturn(List.of(sampleProduct));
+        when(productRepository.searchCatalog(null, null, null)).thenReturn(List.of(makhanaProduct));
 
         List<ProductDTO> result = productService.getCatalog(null, null, null);
 
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertEquals("Premium Organic Basmati Rice", result.get(0).getTitle());
-        assertEquals("India", result.get(0).getOriginCountry());
-        assertEquals("Oman", result.get(0).getDestinationCountry());
+        assertEquals("Bihar Premium Organic Foxnuts (Makhana HS 1904)", result.get(0).getTitle());
+        assertEquals("HS-1904", result.get(0).getHsCode());
+        assertEquals("Makhana & Superfoods", result.get(0).getCategory());
     }
 
     @Test
-    @DisplayName("createProduct: successfully creates and saves cross-border product")
+    @DisplayName("createProduct: successfully creates and saves Makhana product")
     public void testCreateProductSuccess() {
         ProductRequestDTO requestDTO = new ProductRequestDTO(
-                "Premium Organic Basmati Rice",
+                "Bihar Premium Organic Foxnuts (Makhana HS 1904)",
                 "Description",
-                "Agri & Food",
-                "HS-1006",
+                "Makhana & Superfoods",
+                "HS-1904",
                 "India",
-                "Oman",
-                BigDecimal.valueOf(5.00),
-                BigDecimal.valueOf(1250.00),
-                "metric ton",
+                "United States",
+                BigDecimal.valueOf(3.50),
+                BigDecimal.valueOf(14.50),
+                "kg",
                 10L,
-                "image.png"
+                "makhana.jpg"
         );
 
         when(userRepository.findById(10L)).thenReturn(Optional.of(sampleSupplier));
-        when(productRepository.save(any(Product.class))).thenReturn(sampleProduct);
+        when(productRepository.save(any(Product.class))).thenReturn(makhanaProduct);
 
         ProductDTO result = productService.createProduct(requestDTO);
 
         assertNotNull(result);
-        assertEquals(100L, result.getId());
-        assertEquals("HS-1006", result.getHsCode());
+        assertEquals(201L, result.getId());
+        assertEquals("HS-1904", result.getHsCode());
         verify(productRepository, times(1)).save(any(Product.class));
     }
 }

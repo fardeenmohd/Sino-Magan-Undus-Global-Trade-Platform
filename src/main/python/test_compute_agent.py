@@ -11,26 +11,25 @@ class TestComputeAgent(unittest.TestCase):
         response = self.client.get("/health")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()["status"], "HEALTHY")
-        self.assertIn("Poland", response.json()["supported_destinations"])
+        self.assertIn("Foxnuts/Makhana", response.json()["supported_commodities"])
 
-    def test_compute_find_crossborder_leads_success(self):
+    def test_compute_find_makhana_leads_success(self):
         payload = {
-            "product_id": 101,
-            "title": "Organic Basmati Rice & Spices",
-            "category": "Agri & Spices",
-            "hs_code": "HS-1006",
+            "product_id": 201,
+            "title": "Bihar Premium Organic Foxnuts (Makhana)",
+            "category": "Makhana & Superfoods",
+            "hs_code": "HS-1904",
             "origin_country": "India",
-            "destination_country": "Oman",
+            "destination_country": "United States",
             "min_budget": 50000.0
         }
         response = self.client.post("/api/compute/find-leads", json=payload)
         self.assertEqual(response.status_code, 200)
 
         data = response.json()
-        self.assertEqual(data["product_id"], 101)
+        self.assertEqual(data["product_id"], 201)
         self.assertEqual(data["origin_country"], "India")
         self.assertGreater(data["total_leads_found"], 0)
-        self.assertIn("leads", data)
 
 if __name__ == "__main__":
     unittest.main()

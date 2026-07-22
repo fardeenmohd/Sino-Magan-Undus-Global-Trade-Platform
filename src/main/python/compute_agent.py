@@ -4,16 +4,16 @@ import pandas as pd
 from typing import List, Optional
 
 app = FastAPI(
-    title="Antigravity Cross-Border Trade Compute Engine - India Trade Corridors",
-    description="Python FastAPI & Pandas Compute Engine for India Import/Export lead matching targeting Poland, Netherlands, Australia, Oman, China, and USA",
-    version="2.0.0"
+    title="Antigravity Cross-Border Trade Compute Engine - Expanded Commodity Leads",
+    description="Python FastAPI & Pandas Compute Engine for India Import/Export lead matching including Makhana, Onions, Eggs, Potatoes, Meat, and Machinery to Poland, Netherlands, Australia, Oman, China, and USA",
+    version="2.5.0"
 )
 
 class ProductTradeQuery(BaseModel):
     product_id: int
     title: str
     category: str
-    hs_code: Optional[str] = "HS-8471"
+    hs_code: Optional[str] = "HS-1904"
     origin_country: Optional[str] = "India"
     destination_country: Optional[str] = "United States"
     min_budget: Optional[float] = 10000.0
@@ -39,73 +39,73 @@ class ComputeTradeResponse(BaseModel):
     average_match_score: float
     leads: List[CrossBorderLeadProspect]
 
-# In-Memory Prospect Database for International Buyers in Poland, Netherlands, Australia, Oman, China, and USA
+# In-Memory International Prospect Database including Makhana, Onions, Eggs, Potatoes, Meat, and Machinery Buyers
 INTERNATIONAL_PROSPECT_DATA = [
     {
-        "user_id": 301,
-        "name": "Jan Kowalski",
-        "email": "j.kowalski@baltictrade.pl",
-        "company": "Baltic Global Imports",
-        "destination_country": "Poland",
-        "port_hub": "Port of Gdańsk",
-        "tariff_pct": 3.2,
-        "budget": 120000.0,
-        "preferred_categories": ["Pharmaceuticals", "Textiles", "IT Hardware"]
-    },
-    {
-        "user_id": 302,
-        "name": "Willem de Jong",
-        "email": "willem@rotterdamb2b.nl",
-        "company": "Rotterdam Gateway Logistics",
-        "destination_country": "Netherlands",
-        "port_hub": "Port of Rotterdam",
-        "tariff_pct": 2.8,
+        "user_id": 401,
+        "name": "David Miller",
+        "email": "dmiller@superfoods.us",
+        "company": "Organics & Superfoods USA Inc",
+        "destination_country": "United States",
+        "port_hub": "Port of Los Angeles",
+        "tariff_pct": 3.5,
         "budget": 250000.0,
-        "preferred_categories": ["Spices & Agri", "Chemicals", "AI Hardware"]
+        "preferred_categories": ["Makhana & Superfoods", "Agri & Spices"]
     },
     {
-        "user_id": 303,
-        "name": "Lachlan Murdoch",
-        "email": "l.murdoch@pacificeX.com.au",
-        "company": "Pacific Cross-Border Energy",
-        "destination_country": "Australia",
-        "port_hub": "Port of Sydney",
-        "tariff_pct": 4.0,
-        "budget": 180000.0,
-        "preferred_categories": ["Solar Components", "Engineering Goods", "Textiles"]
-    },
-    {
-        "user_id": 304,
-        "name": "Tariq Al-Said",
-        "email": "tariq@gulfmerchant.om",
-        "company": "Oman Trade & Gulf Supply",
+        "user_id": 402,
+        "name": "Nasser Al-Harthy",
+        "email": "nasser@muscatimport.om",
+        "company": "Muscat Fresh Produce & Foodstuffs",
         "destination_country": "Oman",
         "port_hub": "Port of Salalah",
         "tariff_pct": 5.0,
-        "budget": 310000.0,
-        "preferred_categories": ["Basmati Rice & Spices", "Jewelry & Gems", "Machinery"]
+        "budget": 380000.0,
+        "preferred_categories": ["Fresh Produce", "Poultry & Eggs", "Meat Exports"]
     },
     {
-        "user_id": 305,
-        "name": "Wei Zhang",
-        "email": "w.zhang@shanghaiimport.cn",
-        "company": "Shanghai Silk Road Enterprise",
+        "user_id": 403,
+        "name": "Sophie van der Meer",
+        "email": "sophie@amsterdambakery.nl",
+        "company": "Amsterdam Bakery Ingredients BV",
+        "destination_country": "Netherlands",
+        "port_hub": "Port of Rotterdam",
+        "tariff_pct": 2.8,
+        "budget": 190000.0,
+        "preferred_categories": ["Poultry & Eggs", "Agri & Spices"]
+    },
+    {
+        "user_id": 404,
+        "name": "Piotr Wisniewski",
+        "email": "p.wisniewski@polandfoods.pl",
+        "company": "Warsaw Agri Importers Sp. z o.o.",
+        "destination_country": "Poland",
+        "port_hub": "Port of Gdańsk",
+        "tariff_pct": 4.0,
+        "budget": 210000.0,
+        "preferred_categories": ["Fresh Produce", "Machinery & Engineering"]
+    },
+    {
+        "user_id": 405,
+        "name": "Li Gang",
+        "email": "ligang@chinameat.cn",
+        "company": "China National Cold Chain Meat Corp",
         "destination_country": "China",
         "port_hub": "Port of Shanghai",
         "tariff_pct": 6.5,
-        "budget": 450000.0,
-        "preferred_categories": ["Iron Ore", "Organic Chemicals", "Cotton Yarn"]
+        "budget": 600000.0,
+        "preferred_categories": ["Meat Exports", "Fresh Produce"]
     },
     {
-        "user_id": 306,
-        "name": "Sarah Jenkins",
-        "email": "sjenkins@americantrade.us",
-        "company": "Apex Americas Import Corp",
-        "destination_country": "United States",
-        "port_hub": "Port of Los Angeles / Newark",
-        "tariff_pct": 4.5,
-        "budget": 500000.0,
-        "preferred_categories": ["IT Services", "Pharmaceuticals", "Textiles & Apparel"]
+        "user_id": 406,
+        "name": "Harrison Forde",
+        "email": "hforde@ozmachinery.com.au",
+        "company": "Australia Industrial & Mining Equipment",
+        "destination_country": "Australia",
+        "port_hub": "Port of Sydney",
+        "tariff_pct": 4.0,
+        "budget": 450000.0,
+        "preferred_categories": ["Machinery & Engineering", "Makhana & Superfoods"]
     }
 ]
 
@@ -113,7 +113,8 @@ INTERNATIONAL_PROSPECT_DATA = [
 def health_check():
     return {
         "status": "HEALTHY",
-        "engine": "FastAPI + Pandas Cross-Border India Trade Engine v2.0",
+        "engine": "FastAPI + Pandas Cross-Border India Trade Engine v2.5",
+        "supported_commodities": ["Foxnuts/Makhana", "Onions", "Eggs", "Potatoes", "Meat", "Machinery Goods"],
         "supported_destinations": ["Poland", "Netherlands", "Australia", "Oman", "China", "United States"]
     }
 
@@ -124,16 +125,13 @@ def compute_find_leads(query: ProductTradeQuery):
 
     df = pd.DataFrame(INTERNATIONAL_PROSPECT_DATA)
 
-    # Filter by destination country if specified and not 'ALL'
     if query.destination_country and query.destination_country.upper() != "ALL":
-        df = df[df["destination_country"].str.contains(query.destination_country, case=False, na=False)]
-
-    if df.empty:
-        # Fallback to all data if exact country filter produces 0 rows
-        df = pd.DataFrame(INTERNATIONAL_PROSPECT_DATA)
+        filtered_df = df[df["destination_country"].str.contains(query.destination_country, case=False, na=False)]
+        if not filtered_df.empty:
+            df = filtered_df
 
     df["budget_score"] = df["budget"].apply(lambda b: min(50.0, (b / (query.min_budget or 10000.0)) * 25.0))
-    df["match_score"] = df["budget_score"].apply(lambda s: round(s + 48.5, 1))
+    df["match_score"] = df["budget_score"].apply(lambda s: round(s + 49.0, 1))
 
     matched_leads = []
     for idx, row in df.iterrows():
@@ -149,7 +147,7 @@ def compute_find_leads(query: ProductTradeQuery):
                 hs_code_match=True,
                 tariff_estimate_pct=float(row["tariff_pct"]),
                 match_score=float(row["match_score"]),
-                confidence_reason=f"Verified Buyer in {row['destination_country']} via {row['port_hub']} with ${row['budget']:,.0f} import budget"
+                confidence_reason=f"Verified Buyer for {query.category} ({query.hs_code}) in {row['destination_country']} with ${row['budget']:,.0f} import budget"
             )
         )
 

@@ -43,13 +43,13 @@ export interface TradeLeadProspect {
   company: string;
   role: UserRole;
   destination_country: string;
-  port_hub: str;
+  port_hub: string;
   tariff_estimate_pct: number;
   match_score: number;
   confidence_reason: string;
 }
 
-// Target Destinations supported
+// Target Destinations
 const DESTINATION_COUNTRIES = [
   { code: "ALL", name: "All Destinations", flag: "🌐" },
   { code: "Poland", name: "Poland", flag: "🇵🇱", hub: "Port of Gdańsk" },
@@ -60,159 +60,169 @@ const DESTINATION_COUNTRIES = [
   { code: "USA", name: "United States", flag: "🇺🇸", hub: "Port of Los Angeles / Newark" },
 ];
 
-// Sample Suppliers in India (Unified User Structure)
+// Indian Exporters & Suppliers
 const INITIAL_INDIAN_SUPPLIERS: CatalogUser[] = [
   {
     id: 10,
-    name: "Rajesh Export Corp",
-    email: "rajesh@exim.in",
-    company: "Rajesh Global Industries",
+    name: "Bihar Organic Agro & Makhana Exim",
+    email: "makhana@biharagro.in",
+    company: "Bihar Makhana & Superfoods Ltd",
     role: "SUPPLIER",
-    location: "Mumbai, India 🇮🇳",
+    location: "Patna, Bihar 🇮🇳",
+    rating: 5.0,
+    avatarUrl: "https://images.unsplash.com/photo-1544717305-2782549b5136?w=150&auto=format&fit=crop&q=80",
+  },
+  {
+    id: 11,
+    name: "Nashik Onion & Agri Producers Co.",
+    email: "export@nashikonions.co.in",
+    company: "Nashik Fresh Produce & Cold Chain",
+    role: "SUPPLIER",
+    location: "Nashik, Maharashtra 🇮🇳",
     rating: 4.9,
     avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80",
   },
   {
-    id: 11,
-    name: "Priya Sharma",
-    email: "priya@deccanspices.com",
-    company: "Deccan Organic Spices & Agri",
-    role: "SUPPLIER",
-    location: "Bengaluru, India 🇮🇳",
-    rating: 5.0,
-    avatarUrl: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80",
-  },
-  {
     id: 12,
-    name: "Amitav Roy",
-    email: "aroy@bengaltextiles.co.in",
-    company: "Bengal Apparel & Handicrafts",
+    name: "Deccan Poultry & Egg Farms",
+    email: "eggs@deccanpoultry.in",
+    company: "Deccan Agro & Poultry Exports",
     role: "SUPPLIER",
-    location: "Kolkata, India 🇮🇳",
+    location: "Hyderabad, Telangana 🇮🇳",
     rating: 4.8,
     avatarUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80",
   },
+  {
+    id: 13,
+    name: "Gujarat Engineering & Machinery Works",
+    email: "machinery@gujarateng.in",
+    company: "Gujarat Industrial Equipment Ltd",
+    role: "SUPPLIER",
+    location: "Rajkot, Gujarat 🇮🇳",
+    rating: 4.9,
+    avatarUrl: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80",
+  },
 ];
 
-// Initial Cross-Border Trade Products from India
+// Expanded Product Catalog featuring Makhana, Onions, Eggs, Potatoes, Meat, Machinery
 const INITIAL_TRADE_PRODUCTS: TradeProduct[] = [
   {
-    id: 201,
-    title: "100% Organic Premium Basmati Rice (HS 1006)",
-    description: "Export-grade long grain aromatic Basmati rice with phytosanitary certification, vacuum packed for container shipments.",
-    category: "Agri & Spices",
-    hsCode: "HS-1006",
+    id: 301,
+    title: "Bihar Premium Organic Foxnuts / Makhana (HS 1904)",
+    description: "Hand-popped grade-A gorgon nuts (makhana), 5-6 sieve size, vacuum packed in 10kg cartons for US & EU superfood distributors.",
+    category: "Makhana & Superfoods",
+    hsCode: "HS-1904",
+    originCountry: "India 🇮🇳",
+    destinationCountry: "United States",
+    destinationFlag: "🇺🇸",
+    portHub: "Port of Los Angeles / Newark",
+    tariffRatePct: 3.5,
+    price: 14.50,
+    unit: "kg",
+    listedBy: INITIAL_INDIAN_SUPPLIERS[0],
+    imageUrl: "https://images.unsplash.com/photo-1599488615731-7e5c2823ff28?w=600&auto=format&fit=crop&q=80",
+    leadCount: 28,
+    status: "ACTIVE",
+    createdAt: "2026-07-22T08:00:00Z",
+  },
+  {
+    id: 302,
+    title: "Nashik Red Onions & Dehydrated Flakes (HS 0703)",
+    description: "45mm+ export grade red Nashik onions with phytosanitary clearance, plus dehydrated onion powder for GCC food processing.",
+    category: "Fresh Produce",
+    hsCode: "HS-0703",
     originCountry: "India 🇮🇳",
     destinationCountry: "Oman",
     destinationFlag: "🇴🇲",
     portHub: "Port of Salalah",
     tariffRatePct: 5.0,
-    price: 1250,
+    price: 380,
     unit: "metric ton",
     listedBy: INITIAL_INDIAN_SUPPLIERS[1],
-    imageUrl: "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=600&auto=format&fit=crop&q=80",
-    leadCount: 18,
+    imageUrl: "https://images.unsplash.com/photo-1618512496248-a07fe83aa8cb?w=600&auto=format&fit=crop&q=80",
+    leadCount: 34,
     status: "ACTIVE",
-    createdAt: "2026-07-21T08:00:00Z",
+    createdAt: "2026-07-21T10:30:00Z",
   },
   {
-    id: 202,
-    title: "Pharmaceutical Active Ingredients (HS 3004)",
-    description: "GMP-certified active raw ingredients for European formulations, pre-inspected for EU customs entry.",
-    category: "Pharmaceuticals",
-    hsCode: "HS-3004",
-    originCountry: "India 🇮🇳",
-    destinationCountry: "Poland",
-    destinationFlag: "🇵🇱",
-    portHub: "Port of Gdańsk",
-    tariffRatePct: 3.2,
-    price: 4800,
-    unit: "kg batch",
-    listedBy: INITIAL_INDIAN_SUPPLIERS[0],
-    imageUrl: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=600&auto=format&fit=crop&q=80",
-    leadCount: 14,
-    status: "ACTIVE",
-    createdAt: "2026-07-20T11:30:00Z",
-  },
-  {
-    id: 203,
-    title: "High-Purity Botanical Extract & Spices (HS 3301)",
-    description: "Essential oils, curcumin, and oleoresin extracts shipped directly to European distribution hubs.",
-    category: "Agri & Spices",
-    hsCode: "HS-3301",
+    id: 303,
+    title: "Fresh Table Eggs & Whole Egg Powder (HS 0407)",
+    description: "Phytosanitary certified fresh white table eggs (30 dozen crates) & spray-dried egg powder for European bakeries.",
+    category: "Poultry & Eggs",
+    hsCode: "HS-0407",
     originCountry: "India 🇮🇳",
     destinationCountry: "Netherlands",
     destinationFlag: "🇳🇱",
     portHub: "Port of Rotterdam",
     tariffRatePct: 2.8,
-    price: 3200,
-    unit: "drum",
+    price: 24,
+    unit: "crate (360 eggs)",
+    listedBy: INITIAL_INDIAN_SUPPLIERS[2],
+    imageUrl: "https://images.unsplash.com/photo-1516448620398-c5f44bf9f441?w=600&auto=format&fit=crop&q=80",
+    leadCount: 19,
+    status: "ACTIVE",
+    createdAt: "2026-07-20T14:15:00Z",
+  },
+  {
+    id: 304,
+    title: "Cold Storage Table & Processing Potatoes (HS 0701)",
+    description: "Kufri Pukhraj cold storage potatoes with high dry matter content, suitable for French fries & processing plants.",
+    category: "Fresh Produce",
+    hsCode: "HS-0701",
+    originCountry: "India 🇮🇳",
+    destinationCountry: "Poland",
+    destinationFlag: "🇵🇱",
+    portHub: "Port of Gdańsk",
+    tariffRatePct: 4.0,
+    price: 290,
+    unit: "metric ton",
     listedBy: INITIAL_INDIAN_SUPPLIERS[1],
-    imageUrl: "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=600&auto=format&fit=crop&q=80",
+    imageUrl: "https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=600&auto=format&fit=crop&q=80",
     leadCount: 22,
     status: "ACTIVE",
-    createdAt: "2026-07-19T14:15:00Z",
+    createdAt: "2026-07-19T09:00:00Z",
   },
   {
-    id: 204,
-    title: "Cotton Apparel & Sustainable Textiles (HS 6205)",
-    description: "Ethically manufactured organic cotton apparel for North American retail distributors.",
-    category: "Textiles",
-    hsCode: "HS-6205",
-    originCountry: "India 🇮🇳",
-    destinationCountry: "United States",
-    destinationFlag: "🇺🇸",
-    portHub: "Port of Los Angeles / Newark",
-    tariffRatePct: 4.5,
-    price: 18,
-    unit: "garment piece",
-    listedBy: INITIAL_INDIAN_SUPPLIERS[2],
-    imageUrl: "https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=600&auto=format&fit=crop&q=80",
-    leadCount: 31,
-    status: "ACTIVE",
-    createdAt: "2026-07-22T09:00:00Z",
-  },
-  {
-    id: 205,
-    title: "Solar & Clean Energy Components (HS 8541)",
-    description: "Heavy industrial solar panel mountings and clean energy accessories for APAC green grid projects.",
-    category: "Engineering & Solar",
-    hsCode: "HS-8541",
-    originCountry: "India 🇮🇳",
-    destinationCountry: "Australia",
-    destinationFlag: "🇦🇺",
-    portHub: "Port of Sydney",
-    tariffRatePct: 4.0,
-    price: 850,
-    unit: "panel set",
-    listedBy: INITIAL_INDIAN_SUPPLIERS[0],
-    imageUrl: "https://images.unsplash.com/photo-1509391365360-2e959784a276?w=600&auto=format&fit=crop&q=80",
-    leadCount: 16,
-    status: "ACTIVE",
-    createdAt: "2026-07-18T16:00:00Z",
-  },
-  {
-    id: 206,
-    title: "High-Grade Iron Ore & Refined Minerals (HS 2601)",
-    description: "Industrial mineral ores and raw materials shipped in bulk cargo vessels.",
-    category: "Minerals & Ore",
-    hsCode: "HS-2601",
+    id: 305,
+    title: "APEDA Halal Certified Frozen Buffalo Meat (HS 0202)",
+    description: "APEDA approved boneless frozen buffalo meat (Bobby veal & forequarter cuts) in 20kg master cartons.",
+    category: "Meat Exports",
+    hsCode: "HS-0202",
     originCountry: "India 🇮🇳",
     destinationCountry: "China",
     destinationFlag: "🇨🇳",
     portHub: "Port of Shanghai",
     tariffRatePct: 6.5,
-    price: 140,
-    unit: "ton bulk",
-    listedBy: INITIAL_INDIAN_SUPPLIERS[0],
-    imageUrl: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&auto=format&fit=crop&q=80",
-    leadCount: 25,
+    price: 3450,
+    unit: "metric ton",
+    listedBy: INITIAL_INDIAN_SUPPLIERS[1],
+    imageUrl: "https://images.unsplash.com/photo-1603048588665-791ca8aea617?w=600&auto=format&fit=crop&q=80",
+    leadCount: 41,
     status: "ACTIVE",
-    createdAt: "2026-07-17T10:00:00Z",
+    createdAt: "2026-07-18T16:00:00Z",
+  },
+  {
+    id: 306,
+    title: "Industrial CNC Lathe & Hydraulic Machinery (HS 8479)",
+    description: "Heavy duty CNC machinery, agricultural water pumps, and industrial gearboxes manufactured in Rajkot.",
+    category: "Machinery & Engineering",
+    hsCode: "HS-8479",
+    originCountry: "India 🇮🇳",
+    destinationCountry: "Australia",
+    destinationFlag: "🇦🇺",
+    portHub: "Port of Sydney",
+    tariffRatePct: 4.0,
+    price: 12500,
+    unit: "machine unit",
+    listedBy: INITIAL_INDIAN_SUPPLIERS[3],
+    imageUrl: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=600&auto=format&fit=crop&q=80",
+    leadCount: 17,
+    status: "ACTIVE",
+    createdAt: "2026-07-17T11:00:00Z",
   },
 ];
 
-export default function CrossBorderTradeLandingPage() {
+export default function ExpandedTradeCatalogPage() {
   const [products, setProducts] = useState<TradeProduct[]>(INITIAL_TRADE_PRODUCTS);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedDestination, setSelectedDestination] = useState("ALL");
@@ -229,13 +239,13 @@ export default function CrossBorderTradeLandingPage() {
   const [newProductForm, setNewProductForm] = useState({
     title: "",
     description: "",
-    category: "Agri & Spices",
-    hsCode: "HS-1006",
-    destinationCountry: "Oman",
-    tariffRatePct: 4.5,
-    price: 950,
-    unit: "metric ton",
-    imageUrl: "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=600&auto=format&fit=crop&q=80",
+    category: "Makhana & Superfoods",
+    hsCode: "HS-1904",
+    destinationCountry: "USA",
+    tariffRatePct: 3.5,
+    price: 14.5,
+    unit: "kg",
+    imageUrl: "https://images.unsplash.com/photo-1599488615731-7e5c2823ff28?w=600&auto=format&fit=crop&q=80",
   });
 
   // Filtered Catalog
@@ -259,7 +269,14 @@ export default function CrossBorderTradeLandingPage() {
     });
   }, [products, searchQuery, selectedDestination, selectedCategory]);
 
-  const categories = ["ALL", "Agri & Spices", "Pharmaceuticals", "Textiles", "Engineering & Solar", "Minerals & Ore"];
+  const categories = [
+    "ALL",
+    "Makhana & Superfoods",
+    "Fresh Produce",
+    "Poultry & Eggs",
+    "Meat Exports",
+    "Machinery & Engineering",
+  ];
 
   // Trigger Python FastAPI Compute Engine
   const handleTriggerComputeAgent = (product: TradeProduct) => {
@@ -269,100 +286,100 @@ export default function CrossBorderTradeLandingPage() {
 
     setTimeout(() => {
       const mockDiscoveredLeads: Record<string, TradeLeadProspect[]> = {
-        Poland: [
+        "United States": [
           {
-            user_id: 301,
-            name: "Jan Kowalski",
-            email: "j.kowalski@baltictrade.pl",
-            company: "Baltic Global Imports Sp. z o.o.",
+            user_id: 401,
+            name: "David Miller",
+            email: "dmiller@superfoods.us",
+            company: "Organics & Superfoods USA Inc",
             role: "LEAD_PROSPECT",
-            destination_country: "Poland 🇵🇱",
-            port_hub: "Port of Gdańsk",
-            tariff_estimate_pct: 3.2,
-            match_score: 95.8,
-            confidence_reason: `Active EU Import Permit verified for ${product.hsCode} ($140k budget)`,
+            destination_country: "United States 🇺🇸",
+            port_hub: "Port of Los Angeles",
+            tariff_estimate_pct: 3.5,
+            match_score: 97.5,
+            confidence_reason: `FDA Registered Importer ready for ${product.hsCode} ($250k annual budget)`,
           },
           {
-            user_id: 307,
-            name: "Marek Nowak",
-            email: "mnowak@warsawpharma.pl",
-            company: "Warsaw Distribution Group",
+            user_id: 407,
+            name: "Jennifer Hayes",
+            email: "j.hayes@wholeorganics.com",
+            company: "Whole Organics Distribution Corp",
             role: "LEAD_PROSPECT",
-            destination_country: "Poland 🇵🇱",
-            port_hub: "Port of Gdynia",
-            tariff_estimate_pct: 3.2,
-            match_score: 91.4,
-            confidence_reason: "High volume quarterly import contract requirement",
-          },
-        ],
-        Netherlands: [
-          {
-            user_id: 302,
-            name: "Willem de Jong",
-            email: "willem@rotterdamb2b.nl",
-            company: "Rotterdam Gateway Logistics BV",
-            role: "LEAD_PROSPECT",
-            destination_country: "Netherlands 🇳🇱",
-            port_hub: "Port of Rotterdam",
-            tariff_estimate_pct: 2.8,
-            match_score: 96.2,
-            confidence_reason: `Rotterdam port customs pre-clearance ready for ${product.hsCode}`,
-          },
-        ],
-        Australia: [
-          {
-            user_id: 303,
-            name: "Lachlan Murdoch",
-            email: "l.murdoch@pacificeX.com.au",
-            company: "Pacific Cross-Border Energy Pty",
-            role: "LEAD_PROSPECT",
-            destination_country: "Australia 🇦🇺",
-            port_hub: "Port of Sydney",
-            tariff_estimate_pct: 4.0,
-            match_score: 93.0,
-            confidence_reason: "Approved APAC trade credit limit ($210k)",
+            destination_country: "United States 🇺🇸",
+            port_hub: "Port of Newark",
+            tariff_estimate_pct: 3.5,
+            match_score: 94.2,
+            confidence_reason: "High volume monthly retail packaging contract requirement",
           },
         ],
         Oman: [
           {
-            user_id: 304,
-            name: "Tariq Al-Said",
-            email: "tariq@gulfmerchant.om",
-            company: "Oman Trade & Gulf Supply LLC",
+            user_id: 402,
+            name: "Nasser Al-Harthy",
+            email: "nasser@muscatimport.om",
+            company: "Muscat Fresh Produce & Foodstuffs LLC",
             role: "LEAD_PROSPECT",
             destination_country: "Oman 🇴🇲",
             port_hub: "Port of Salalah",
             tariff_estimate_pct: 5.0,
-            match_score: 97.4,
-            confidence_reason: `GCC import license & Salalah port free-zone container deposit ready`,
+            match_score: 98.0,
+            confidence_reason: `GCC Phytosanitary import permit pre-approved for ${product.hsCode}`,
+          },
+        ],
+        Netherlands: [
+          {
+            user_id: 403,
+            name: "Sophie van der Meer",
+            email: "sophie@amsterdambakery.nl",
+            company: "Amsterdam Bakery Ingredients BV",
+            role: "LEAD_PROSPECT",
+            destination_country: "Netherlands 🇳🇱",
+            port_hub: "Port of Rotterdam",
+            tariff_estimate_pct: 2.8,
+            match_score: 95.8,
+            confidence_reason: "Rotterdam port customs pre-clearance ready",
+          },
+        ],
+        Poland: [
+          {
+            user_id: 404,
+            name: "Piotr Wisniewski",
+            email: "p.wisniewski@polandfoods.pl",
+            company: "Warsaw Agri Importers Sp. z o.o.",
+            role: "LEAD_PROSPECT",
+            destination_country: "Poland 🇵🇱",
+            port_hub: "Port of Gdańsk",
+            tariff_estimate_pct: 4.0,
+            match_score: 93.6,
+            confidence_reason: "EU cold chain distribution warehouse pre-booked",
           },
         ],
         China: [
           {
-            user_id: 305,
-            name: "Wei Zhang",
-            email: "w.zhang@shanghaiimport.cn",
-            company: "Shanghai Silk Road Enterprise Ltd",
+            user_id: 405,
+            name: "Li Gang",
+            email: "ligang@chinameat.cn",
+            company: "China National Cold Chain Meat Corp",
             role: "LEAD_PROSPECT",
             destination_country: "China 🇨🇳",
             port_hub: "Port of Shanghai",
             tariff_estimate_pct: 6.5,
-            match_score: 94.1,
-            confidence_reason: "Bulk cargo import letter of credit (L/C) issued",
+            match_score: 96.9,
+            confidence_reason: "GACC import registration & Bank L/C issued ($600k)",
           },
         ],
-        "United States": [
+        Australia: [
           {
-            user_id: 306,
-            name: "Sarah Jenkins",
-            email: "sjenkins@americantrade.us",
-            company: "Apex Americas Import Corp",
+            user_id: 406,
+            name: "Harrison Forde",
+            email: "hforde@ozmachinery.com.au",
+            company: "Australia Industrial & Mining Equipment",
             role: "LEAD_PROSPECT",
-            destination_country: "United States 🇺🇸",
-            port_hub: "Port of Los Angeles / Newark",
-            tariff_estimate_pct: 4.5,
-            match_score: 98.2,
-            confidence_reason: `FDA & US Customs entry pre-classification for ${product.hsCode}`,
+            destination_country: "Australia 🇦🇺",
+            port_hub: "Port of Sydney",
+            tariff_estimate_pct: 4.0,
+            match_score: 94.7,
+            confidence_reason: "Australian Customs compliance verification completed",
           },
         ],
       };
@@ -391,7 +408,7 @@ export default function CrossBorderTradeLandingPage() {
       price: Number(newProductForm.price),
       unit: newProductForm.unit,
       listedBy: INITIAL_INDIAN_SUPPLIERS[0],
-      imageUrl: newProductForm.imageUrl || "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=600&auto=format&fit=crop&q=80",
+      imageUrl: newProductForm.imageUrl || "https://images.unsplash.com/photo-1599488615731-7e5c2823ff28?w=600&auto=format&fit=crop&q=80",
       leadCount: 0,
       status: "ACTIVE",
       createdAt: new Date().toISOString(),
@@ -413,12 +430,12 @@ export default function CrossBorderTradeLandingPage() {
             </div>
             <div>
               <span className="font-extrabold text-lg tracking-tight text-white">Antigravity ExIm</span>
-              <span className="text-xs text-cyan-400 font-mono ml-2">India Trade Hub</span>
+              <span className="text-xs text-cyan-400 font-mono ml-2">Makhana, Eggs, Meat & Machinery Hub</span>
             </div>
           </div>
 
           <div className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-400">
-            <a href="#catalog" className="hover:text-cyan-400 transition-colors duration-200">Export Catalog</a>
+            <a href="#catalog" className="hover:text-cyan-400 transition-colors duration-200">Commodity Catalog</a>
             <a href="#corridors" className="hover:text-cyan-400 transition-colors duration-200">Trade Corridors</a>
             <a href="#suppliers" className="hover:text-cyan-400 transition-colors duration-200">Indian Exporters</a>
           </div>
@@ -434,7 +451,7 @@ export default function CrossBorderTradeLandingPage() {
               onClick={() => setIsListProductModalOpen(true)}
               className="px-4 py-2 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-semibold text-xs sm:text-sm transition-colors duration-200 shadow-md shadow-cyan-500/20 cursor-pointer"
             >
-              + List Indian Product
+              + List Indian Goods
             </button>
           </div>
         </div>
@@ -443,19 +460,19 @@ export default function CrossBorderTradeLandingPage() {
       {/* --- HERO SECTION --- */}
       <section className="relative overflow-hidden pt-16 pb-12 border-b border-slate-800/60 bg-gradient-to-b from-slate-900/50 via-slate-950 to-slate-950">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10 space-y-6">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 text-xs font-medium">
-            <span>🚢 India Cross-Border Trade Engine • 6 Target International Corridors</span>
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 text-xs font-medium">
+            <span>🪷 Makhana • 🧅 Onions • 🥚 Eggs • 🥔 Potatoes • 🥩 Meat • ⚙️ Machinery Engine</span>
           </div>
 
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight bg-gradient-to-r from-white via-slate-100 to-slate-400 bg-clip-text text-transparent max-w-5xl mx-auto leading-tight">
-            Export Leads & Trade Matching from India 🇮🇳
+            Export Leads & Buyer Discovery from India 🇮🇳
           </h1>
 
           <p className="text-slate-400 text-base sm:text-lg max-w-3xl mx-auto">
-            Discover verified buyer lead prospects across <strong>Poland 🇵🇱</strong>, <strong>Netherlands 🇳🇱</strong>, <strong>Australia 🇦🇺</strong>, <strong>Oman 🇴🇲</strong>, <strong>China 🇨🇳</strong>, and <strong>USA 🇺🇸</strong> with automated HS Code & Duty Tariff matching.
+            Direct B2B buyer lead matching for Foxnuts (Makhana), Nashik Onions, Table Eggs, Cold Storage Potatoes, Halal Meat, and Industrial Machinery targeting <strong>Poland 🇵🇱</strong>, <strong>Netherlands 🇳🇱</strong>, <strong>Australia 🇦🇺</strong>, <strong>Oman 🇴🇲</strong>, <strong>China 🇨🇳</strong>, and <strong>USA 🇺🇸</strong>.
           </p>
 
-          {/* Search Input */}
+          {/* Search Bar */}
           <div className="max-w-3xl mx-auto pt-4">
             <div className="bg-slate-900/90 border border-slate-800 p-2 rounded-xl shadow-2xl flex flex-col sm:flex-row gap-2 backdrop-blur-md">
               <div className="relative flex-1">
@@ -464,7 +481,7 @@ export default function CrossBorderTradeLandingPage() {
                 </svg>
                 <input
                   type="text"
-                  placeholder="Search by product, HS code (e.g. HS-1006), or Indian exporter..."
+                  placeholder="Search Makhana, Onions, Eggs, Potatoes, Meat, Machinery or HS Code..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full bg-transparent border-0 pl-10 pr-4 py-2.5 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-0"
@@ -475,19 +492,19 @@ export default function CrossBorderTradeLandingPage() {
                 onClick={() => {}}
                 className="px-6 py-2.5 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-sm rounded-lg transition-colors duration-200 cursor-pointer"
               >
-                Search Trade Engine
+                Search Commodity Leads
               </button>
             </div>
           </div>
         </div>
       </section>
 
-      {/* --- TRADE CORRIDOR SELECTOR BAR --- */}
+      {/* --- DESTINATION CORRIDOR SELECTOR --- */}
       <section id="corridors" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 backdrop-blur-sm space-y-3">
           <div className="flex items-center justify-between text-xs text-slate-400 font-mono">
-            <span>SELECT DESTINATION TRADE CORRIDOR FROM INDIA 🇮🇳</span>
-            <span>6 ACTIVE DESTINATIONS</span>
+            <span>SELECT DESTINATION COUNTRY CORRIDOR FROM INDIA 🇮🇳</span>
+            <span>6 TARGET TRADE DESTINATIONS</span>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2.5">
@@ -515,8 +532,8 @@ export default function CrossBorderTradeLandingPage() {
         
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800/80 pb-6">
           <div>
-            <h2 className="text-2xl font-bold text-white">India Export Product Catalog</h2>
-            <p className="text-xs text-slate-400 mt-1">Listing certified Indian export products & international buyer leads</p>
+            <h2 className="text-2xl font-bold text-white">India Export Commodity Catalog</h2>
+            <p className="text-xs text-slate-400 mt-1">Listing certified export goods & active international buyer leads</p>
           </div>
 
           {/* Category Pills */}
@@ -579,7 +596,7 @@ export default function CrossBorderTradeLandingPage() {
                   </p>
                 </div>
 
-                {/* Pricing & Supplier Info */}
+                {/* Pricing & Exporter Info */}
                 <div className="pt-3 border-t border-slate-800/60 space-y-3">
                   <div className="flex items-baseline justify-between">
                     <span className="text-xs text-slate-400">Export Unit Price</span>
@@ -602,7 +619,7 @@ export default function CrossBorderTradeLandingPage() {
                     </div>
                   </div>
 
-                  {/* Action Buttons */}
+                  {/* Action Button */}
                   <button
                     onClick={() => handleTriggerComputeAgent(product)}
                     className="w-full py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-cyan-500 hover:text-slate-950 text-cyan-400 font-bold text-xs transition-colors duration-200 flex items-center justify-center gap-1.5 cursor-pointer shadow-md"
@@ -620,10 +637,10 @@ export default function CrossBorderTradeLandingPage() {
       <section id="suppliers" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 border-t border-slate-800/60 space-y-6">
         <div>
           <h2 className="text-2xl font-bold text-white">Verified Indian Exporters</h2>
-          <p className="text-xs text-slate-400 mt-1">Certified exporters shipping to Poland, Netherlands, Australia, Oman, China & USA</p>
+          <p className="text-xs text-slate-400 mt-1">Exporters shipping Makhana, Onions, Eggs, Potatoes, Meat & Machinery to Poland, Netherlands, Australia, Oman, China & USA</p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {INITIAL_INDIAN_SUPPLIERS.map((supplier) => (
             <div key={supplier.id} className="bg-slate-900/40 border border-slate-800/80 rounded-2xl p-4 flex items-center gap-4">
               <img src={supplier.avatarUrl} alt={supplier.name} className="w-12 h-12 rounded-full object-cover border border-slate-700" />
@@ -708,7 +725,7 @@ export default function CrossBorderTradeLandingPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
           <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4">
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-              <h3 className="text-lg font-bold text-white">List Indian Export Product</h3>
+              <h3 className="text-lg font-bold text-white">List Indian Export Goods</h3>
               <button onClick={() => setIsListProductModalOpen(false)} className="text-slate-400 hover:text-slate-200 text-sm cursor-pointer">
                 ✕
               </button>
@@ -723,7 +740,7 @@ export default function CrossBorderTradeLandingPage() {
                   value={newProductForm.title}
                   onChange={(e) => setNewProductForm({ ...newProductForm, title: e.target.value })}
                   className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-sm text-slate-100 focus:outline-none focus:border-cyan-500/50"
-                  placeholder="e.g. Organic Basmati Rice Grade-A"
+                  placeholder="e.g. Bihar Premium Organic Foxnuts (Makhana)"
                 />
               </div>
 
@@ -736,7 +753,7 @@ export default function CrossBorderTradeLandingPage() {
                     value={newProductForm.hsCode}
                     onChange={(e) => setNewProductForm({ ...newProductForm, hsCode: e.target.value })}
                     className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-sm text-slate-100 focus:outline-none focus:border-cyan-500/50"
-                    placeholder="e.g. HS-1006"
+                    placeholder="e.g. HS-1904"
                   />
                 </div>
 
@@ -747,12 +764,12 @@ export default function CrossBorderTradeLandingPage() {
                     onChange={(e) => setNewProductForm({ ...newProductForm, destinationCountry: e.target.value })}
                     className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-sm text-slate-100 focus:outline-none focus:border-cyan-500/50 cursor-pointer"
                   >
-                    <option value="Poland">Poland 🇵🇱</option>
-                    <option value="Netherlands">Netherlands 🇳🇱</option>
-                    <option value="Australia">Australia 🇦🇺</option>
-                    <option value="Oman">Oman 🇴🇲</option>
-                    <option value="China">China 🇨🇳</option>
                     <option value="USA">United States 🇺🇸</option>
+                    <option value="Oman">Oman 🇴🇲</option>
+                    <option value="Netherlands">Netherlands 🇳🇱</option>
+                    <option value="Poland">Poland 🇵🇱</option>
+                    <option value="China">China 🇨🇳</option>
+                    <option value="Australia">Australia 🇦🇺</option>
                   </select>
                 </div>
               </div>
@@ -765,11 +782,11 @@ export default function CrossBorderTradeLandingPage() {
                     onChange={(e) => setNewProductForm({ ...newProductForm, category: e.target.value })}
                     className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-sm text-slate-100 focus:outline-none focus:border-cyan-500/50 cursor-pointer"
                   >
-                    <option value="Agri & Spices">Agri & Spices</option>
-                    <option value="Pharmaceuticals">Pharmaceuticals</option>
-                    <option value="Textiles">Textiles</option>
-                    <option value="Engineering & Solar">Engineering & Solar</option>
-                    <option value="Minerals & Ore">Minerals & Ore</option>
+                    <option value="Makhana & Superfoods">Makhana & Superfoods</option>
+                    <option value="Fresh Produce">Fresh Produce (Onions/Potatoes)</option>
+                    <option value="Poultry & Eggs">Poultry & Eggs</option>
+                    <option value="Meat Exports">Meat Exports</option>
+                    <option value="Machinery & Engineering">Machinery & Engineering</option>
                   </select>
                 </div>
 
@@ -792,7 +809,7 @@ export default function CrossBorderTradeLandingPage() {
                   value={newProductForm.description}
                   onChange={(e) => setNewProductForm({ ...newProductForm, description: e.target.value })}
                   className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-sm text-slate-100 focus:outline-none focus:border-cyan-500/50"
-                  placeholder="Describe your product specifications, port of origin in India, and packaging..."
+                  placeholder="Describe product specifications, APEDA/Phytosanitary clearances, and export packaging..."
                 ></textarea>
               </div>
 
@@ -808,7 +825,7 @@ export default function CrossBorderTradeLandingPage() {
                   type="submit"
                   className="px-4 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-semibold text-sm transition-colors duration-200 shadow-md shadow-cyan-500/20 cursor-pointer"
                 >
-                  Publish Export Product
+                  Publish Goods
                 </button>
               </div>
             </form>
