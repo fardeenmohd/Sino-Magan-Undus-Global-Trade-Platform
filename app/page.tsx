@@ -227,6 +227,28 @@ export default function ExpandedTradeCatalogPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedDestination, setSelectedDestination] = useState("ALL");
   const [selectedCategory, setSelectedCategory] = useState("ALL");
+  const [userSession, setUserSession] = useState<any>(null);
+  
+  // Read session on mount
+  React.useEffect(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("antigravity_user_session");
+      if (saved) {
+        try {
+          setUserSession(JSON.parse(saved));
+        } catch (e) {
+          console.error(e);
+        }
+      }
+    }
+  }, []);
+
+  const handleSignOut = () => {
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("antigravity_user_session");
+    }
+    setUserSession(null);
+  };
   
   // Modals state
   const [selectedProduct, setSelectedProduct] = useState<TradeProduct | null>(null);
@@ -447,12 +469,23 @@ export default function ExpandedTradeCatalogPage() {
             >
               <span>📊 My Dashboard</span>
             </Link>
-            <Link
-              href="/login"
-              className="px-3.5 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-200 font-semibold text-xs sm:text-sm border border-slate-800 transition-colors duration-200 cursor-pointer"
-            >
-              Sign In
-            </Link>
+
+            {userSession ? (
+              <button
+                onClick={handleSignOut}
+                className="px-3 py-2 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 font-semibold text-xs sm:text-sm border border-rose-500/20 transition-colors duration-200 cursor-pointer"
+              >
+                Sign Out
+              </button>
+            ) : (
+              <Link
+                href="/login"
+                className="px-3.5 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-200 font-semibold text-xs sm:text-sm border border-slate-800 transition-colors duration-200 cursor-pointer"
+              >
+                Sign In
+              </Link>
+            )}
+
             <button
               onClick={() => setIsListProductModalOpen(true)}
               className="px-4 py-2 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-semibold text-xs sm:text-sm transition-colors duration-200 shadow-md shadow-cyan-500/20 cursor-pointer"

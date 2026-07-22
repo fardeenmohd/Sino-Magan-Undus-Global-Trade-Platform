@@ -10,31 +10,15 @@ export default function RegisterPage() {
     name: "",
     email: "",
     company: "",
-    role: "BUYER" as "BUYER" | "SUPPLIER",
-    location: "",
+    role: "SUPPLIER" as "BUYER" | "SUPPLIER",
+    location: "Mumbai, India 🇮🇳",
     password: "",
     confirmPassword: "",
-    acceptTerms: false,
+    acceptTerms: true,
   });
 
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-
-  // Live Password Strength Calculator
-  const passwordStrength = React.useMemo(() => {
-    const pass = formData.password;
-    if (!pass) return { score: 0, label: "Empty", color: "bg-slate-800" };
-    let score = 0;
-    if (pass.length >= 8) score++;
-    if (/[A-Z]/.test(pass)) score++;
-    if (/[0-9]/.test(pass)) score++;
-    if (/[^A-Za-z0-9]/.test(pass)) score++;
-
-    if (score <= 1) return { score: 25, label: "Weak", color: "bg-rose-500" };
-    if (score === 2) return { score: 50, label: "Fair", color: "bg-amber-500" };
-    if (score === 3) return { score: 75, label: "Good", color: "bg-blue-500" };
-    return { score: 100, label: "Strong", color: "bg-emerald-400" };
-  }, [formData.password]);
 
   const handleRegister = (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,17 +40,28 @@ export default function RegisterPage() {
       setErrorMessage("Passwords do not match.");
       return;
     }
-    if (!formData.acceptTerms) {
-      setErrorMessage("You must accept the Terms of Service.");
-      return;
-    }
 
     setIsLoading(true);
+
     setTimeout(() => {
       setIsLoading(false);
-      // Simulate successful registration and redirect to login
-      router.push("/login");
-    }, 800);
+
+      const userSession = {
+        name: formData.name,
+        email: formData.email,
+        company: formData.company || "Global Trade Enterprise",
+        role: formData.role,
+        avatarUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+        token: "ag_token_" + Date.now(),
+      };
+
+      if (typeof window !== "undefined") {
+        localStorage.setItem("antigravity_user_session", JSON.stringify(userSession));
+      }
+
+      // Redirect directly to Dashboard
+      router.push("/dashboard");
+    }, 600);
   };
 
   return (
@@ -81,9 +76,9 @@ export default function RegisterPage() {
             </div>
             <span className="text-xl font-extrabold tracking-tight text-white">Project Antigravity</span>
           </Link>
-          <h2 className="text-2xl font-bold tracking-tight text-white">Create Your Account</h2>
+          <h2 className="text-2xl font-bold tracking-tight text-white">Create ExIm Account</h2>
           <p className="text-xs text-slate-400">
-            Join the enterprise product marketplace & AI lead network
+            Join the Indian export commodity marketplace & AI lead discovery network
           </p>
         </div>
 
@@ -91,21 +86,21 @@ export default function RegisterPage() {
         <div className="flex bg-slate-950 p-1 rounded-xl border border-slate-800">
           <button
             type="button"
-            onClick={() => setFormData({ ...formData, role: "BUYER" })}
-            className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-colors duration-200 cursor-pointer ${
-              formData.role === "BUYER" ? "bg-slate-800 text-cyan-400 shadow" : "text-slate-400 hover:text-slate-200"
-            }`}
-          >
-            Buyer / Lead Prospect
-          </button>
-          <button
-            type="button"
             onClick={() => setFormData({ ...formData, role: "SUPPLIER" })}
             className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-colors duration-200 cursor-pointer ${
               formData.role === "SUPPLIER" ? "bg-slate-800 text-cyan-400 shadow" : "text-slate-400 hover:text-slate-200"
             }`}
           >
-            Product Supplier
+            Indian Exporter / Supplier
+          </button>
+          <button
+            type="button"
+            onClick={() => setFormData({ ...formData, role: "BUYER" })}
+            className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-colors duration-200 cursor-pointer ${
+              formData.role === "BUYER" ? "bg-slate-800 text-cyan-400 shadow" : "text-slate-400 hover:text-slate-200"
+            }`}
+          >
+            Buyer / Importer
           </button>
         </div>
 
@@ -128,7 +123,7 @@ export default function RegisterPage() {
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-500/50"
-                placeholder="Jane Doe"
+                placeholder="Rajesh Sharma"
               />
             </div>
 
@@ -140,7 +135,7 @@ export default function RegisterPage() {
                 value={formData.company}
                 onChange={(e) => setFormData({ ...formData, company: e.target.value })}
                 className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-500/50"
-                placeholder="Acme Systems"
+                placeholder="Rajesh Global Trade"
               />
             </div>
           </div>
@@ -154,7 +149,7 @@ export default function RegisterPage() {
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-500/50"
-                placeholder="jane@company.com"
+                placeholder="rajesh@exim.in"
               />
             </div>
 
@@ -165,62 +160,35 @@ export default function RegisterPage() {
                 value={formData.location}
                 onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                 className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-500/50"
-                placeholder="San Francisco, USA"
+                placeholder="Mumbai, India 🇮🇳"
               />
             </div>
           </div>
 
-          <div>
-            <label className="block text-xs font-medium text-slate-300 mb-1">Password *</label>
-            <input
-              type="password"
-              required
-              value={formData.password}
-              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-500/50"
-              placeholder="At least 6 characters"
-            />
-            {/* Password Strength Indicator */}
-            {formData.password && (
-              <div className="mt-2 space-y-1">
-                <div className="flex items-center justify-between text-xs text-slate-400">
-                  <span>Password Strength</span>
-                  <span className="font-semibold">{passwordStrength.label}</span>
-                </div>
-                <div className="w-full bg-slate-950 rounded-full h-1.5 overflow-hidden border border-slate-800">
-                  <div
-                    className={`h-full transition-all duration-300 ${passwordStrength.color}`}
-                    style={{ width: `${passwordStrength.score}%` }}
-                  ></div>
-                </div>
-              </div>
-            )}
-          </div>
-
-          <div>
-            <label className="block text-xs font-medium text-slate-300 mb-1">Confirm Password *</label>
-            <input
-              type="password"
-              required
-              value={formData.confirmPassword}
-              onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-500/50"
-              placeholder="Re-enter password"
-            />
-          </div>
-
-          <div className="pt-1">
-            <label className="flex items-start gap-2.5 text-xs text-slate-400 cursor-pointer">
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-xs font-medium text-slate-300 mb-1">Password *</label>
               <input
-                type="checkbox"
-                checked={formData.acceptTerms}
-                onChange={(e) => setFormData({ ...formData, acceptTerms: e.target.checked })}
-                className="mt-0.5 rounded bg-slate-950 border-slate-800 text-cyan-500 focus:ring-0"
+                type="password"
+                required
+                value={formData.password}
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-500/50"
+                placeholder="••••••••••••"
               />
-              <span>
-                I agree to the <a href="#" className="text-cyan-400 underline">Terms of Service</a> and Privacy Policy.
-              </span>
-            </label>
+            </div>
+
+            <div>
+              <label className="block text-xs font-medium text-slate-300 mb-1">Confirm Password *</label>
+              <input
+                type="password"
+                required
+                value={formData.confirmPassword}
+                onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-500/50"
+                placeholder="••••••••••••"
+              />
+            </div>
           </div>
 
           <button
@@ -234,7 +202,7 @@ export default function RegisterPage() {
                 <span>Creating Account...</span>
               </>
             ) : (
-              <span>Complete Registration</span>
+              <span>Complete Registration & Open Dashboard →</span>
             )}
           </button>
         </form>

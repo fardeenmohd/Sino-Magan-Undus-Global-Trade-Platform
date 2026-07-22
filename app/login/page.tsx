@@ -6,9 +6,9 @@ import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [role, setRole] = useState<"BUYER" | "SUPPLIER">("BUYER");
+  const [email, setEmail] = useState("rajesh@exim.in");
+  const [password, setPassword] = useState("Password123!");
+  const [role, setRole] = useState<"BUYER" | "SUPPLIER">("SUPPLIER");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -27,11 +27,35 @@ export default function LoginPage() {
     }
 
     setIsLoading(true);
+
     setTimeout(() => {
       setIsLoading(false);
-      // Simulate successful login
-      router.push("/");
-    }, 800);
+
+      // Save session into localStorage
+      const userSession = {
+        name: role === "SUPPLIER" ? "Rajesh Export Corp" : "David Miller",
+        email: email,
+        company: role === "SUPPLIER" ? "Rajesh Global Industries 🇮🇳" : "Organics & Superfoods USA Inc 🇺🇸",
+        role: role,
+        avatarUrl: role === "SUPPLIER" 
+          ? "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80"
+          : "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+        token: "ag_token_" + Date.now(),
+      };
+
+      if (typeof window !== "undefined") {
+        localStorage.setItem("antigravity_user_session", JSON.stringify(userSession));
+      }
+
+      // Redirect directly to Dashboard
+      router.push("/dashboard");
+    }, 600);
+  };
+
+  const handleUseDemoCredentials = (demoEmail: string, demoRole: "BUYER" | "SUPPLIER") => {
+    setEmail(demoEmail);
+    setPassword("Password123!");
+    setRole(demoRole);
   };
 
   return (
@@ -48,21 +72,38 @@ export default function LoginPage() {
           </Link>
           <h2 className="text-2xl font-bold tracking-tight text-white">Welcome Back</h2>
           <p className="text-xs text-slate-400">
-            Sign in to access your Product Catalog & AI Lead Discovery Dashboard
+            Sign in to access your Trade Dashboard & International Buyer Prospects
           </p>
+        </div>
+
+        {/* Demo Credentials Box */}
+        <div className="bg-slate-950 border border-cyan-500/30 p-3.5 rounded-xl space-y-2 text-xs">
+          <div className="font-bold text-cyan-400 flex items-center justify-between">
+            <span>🔑 One-Click Demo Credentials</span>
+            <span className="text-[10px] text-slate-400 font-mono">CLICK TO FILL</span>
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              type="button"
+              onClick={() => handleUseDemoCredentials("rajesh@exim.in", "SUPPLIER")}
+              className="p-2 rounded bg-slate-900 hover:bg-slate-800 border border-slate-800 text-left transition-colors duration-200 cursor-pointer"
+            >
+              <div className="font-bold text-slate-200">🇮🇳 Exporter Account</div>
+              <div className="text-[10px] text-slate-400 truncate">rajesh@exim.in</div>
+            </button>
+            <button
+              type="button"
+              onClick={() => handleUseDemoCredentials("dmiller@superfoods.us", "BUYER")}
+              className="p-2 rounded bg-slate-900 hover:bg-slate-800 border border-slate-800 text-left transition-colors duration-200 cursor-pointer"
+            >
+              <div className="font-bold text-slate-200">🇺🇸 Importer Account</div>
+              <div className="text-[10px] text-slate-400 truncate">dmiller@superfoods.us</div>
+            </button>
+          </div>
         </div>
 
         {/* Role Selector Tabs */}
         <div className="flex bg-slate-950 p-1 rounded-xl border border-slate-800">
-          <button
-            type="button"
-            onClick={() => setRole("BUYER")}
-            className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-colors duration-200 cursor-pointer ${
-              role === "BUYER" ? "bg-slate-800 text-cyan-400 shadow" : "text-slate-400 hover:text-slate-200"
-            }`}
-          >
-            Buyer / Lead Prospect
-          </button>
           <button
             type="button"
             onClick={() => setRole("SUPPLIER")}
@@ -70,7 +111,16 @@ export default function LoginPage() {
               role === "SUPPLIER" ? "bg-slate-800 text-cyan-400 shadow" : "text-slate-400 hover:text-slate-200"
             }`}
           >
-            Product Supplier
+            Indian Exporter / Supplier
+          </button>
+          <button
+            type="button"
+            onClick={() => setRole("BUYER")}
+            className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-colors duration-200 cursor-pointer ${
+              role === "BUYER" ? "bg-slate-800 text-cyan-400 shadow" : "text-slate-400 hover:text-slate-200"
+            }`}
+          >
+            Buyer / Importer
           </button>
         </div>
 
@@ -83,7 +133,7 @@ export default function LoginPage() {
         )}
 
         {/* Login Form */}
-        <form onSubmit={handleLogin} className="space-y-5">
+        <form onSubmit={handleLogin} className="space-y-4">
           <div>
             <label className="block text-xs font-medium text-slate-300 mb-1.5">Email Address</label>
             <input
@@ -91,8 +141,7 @@ export default function LoginPage() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-500/50 transition-colors duration-200"
-              placeholder="you@company.com"
+              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-500/50 transition-colors duration-200 font-mono"
             />
           </div>
 
@@ -108,7 +157,6 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-4 pr-10 py-2.5 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-500/50 transition-colors duration-200"
-                placeholder="••••••••••••"
               />
               <button
                 type="button"
@@ -118,13 +166,6 @@ export default function LoginPage() {
                 {showPassword ? "Hide" : "Show"}
               </button>
             </div>
-          </div>
-
-          <div className="flex items-center justify-between text-xs text-slate-400">
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" className="rounded bg-slate-950 border-slate-800 text-cyan-500 focus:ring-0" />
-              <span>Remember this device</span>
-            </label>
           </div>
 
           <button
@@ -138,7 +179,7 @@ export default function LoginPage() {
                 <span>Signing In...</span>
               </>
             ) : (
-              <span>Sign In to Dashboard</span>
+              <span>Sign In & Open Dashboard →</span>
             )}
           </button>
         </form>

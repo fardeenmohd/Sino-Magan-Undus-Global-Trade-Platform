@@ -111,6 +111,35 @@ export default function UserDashboardPage() {
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
 
+  // Read User Session on Mount
+  React.useEffect(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("antigravity_user_session");
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          setProfile((prev) => ({
+            ...prev,
+            name: parsed.name || prev.name,
+            email: parsed.email || prev.email,
+            company: parsed.company || prev.company,
+            role: parsed.role || prev.role,
+            avatarUrl: parsed.avatarUrl || prev.avatarUrl,
+          }));
+        } catch (e) {
+          console.error("Failed to parse user session", e);
+        }
+      }
+    }
+  }, []);
+
+  const handleSignOut = () => {
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("antigravity_user_session");
+    }
+    window.location.href = "/login";
+  };
+
   // Handle Profile Update
   const handleSaveProfile = (e: React.FormEvent) => {
     e.preventDefault();
@@ -144,7 +173,7 @@ export default function UserDashboardPage() {
             </div>
           </Link>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             <div className="flex items-center gap-2.5">
               <img src={profile.avatarUrl} alt={profile.name} className="w-8 h-8 rounded-full object-cover border border-slate-700" />
               <span className="text-xs font-semibold text-slate-200 hidden sm:inline">{profile.name}</span>
@@ -155,6 +184,12 @@ export default function UserDashboardPage() {
             >
               Back to Catalog
             </Link>
+            <button
+              onClick={handleSignOut}
+              className="px-3 py-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 text-xs font-semibold transition-colors duration-200 cursor-pointer"
+            >
+              Sign Out
+            </button>
           </div>
         </div>
       </header>
