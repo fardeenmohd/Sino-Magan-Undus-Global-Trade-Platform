@@ -1002,7 +1002,12 @@ export default function ExpandedTradeCatalogPage() {
             <span className="text-slate-600">|</span>
             <span>Cross-Border ExIm Lead Engine</span>
           </div>
-          <p>© 2026 Sino Magan Undus Global Trade. All rights reserved.</p>
+          <div className="flex items-center gap-4">
+            <Link href="/admin" className="text-slate-500 hover:text-cyan-400 font-mono transition-colors duration-200">
+              🛡️ Admin Portal
+            </Link>
+            <p>© 2026 Sino Magan Undus Global Trade. All rights reserved.</p>
+          </div>
         </div>
       </footer>
 
