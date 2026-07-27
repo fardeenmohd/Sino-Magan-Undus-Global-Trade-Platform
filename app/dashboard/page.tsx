@@ -275,7 +275,7 @@ export default function UserDashboardPage() {
       </header>
 
       {/* Main Dashboard Container */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+      <div className="max-w-7xl 2xl:max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         
         {/* Banner Card */}
         <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-6 backdrop-blur-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -313,7 +313,7 @@ export default function UserDashboardPage() {
         )}
 
         {/* Dashboard Navigation Tabs */}
-        <div className="flex border-b border-slate-800 space-x-8">
+        <div className="flex border-b border-slate-800 space-x-6 sm:space-x-8 overflow-x-auto whitespace-nowrap scrollbar-none">
           <button
             onClick={() => setActiveTab("overview")}
             className={`pb-3 text-sm font-bold border-b-2 transition-colors duration-200 cursor-pointer ${

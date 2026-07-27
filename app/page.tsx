@@ -537,14 +537,14 @@ export default function ExpandedTradeCatalogPage() {
       </section>
 
       {/* --- DESTINATION CORRIDOR SELECTOR --- */}
-      <section id="corridors" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <section id="corridors" className="max-w-7xl 2xl:max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 backdrop-blur-sm space-y-3">
           <div className="flex items-center justify-between text-xs text-slate-400 font-mono">
             <span>SELECT DESTINATION COUNTRY CORRIDOR FROM INDIA 🇮🇳</span>
             <span>{activeCorridors.length - 1} TARGET TRADE DESTINATIONS</span>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2.5">
+          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 2xl:grid-cols-8 gap-2.5">
             {activeCorridors.map((dest) => (
               <button
                 key={dest.code}
@@ -565,7 +565,7 @@ export default function ExpandedTradeCatalogPage() {
       </section>
 
       {/* --- CATALOG GRID SECTION --- */}
-      <section id="catalog" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8">
+      <section id="catalog" className="max-w-7xl 2xl:max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8">
         
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800/80 pb-6">
           <div>
@@ -592,7 +592,7 @@ export default function ExpandedTradeCatalogPage() {
         </div>
 
         {/* Product Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-6">
           {filteredProducts.map((product) => (
             <div
               key={product.id}
