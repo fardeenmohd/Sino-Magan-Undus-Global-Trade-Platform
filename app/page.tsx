@@ -452,6 +452,21 @@ export default function ExpandedTradeCatalogPage() {
                 >
                   <span>📊 My Dashboard</span>
                 </Link>
+                {userSession.role === "SUPPLIER" ? (
+                  <button
+                    onClick={() => setIsListProductModalOpen(true)}
+                    className="px-4 py-2 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-semibold text-xs sm:text-sm transition-colors duration-200 shadow-md shadow-cyan-500/20 cursor-pointer"
+                  >
+                    + List Indian Goods
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => setIsListProductModalOpen(true)}
+                    className="px-4 py-2 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-semibold text-xs sm:text-sm transition-colors duration-200 shadow-md shadow-cyan-500/20 cursor-pointer"
+                  >
+                    + Post Import RFQ
+                  </button>
+                )}
                 <button
                   onClick={handleSignOut}
                   className="px-3 py-2 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 font-semibold text-xs sm:text-sm border border-rose-500/20 transition-colors duration-200 cursor-pointer"
@@ -469,19 +484,12 @@ export default function ExpandedTradeCatalogPage() {
                 </Link>
                 <Link
                   href="/register"
-                  className="px-3.5 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-cyan-400 font-semibold text-xs sm:text-sm border border-slate-800 transition-colors duration-200 cursor-pointer"
+                  className="px-3.5 py-2 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-semibold text-xs sm:text-sm transition-colors duration-200 shadow-md shadow-cyan-500/20 cursor-pointer"
                 >
                   Get Started
                 </Link>
               </>
             )}
-
-            <button
-              onClick={() => setIsListProductModalOpen(true)}
-              className="px-4 py-2 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-semibold text-xs sm:text-sm transition-colors duration-200 shadow-md shadow-cyan-500/20 cursor-pointer"
-            >
-              {userSession && userSession.role === "BUYER" ? "+ Post Import RFQ" : "+ List Indian Goods"}
-            </button>
           </div>
         </div>
       </header>
