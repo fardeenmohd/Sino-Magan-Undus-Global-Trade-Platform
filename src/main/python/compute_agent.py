@@ -161,6 +161,17 @@ def generate_dynamic_leads_for_product(
                 {"name": "Fatima Al-Zahra", "company": f"Dubai Global ExIm Logistics", "email": "fatima@dubaiexim.ae"}
             ]
         },
+        "Sweden": {
+            "flag": "🇸🇪",
+            "ports": ["Port of Gothenburg", "Port of Stockholm", "Port of Malmö"],
+            "base_tariff": 2.5,
+            "compliance": "EU TPD2 Compliant & Swedish Customs Pre-Approved",
+            "contacts": [
+                {"name": "Erik Lindqvist", "company": f"Nordic Nicotine & Tobacco Supplies AB", "email": "erik@nordicnicotine.se"},
+                {"name": "Astrid Norberg", "company": f"Gothenburg Snus & Commodity Trade AB", "email": "astrid@gothenburgsnus.se"},
+                {"name": "Lars Svensson", "company": f"Stockholm Wholesale Logistics Group", "email": "l.svensson@stockholmexim.se"}
+            ]
+        },
         "Japan": {
             "flag": "🇯🇵",
             "ports": ["Port of Yokohama", "Port of Tokyo", "Port of Kobe"],

@@ -142,6 +142,16 @@ export function generateDynamicLeadsClient(
         { name: "Rashid Al-Maktoum", company: `Jebel Ali Commodity Distribution Co.`, email: "rashid@jebelalitrade.ae" }
       ]
     },
+    "Sweden": {
+      flag: "🇸🇪",
+      ports: ["Port of Gothenburg", "Port of Stockholm"],
+      tariff: 2.5,
+      compliance: "EU TPD2 Compliant & Swedish Customs Pre-Approved",
+      contacts: [
+        { name: "Erik Lindqvist", company: `Nordic Nicotine & Tobacco Supplies AB`, email: "erik@nordicnicotine.se" },
+        { name: "Astrid Norberg", company: `Gothenburg Snus & Commodity Trade AB`, email: "astrid@gothenburgsnus.se" }
+      ]
+    },
     "Japan": {
       flag: "🇯🇵",
       ports: ["Port of Yokohama", "Port of Tokyo"],

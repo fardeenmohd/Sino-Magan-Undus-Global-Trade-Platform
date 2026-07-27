@@ -94,8 +94,27 @@ const INITIAL_INDIAN_SUPPLIERS: CatalogUser[] = [
   },
 ];
 
-// Expanded Product Catalog featuring Makhana, Onions, Eggs, Potatoes, Meat, Machinery
+// Expanded Product Catalog featuring Nicotine Pouches, Makhana, Onions, Eggs, Potatoes, Meat, Machinery
 const INITIAL_TRADE_PRODUCTS: TradeProduct[] = [
+  {
+    id: 300,
+    title: "Tobacco-Free White Nicotine Pouches & Swedish Style Snus (HS 2404)",
+    description: "Premium pharma-grade oral nicotine pouches (6mg, 12mg, 20mg mint & fruit flavors). TPD2 compliant, foil sealed in 20-pouch cans for EU & US distribution.",
+    category: "Tobacco & Nicotine Pouches",
+    hsCode: "HS-2404",
+    originCountry: "India 🇮🇳",
+    destinationCountry: "Sweden",
+    destinationFlag: "🇸🇪",
+    portHub: "Port of Gothenburg / Gdańsk",
+    tariffRatePct: 2.5,
+    price: 2.45,
+    unit: "can",
+    listedBy: INITIAL_INDIAN_SUPPLIERS[0],
+    imageUrl: "https://images.unsplash.com/photo-1527661591475-527312dd65f5?w=600&auto=format&fit=crop&q=80",
+    leadCount: 36,
+    status: "ACTIVE",
+    createdAt: "2026-07-25T10:00:00Z",
+  },
   {
     id: 301,
     title: "Bihar Premium Organic Foxnuts / Makhana (HS 1904)",
@@ -329,6 +348,7 @@ export default function ExpandedTradeCatalogPage() {
 
   const categories = [
     "ALL",
+    "Tobacco & Nicotine Pouches",
     "Makhana & Superfoods",
     "Fresh Produce",
     "Poultry & Eggs",

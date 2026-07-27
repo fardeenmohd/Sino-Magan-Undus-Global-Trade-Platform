@@ -512,6 +512,23 @@ export default function AdminDashboardPage() {
                 <button
                   onClick={() =>
                     setPresetCorridor({
+                      title: "Tobacco-Free White Nicotine Pouches & Swedish Style Snus (HS 2404)",
+                      category: "Tobacco & Nicotine Pouches",
+                      hsCode: "HS-2404",
+                      destinationCountry: "Sweden 🇸🇪",
+                      portHub: "Port of Gothenburg",
+                      price: 2.45,
+                      unit: "can",
+                    })
+                  }
+                  className="px-3 py-1.5 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded-lg text-xs font-mono text-cyan-400 cursor-pointer"
+                >
+                  🇸🇪 Swedish Nicotine Pouches & Snus
+                </button>
+
+                <button
+                  onClick={() =>
+                    setPresetCorridor({
                       title: "Salem Nizamabad Organic Turmeric Powder (HS 0910)",
                       category: "Makhana & Superfoods",
                       hsCode: "HS-0910",

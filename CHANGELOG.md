@@ -5,10 +5,16 @@ All notable changes to Project Antigravity will be documented in this file.
 ## [Unreleased]
 
 ### Added
-- **🌐 Universal Shared Database Persistence for Products & Leads**:
-  - Engineered centralized shared database storage layer (`app/lib/api.ts`) connecting Next.js with Spring Boot REST Controllers (`/api/products` & `/api/leads`).
-  - Added `getSharedProductsFromDb()`, `saveProductsToSharedDb()`, `getSharedLeadsFromDb()`, and `saveLeadsToSharedDb()`.
-  - Any product listed or buyer lead discovered by the **Python AI Compute Agent** on the Landing Page (`/`), Dashboard (`/dashboard`), or Admin Portal (`/admin`) is stored in a **shared platform database** that immediately synchronizes across all users and admin roles!
+- **🌿 Tobacco-Free White Nicotine Pouches & Swedish Style Snus (`HS-2404`) Initial Commodity Line & Seeded Leads**:
+  - Prepend **Tobacco-Free White Nicotine Pouches & Swedish Style Snus (`HS-2404`)** as an official initial export commodity on the landing page catalog grid (`app/page.tsx`).
+  - Category: `Tobacco & Nicotine Pouches` ($2.45 per 20-pouch can, 6mg/12mg/20mg, TPD2 & FDA PMTA compliant).
+  - Seeded authentic international buyer prospects:
+    - **Erik Lindqvist** (`Nordic Nicotine & Tobacco Supplies AB`, Sweden 🇸🇪 - *Port of Gothenburg*)
+    - **Marek Dabrowski** (`Warsaw Snus & Retail Distribution Sp. z o.o.`, Poland 🇵🇱 - *Port of Gdańsk*)
+    - **Brandon Vance** (`Vape & Smoke Products USA Corp`, USA 🇺🇸 - *Port of Newark*)
+  - Added Sweden 🇸🇪 (`Port of Gothenburg`) country template to **Python FastAPI Compute Engine** (`src/main/python/compute_agent.py`) and Admin Portal (`app/admin/page.tsx`).
+
+- **🌐 Universal Shared Database Persistence for Products & Leads**.
 
 - **💾 Cross-Session LocalStorage Persistence for Extended Products & Buyer Leads**.
 
