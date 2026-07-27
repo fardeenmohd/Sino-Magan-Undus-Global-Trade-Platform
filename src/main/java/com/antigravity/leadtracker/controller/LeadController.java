@@ -4,6 +4,7 @@ import com.antigravity.leadtracker.dto.LeadDTO;
 import com.antigravity.leadtracker.dto.LeadRequestDTO;
 import com.antigravity.leadtracker.dto.LeadStatsDTO;
 import com.antigravity.leadtracker.model.LeadStatus;
+import com.antigravity.leadtracker.service.FastApiIntegrationService;
 import com.antigravity.leadtracker.service.LeadService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/leads")
@@ -27,9 +29,11 @@ import java.util.List;
 public class LeadController {
 
     private final LeadService leadService;
+    private final FastApiIntegrationService fastApiIntegrationService;
 
-    public LeadController(LeadService leadService) {
+    public LeadController(LeadService leadService, FastApiIntegrationService fastApiIntegrationService) {
         this.leadService = leadService;
+        this.fastApiIntegrationService = fastApiIntegrationService;
     }
 
     @GetMapping
@@ -50,6 +54,19 @@ public class LeadController {
     public ResponseEntity<LeadDTO> createLead(@RequestBody LeadRequestDTO requestDTO) {
         LeadDTO createdLead = leadService.createLead(requestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdLead);
+    }
+
+    @PostMapping("/discover/{productId}")
+    public ResponseEntity<Map<String, Object>> discoverLeadsFromComputeEngine(
+            @PathVariable Long productId,
+            @RequestParam(required = false, defaultValue = "Export Commodity") String title,
+            @RequestParam(required = false, defaultValue = "Makhana & Superfoods") String category,
+            @RequestParam(required = false, defaultValue = "HS-1904") String hsCode,
+            @RequestParam(required = false, defaultValue = "United States") String destination) {
+        Map<String, Object> discoveryResult = fastApiIntegrationService.discoverLeadsFromFastApi(
+                productId, title, category, hsCode, destination
+        );
+        return ResponseEntity.ok(discoveryResult);
     }
 
     @PutMapping("/{id}")

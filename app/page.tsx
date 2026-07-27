@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo } from "react";
 import Link from "next/link";
-import { findLeadsCompute } from "./lib/api";
+import { findLeadsCompute, fetchProductsApi, streamLeadsCompute } from "./lib/api";
 
 export type UserRole = "BUYER" | "SUPPLIER" | "LEAD_PROSPECT" | "COMPUTE_AGENT";
 
@@ -256,6 +256,8 @@ export default function ExpandedTradeCatalogPage() {
   const [isLeadModalOpen, setIsLeadModalOpen] = useState(false);
   const [isListProductModalOpen, setIsListProductModalOpen] = useState(false);
   const [isComputing, setIsComputing] = useState(false);
+  const [streamProgress, setStreamProgress] = useState(0);
+  const [streamMessage, setStreamMessage] = useState("");
   const [discoveredLeads, setDiscoveredLeads] = useState<TradeLeadProspect[]>([]);
 
   // List product form state
@@ -333,49 +335,30 @@ export default function ExpandedTradeCatalogPage() {
     "Machinery & Engineering",
   ];
 
-  // Trigger Python FastAPI Compute Engine
-  const handleTriggerComputeAgent = async (product: TradeProduct) => {
+  // Trigger Python FastAPI Compute Engine via Server-Sent Events (SSE) Stream
+  const handleTriggerComputeAgent = (product: TradeProduct) => {
     setSelectedProduct(product);
     setIsComputing(true);
     setIsLeadModalOpen(true);
+    setDiscoveredLeads([]);
+    setStreamProgress(15);
+    setStreamMessage("⚡ Connecting to Python FastAPI Compute Engine SSE Stream...");
 
-    try {
-      const res = await findLeadsCompute(
-        product.id,
-        product.title,
-        product.category,
-        product.hsCode,
-        product.originCountry,
-        product.destinationCountry
-      );
-
-      if (res && res.leads && res.leads.length > 0) {
-        setDiscoveredLeads(res.leads as any);
-      } else {
-        throw new Error("No leads returned");
+    streamLeadsCompute(
+      product.id,
+      product.title,
+      product.category,
+      product.hsCode,
+      product.destinationCountry,
+      (event) => {
+        setStreamProgress(event.progress);
+        setStreamMessage(event.message);
+        if (event.stage === "COMPLETE" && event.leads) {
+          setDiscoveredLeads(event.leads as any);
+          setIsComputing(false);
+        }
       }
-    } catch (err) {
-      console.warn("Falling back to local lead data", err);
-      const mockDiscoveredLeads: Record<string, TradeLeadProspect[]> = {
-        "United States": [
-          {
-            user_id: 401,
-            name: "David Miller",
-            email: "dmiller@superfoods.us",
-            company: "Organics & Superfoods USA Inc",
-            role: "LEAD_PROSPECT",
-            destination_country: "United States 🇺🇸",
-            port_hub: "Port of Los Angeles",
-            tariff_estimate_pct: 3.5,
-            match_score: 97.5,
-            confidence_reason: `FDA Registered Importer ready for ${product.hsCode} ($250k annual budget)`,
-          },
-        ],
-      };
-      setDiscoveredLeads(mockDiscoveredLeads[product.destinationCountry] || mockDiscoveredLeads["United States"]);
-    } finally {
-      setIsComputing(false);
-    }
+    );
   };
 
   const handleCreateProduct = (e: React.FormEvent) => {
@@ -708,9 +691,25 @@ export default function ExpandedTradeCatalogPage() {
             </div>
 
             {isComputing ? (
-              <div className="py-12 text-center space-y-3">
-                <div className="w-8 h-8 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin mx-auto"></div>
-                <p className="text-sm text-slate-300 font-mono">Matching HS Code {selectedProduct.hsCode} with Buyer Databases in {selectedProduct.destinationCountry}...</p>
+              <div className="py-8 px-4 space-y-5 bg-slate-950/80 border border-slate-800 rounded-xl">
+                <div className="flex items-center justify-between text-xs font-mono">
+                  <span className="text-cyan-400 font-bold flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
+                    SSE LIVE TRADE PIPELINE STREAM
+                  </span>
+                  <span className="text-slate-400">{streamProgress}% COMPLETE</span>
+                </div>
+
+                <div className="w-full bg-slate-900 h-2 rounded-full overflow-hidden border border-slate-800">
+                  <div
+                    className="bg-gradient-to-r from-cyan-500 to-blue-500 h-full transition-all duration-300 rounded-full"
+                    style={{ width: `${streamProgress}%` }}
+                  ></div>
+                </div>
+
+                <div className="p-3 bg-slate-900 border border-slate-800/80 rounded-lg text-xs font-mono text-slate-200">
+                  {streamMessage || "⚡ Initializing FastAPI Compute Agent SSE Stream..."}
+                </div>
               </div>
             ) : (
               <div className="space-y-4">
