@@ -336,45 +336,85 @@ export default function UserDashboardPage() {
         {/* --- TAB CONTENT: OVERVIEW --- */}
         {activeTab === "overview" && (
           <div className="space-y-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 backdrop-blur-sm">
-                <div className="text-xs font-medium text-slate-400">Total Active Listings</div>
-                <div className="text-3xl font-bold text-white mt-2">{listings.filter(l => l.status === "ACTIVE").length}</div>
-                <div className="text-xs text-emerald-400 mt-2 font-medium">Makhana, Onions, Meat & Machinery</div>
-              </div>
-
-              <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 backdrop-blur-sm">
-                <div className="text-xs font-medium text-slate-400">Matched Buyer Leads</div>
-                <div className="text-3xl font-bold text-cyan-400 mt-2">
-                  {listings.reduce((sum, l) => sum + l.leadCount, 0)}
+            {profile.role === "SUPPLIER" ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 backdrop-blur-sm">
+                  <div className="text-xs font-medium text-slate-400">Total Active Listings</div>
+                  <div className="text-3xl font-bold text-white mt-2">{listings.filter(l => l.status === "ACTIVE").length}</div>
+                  <div className="text-xs text-emerald-400 mt-2 font-medium">Makhana, Onions, Meat & Machinery</div>
                 </div>
-                <div className="text-xs text-slate-400 mt-2 font-medium">Across 6 Target Destinations</div>
-              </div>
 
-              <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 backdrop-blur-sm">
-                <div className="text-xs font-medium text-slate-400">Top Destination Route</div>
-                <div className="text-3xl font-bold text-white mt-2">🇨🇳 China / 🇺🇸 USA</div>
-                <div className="text-xs text-purple-400 mt-2 font-medium">Meat & Makhana Superfoods</div>
-              </div>
+                <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 backdrop-blur-sm">
+                  <div className="text-xs font-medium text-slate-400">Matched Buyer Leads</div>
+                  <div className="text-3xl font-bold text-cyan-400 mt-2">
+                    {listings.reduce((sum, l) => sum + l.leadCount, 0)}
+                  </div>
+                  <div className="text-xs text-slate-400 mt-2 font-medium">Across 6 Target Destinations</div>
+                </div>
 
-              <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 backdrop-blur-sm">
-                <div className="text-xs font-medium text-slate-400">Seller Rating</div>
-                <div className="text-3xl font-bold text-amber-400 mt-2">⭐ {profile.rating} / 5.0</div>
-                <div className="text-xs text-emerald-400 mt-2 font-medium">APEDA & Customs Cleared</div>
+                <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 backdrop-blur-sm">
+                  <div className="text-xs font-medium text-slate-400">Top Destination Route</div>
+                  <div className="text-3xl font-bold text-white mt-2">🇨🇳 China / 🇺🇸 USA</div>
+                  <div className="text-xs text-purple-400 mt-2 font-medium">Meat & Makhana Superfoods</div>
+                </div>
+
+                <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 backdrop-blur-sm">
+                  <div className="text-xs font-medium text-slate-400">Seller Rating</div>
+                  <div className="text-3xl font-bold text-amber-400 mt-2">⭐ {profile.rating} / 5.0</div>
+                  <div className="text-xs text-emerald-400 mt-2 font-medium">APEDA & Customs Cleared</div>
+                </div>
               </div>
-            </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 backdrop-blur-sm">
+                  <div className="text-xs font-medium text-slate-400">Active Import Inquiries</div>
+                  <div className="text-3xl font-bold text-white mt-2">{listings.filter(l => l.status === "ACTIVE").length}</div>
+                  <div className="text-xs text-cyan-400 mt-2 font-medium">Targeted Commodities & RFQs</div>
+                </div>
+
+                <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 backdrop-blur-sm">
+                  <div className="text-xs font-medium text-slate-400">Verified Exporter Network</div>
+                  <div className="text-3xl font-bold text-emerald-400 mt-2">48 Exporters</div>
+                  <div className="text-xs text-slate-400 mt-2 font-medium">Verified Indian Exporters 🇮🇳</div>
+                </div>
+
+                <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 backdrop-blur-sm">
+                  <div className="text-xs font-medium text-slate-400">Port Clearance ETAs</div>
+                  <div className="text-3xl font-bold text-white mt-2">Pre-Cleared</div>
+                  <div className="text-xs text-purple-400 mt-2 font-medium">LA, Rotterdam & Salalah Ports</div>
+                </div>
+
+                <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 backdrop-blur-sm">
+                  <div className="text-xs font-medium text-slate-400">Importer Trust Score</div>
+                  <div className="text-3xl font-bold text-amber-400 mt-2">⭐ {profile.rating} / 5.0</div>
+                  <div className="text-xs text-emerald-400 mt-2 font-medium">FDA / GACC Pre-Approved</div>
+                </div>
+              </div>
+            )}
 
             {/* Quick Action Banner */}
             <div className="bg-slate-900/40 border border-slate-800 p-6 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div>
-                <h3 className="font-bold text-lg text-white">Expand Your Export Operations</h3>
-                <p className="text-xs text-slate-400 mt-1">Add new agricultural produce or engineering machinery goods to connect with buyers in Poland, Netherlands, Australia, Oman, China & USA.</p>
+                <h3 className="font-bold text-lg text-white">
+                  {profile.role === "SUPPLIER" ? "Expand Your Export Operations" : "Source Premium Goods from India 🇮🇳"}
+                </h3>
+                <p className="text-xs text-slate-400 mt-1">
+                  {profile.role === "SUPPLIER"
+                    ? "Add new agricultural produce or engineering machinery goods to connect with buyers in Poland, Netherlands, Australia, Oman, China & USA."
+                    : "Post an Import Requirement (RFQ) for Makhana, Onions, Eggs, Potatoes, Meat, Machinery, or custom commodities directly to verified Indian exporters."}
+                </p>
               </div>
               <button
-                onClick={() => setActiveTab("listings")}
+                onClick={() => {
+                  if (profile.role === "SUPPLIER") {
+                    setActiveTab("listings");
+                  } else {
+                    setIsAddListingModalOpen(true);
+                  }
+                }}
                 className="px-5 py-2.5 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs rounded-xl shadow-lg shadow-cyan-500/20 transition-colors duration-200 cursor-pointer whitespace-nowrap"
               >
-                + Add Export Listing
+                {profile.role === "SUPPLIER" ? "+ Add Export Listing" : "+ Post Import Requirement (RFQ)"}
               </button>
             </div>
           </div>
@@ -395,14 +435,12 @@ export default function UserDashboardPage() {
                 </p>
               </div>
 
-              {profile.role === "SUPPLIER" && (
-                <button
-                  onClick={() => setIsAddListingModalOpen(true)}
-                  className="px-4 py-2 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs rounded-xl shadow-md shadow-cyan-500/20 transition-colors duration-200 cursor-pointer flex items-center gap-1.5 whitespace-nowrap"
-                >
-                  <span>+ Add New Listing</span>
-                </button>
-              )}
+              <button
+                onClick={() => setIsAddListingModalOpen(true)}
+                className="px-4 py-2 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs rounded-xl shadow-md shadow-cyan-500/20 transition-colors duration-200 cursor-pointer flex items-center gap-1.5 whitespace-nowrap"
+              >
+                <span>{profile.role === "SUPPLIER" ? "+ Add New Listing" : "+ Post Import Requirement (RFQ)"}</span>
+              </button>
             </div>
 
             <div className="overflow-x-auto">
@@ -569,8 +607,12 @@ export default function UserDashboardPage() {
           <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4">
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
               <div>
-                <span className="text-xs font-mono text-cyan-400">EXPORTER INVENTORY PUBLISHER</span>
-                <h3 className="text-lg font-bold text-white mt-0.5">Add Export Commodity Listing</h3>
+                <span className="text-xs font-mono text-cyan-400">
+                  {profile.role === "SUPPLIER" ? "EXPORTER INVENTORY PUBLISHER" : "IMPORTER RFQ PUBLISHER"}
+                </span>
+                <h3 className="text-lg font-bold text-white mt-0.5">
+                  {profile.role === "SUPPLIER" ? "Add Export Commodity Listing" : "Post Import Requirement (RFQ)"}
+                </h3>
               </div>
               <button
                 onClick={() => setIsAddListingModalOpen(false)}
@@ -701,7 +743,7 @@ export default function UserDashboardPage() {
                   type="submit"
                   className="px-5 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-sm transition-colors duration-200 shadow-md shadow-cyan-500/20 cursor-pointer"
                 >
-                  Publish Commodity Listing
+                  {profile.role === "SUPPLIER" ? "Publish Commodity Listing" : "Submit Import Requirement (RFQ)"}
                 </button>
               </div>
             </form>
