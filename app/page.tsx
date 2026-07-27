@@ -354,8 +354,99 @@ export default function ExpandedTradeCatalogPage() {
         setStreamProgress(event.progress);
         setStreamMessage(event.message);
         if (event.stage === "COMPLETE" && event.leads) {
-          setDiscoveredLeads(event.leads as any);
+          const newLeads = event.leads as any;
+          setDiscoveredLeads(newLeads);
           setIsComputing(false);
+
+          // 1. Increment target product leadCount
+          setProducts((prev) =>
+            prev.map((p) =>
+              p.id === product.id ? { ...p, leadCount: p.leadCount + newLeads.length } : p
+            )
+          );
+
+          // 2. Auto-extend product catalog with companion commodity for target country if not existing
+          const COMPANIONS: Record<string, { title: string; category: string; hsCode: string; price: number; unit: string; img: string }> = {
+            "United States": {
+              title: "Salem Premium Nizamabad Turmeric Powder (HS 0910)",
+              category: "Makhana & Superfoods",
+              hsCode: "HS-0910",
+              price: 4.80,
+              unit: "kg",
+              img: "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=600&auto=format&fit=crop&q=80"
+            },
+            "Poland": {
+              title: "Dehydrated Nashik Garlic Flakes & Granules (HS 0712)",
+              category: "Fresh Produce",
+              hsCode: "HS-0712",
+              price: 3.20,
+              unit: "kg",
+              img: "https://images.unsplash.com/photo-1540148426945-6cf22a6b2383?w=600&auto=format&fit=crop&q=80"
+            },
+            "Netherlands": {
+              title: "Organic White Sesame Seeds & Oleoresins (HS 1207)",
+              category: "Makhana & Superfoods",
+              hsCode: "HS-1207",
+              price: 2.90,
+              unit: "kg",
+              img: "https://images.unsplash.com/photo-1599488615731-7e5c2823ff28?w=600&auto=format&fit=crop&q=80"
+            },
+            "Australia": {
+              title: "High-Speed CNC Milling Machine Spare Components (HS 8466)",
+              category: "Machinery & Engineering",
+              hsCode: "HS-8466",
+              price: 18500.00,
+              unit: "unit",
+              img: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=600&auto=format&fit=crop&q=80"
+            },
+            "Oman": {
+              title: "Frozen Halal Mutton & Goat Meat Carcasses (HS 0204)",
+              category: "Meat Exports",
+              hsCode: "HS-0204",
+              price: 8.50,
+              unit: "kg",
+              img: "https://images.unsplash.com/photo-1603048588665-791ca8aea617?w=600&auto=format&fit=crop&q=80"
+            },
+            "China": {
+              title: "Fresh Cold Storage Table Potatoes - Kufri Jyoti (HS 0701)",
+              category: "Fresh Produce",
+              hsCode: "HS-0701",
+              price: 0.45,
+              unit: "kg",
+              img: "https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=600&auto=format&fit=crop&q=80"
+            }
+          };
+
+          const matchedCountryKey = Object.keys(COMPANIONS).find(k => product.destinationCountry.toLowerCase().includes(k.toLowerCase()));
+          if (matchedCountryKey) {
+            const companion = COMPANIONS[matchedCountryKey];
+            setProducts((prev) => {
+              const exists = prev.some(p => p.title.toLowerCase() === companion.title.toLowerCase());
+              if (!exists) {
+                const newCatalogItem: TradeProduct = {
+                  id: Date.now(),
+                  title: companion.title,
+                  description: `AI-discovered high demand trade commodity for ${product.destinationCountry}. Cleared for cross-border export.`,
+                  category: companion.category,
+                  hsCode: companion.hsCode,
+                  originCountry: "India 🇮🇳",
+                  destinationCountry: product.destinationCountry,
+                  destinationFlag: product.destinationFlag || "🌐",
+                  portHub: product.portHub || "Main Sea Port",
+                  tariffRatePct: product.tariffRatePct,
+                  price: companion.price,
+                  unit: companion.unit,
+                  listedBy: INITIAL_INDIAN_SUPPLIERS[0],
+                  imageUrl: companion.img,
+                  leadCount: newLeads.length,
+                  status: "ACTIVE",
+                  createdAt: new Date().toISOString(),
+                };
+                return [newCatalogItem, ...prev];
+              }
+              return prev;
+            });
+          }
         }
       }
     );
@@ -733,7 +824,11 @@ export default function ExpandedTradeCatalogPage() {
                       </div>
 
                       <button
-                        onClick={() => alert(`Buyer Prospect ${lead.name} (${lead.company}) imported to your Lead Dashboard!`)}
+                        onClick={() => {
+                          const existing = JSON.parse(localStorage.getItem("antigravity_imported_leads") || "[]");
+                          localStorage.setItem("antigravity_imported_leads", JSON.stringify([lead, ...existing]));
+                          alert(`✅ Buyer Prospect ${lead.name} (${lead.company}) successfully saved & imported into your Lead Dashboard!`);
+                        }}
                         className="px-3.5 py-2 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs rounded-lg transition-colors duration-200 whitespace-nowrap cursor-pointer shadow-md"
                       >
                         Import Trade Lead
