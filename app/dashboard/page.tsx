@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export type UserRole = "BUYER" | "SUPPLIER" | "LEAD_PROSPECT" | "COMPUTE_AGENT";
 
@@ -105,13 +106,14 @@ const INITIAL_MY_LISTINGS: UserListing[] = [
 ];
 
 export default function UserDashboardPage() {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState<"overview" | "listings" | "profile">("overview");
   const [profile, setProfile] = useState<UserProfile>(INITIAL_PROFILE);
   const [listings, setListings] = useState<UserListing[]>(INITIAL_MY_LISTINGS);
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
 
-  // Read User Session on Mount
+  // Read User Session on Mount & Enforce Route Protection
   React.useEffect(() => {
     if (typeof window !== "undefined") {
       const saved = localStorage.getItem("antigravity_user_session");
@@ -129,9 +131,12 @@ export default function UserDashboardPage() {
         } catch (e) {
           console.error("Failed to parse user session", e);
         }
+      } else {
+        // Route protection: redirect to login if unauthenticated
+        router.push("/login");
       }
     }
-  }, []);
+  }, [router]);
 
   const handleSignOut = () => {
     if (typeof window !== "undefined") {
@@ -252,7 +257,7 @@ export default function UserDashboardPage() {
                 : "border-transparent text-slate-400 hover:text-slate-200"
             }`}
           >
-            📦 My Export Listings ({listings.length})
+            {profile.role === "SUPPLIER" ? `📦 My Export Listings (${listings.length})` : `📑 Saved Import Inquiries (${listings.length})`}
           </button>
           <button
             onClick={() => setActiveTab("profile")}
@@ -318,8 +323,14 @@ export default function UserDashboardPage() {
           <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl overflow-hidden shadow-2xl backdrop-blur-sm">
             <div className="p-5 border-b border-slate-800 flex items-center justify-between">
               <div>
-                <h3 className="font-bold text-lg text-white">My Export Products</h3>
-                <p className="text-xs text-slate-400 mt-0.5">Manage listed commodities and track incoming buyer prospects</p>
+                <h3 className="font-bold text-lg text-white">
+                  {profile.role === "SUPPLIER" ? "My Export Products" : "Saved Import Inquiries & Commodities"}
+                </h3>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  {profile.role === "SUPPLIER"
+                    ? "Manage listed commodities and track incoming buyer prospects"
+                    : "Track target commodities and port clearance status from Indian exporters"}
+                </p>
               </div>
             </div>
 

@@ -397,31 +397,49 @@ export default function ExpandedTradeCatalogPage() {
           </div>
 
           <div className="flex items-center gap-3">
-            <Link
-              href="/dashboard"
-              className="px-3 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-cyan-400 font-semibold text-xs sm:text-sm border border-slate-800 transition-colors duration-200 cursor-pointer flex items-center gap-1.5"
-            >
-              <span>📊 My Dashboard</span>
-            </Link>
-
             {userSession ? (
-              <button
-                onClick={handleSignOut}
-                className="px-3 py-2 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 font-semibold text-xs sm:text-sm border border-rose-500/20 transition-colors duration-200 cursor-pointer"
-              >
-                Sign Out
-              </button>
+              <>
+                <span className="hidden lg:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                  {userSession.role === "SUPPLIER" ? "🇮🇳 Indian Exporter" : "🌐 Importer"}
+                </span>
+                <Link
+                  href="/dashboard"
+                  className="px-3 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-cyan-400 font-semibold text-xs sm:text-sm border border-slate-800 transition-colors duration-200 cursor-pointer flex items-center gap-1.5"
+                >
+                  <span>📊 My Dashboard</span>
+                </Link>
+                <button
+                  onClick={handleSignOut}
+                  className="px-3 py-2 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 font-semibold text-xs sm:text-sm border border-rose-500/20 transition-colors duration-200 cursor-pointer"
+                >
+                  Sign Out
+                </button>
+              </>
             ) : (
-              <Link
-                href="/login"
-                className="px-3.5 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-200 font-semibold text-xs sm:text-sm border border-slate-800 transition-colors duration-200 cursor-pointer"
-              >
-                Sign In
-              </Link>
+              <>
+                <Link
+                  href="/login"
+                  className="px-3.5 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-200 font-semibold text-xs sm:text-sm border border-slate-800 transition-colors duration-200 cursor-pointer"
+                >
+                  Sign In
+                </Link>
+                <Link
+                  href="/register"
+                  className="px-3.5 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-cyan-400 font-semibold text-xs sm:text-sm border border-slate-800 transition-colors duration-200 cursor-pointer"
+                >
+                  Get Started
+                </Link>
+              </>
             )}
 
             <button
-              onClick={() => setIsListProductModalOpen(true)}
+              onClick={() => {
+                if (userSession && userSession.role === "BUYER") {
+                  alert("Listing export goods is reserved for Indian Exporter accounts. Switch your account role or sign in as an Exporter.");
+                } else {
+                  setIsListProductModalOpen(true);
+                }
+              }}
               className="px-4 py-2 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-semibold text-xs sm:text-sm transition-colors duration-200 shadow-md shadow-cyan-500/20 cursor-pointer"
             >
               + List Indian Goods
