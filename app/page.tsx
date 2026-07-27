@@ -433,16 +433,10 @@ export default function ExpandedTradeCatalogPage() {
             )}
 
             <button
-              onClick={() => {
-                if (userSession && userSession.role === "BUYER") {
-                  alert("Listing export goods is reserved for Indian Exporter accounts. Switch your account role or sign in as an Exporter.");
-                } else {
-                  setIsListProductModalOpen(true);
-                }
-              }}
+              onClick={() => setIsListProductModalOpen(true)}
               className="px-4 py-2 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-semibold text-xs sm:text-sm transition-colors duration-200 shadow-md shadow-cyan-500/20 cursor-pointer"
             >
-              + List Indian Goods
+              {userSession && userSession.role === "BUYER" ? "+ Post Import RFQ" : "+ List Indian Goods"}
             </button>
           </div>
         </div>
@@ -716,7 +710,9 @@ export default function ExpandedTradeCatalogPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
           <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4">
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-              <h3 className="text-lg font-bold text-white">List Indian Export Goods</h3>
+              <h3 className="text-lg font-bold text-white">
+                {userSession && userSession.role === "BUYER" ? "Post Import Requirement (RFQ)" : "List Indian Export Goods"}
+              </h3>
               <button onClick={() => setIsListProductModalOpen(false)} className="text-slate-400 hover:text-slate-200 text-sm cursor-pointer">
                 ✕
               </button>
@@ -815,7 +811,7 @@ export default function ExpandedTradeCatalogPage() {
                   type="submit"
                   className="px-4 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-semibold text-sm transition-colors duration-200 shadow-md shadow-cyan-500/20 cursor-pointer"
                 >
-                  Publish Goods
+                  {userSession && userSession.role === "BUYER" ? "Submit Import Requirement (RFQ)" : "Publish Goods"}
                 </button>
               </div>
             </form>
