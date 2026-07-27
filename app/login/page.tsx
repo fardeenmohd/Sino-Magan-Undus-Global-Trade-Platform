@@ -74,8 +74,17 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center p-4 selection:bg-cyan-500/30">
-      <div className="max-w-md w-full space-y-8 bg-slate-900/60 border border-slate-800/80 p-8 rounded-2xl shadow-2xl backdrop-blur-md">
+    <div className="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center p-4 selection:bg-cyan-500/30 py-12">
+      <div className="max-w-md w-full space-y-4">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-cyan-400 transition-colors duration-200 group px-1"
+        >
+          <span className="group-hover:-translate-x-1 transition-transform duration-200">←</span>
+          <span>Back to Landing Page</span>
+        </Link>
+
+        <div className="bg-slate-900/60 border border-slate-800/80 p-8 rounded-2xl shadow-2xl backdrop-blur-md space-y-8">
         
         {/* Brand Header */}
         <div className="text-center space-y-2">
@@ -209,5 +218,6 @@ export default function LoginPage() {
 
       </div>
     </div>
-  );
+  </div>
+);
 }
