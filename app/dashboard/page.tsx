@@ -113,6 +113,68 @@ export default function UserDashboardPage() {
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
 
+  // Add Listing Modal State
+  const [isAddListingModalOpen, setIsAddListingModalOpen] = useState(false);
+  const [newListingForm, setNewListingForm] = useState({
+    title: "",
+    category: "Makhana & Superfoods",
+    customCategory: "",
+    hsCode: "HS-1904",
+    destinationCountry: "USA",
+    price: 15.0,
+    unit: "kg",
+    description: "",
+  });
+
+  const handleCreateListing = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const destMap: Record<string, { name: string; flag: string }> = {
+      USA: { name: "United States", flag: "🇺🇸" },
+      Oman: { name: "Oman", flag: "🇴🇲" },
+      Netherlands: { name: "Netherlands", flag: "🇳🇱" },
+      Poland: { name: "Poland", flag: "🇵🇱" },
+      China: { name: "China", flag: "🇨🇳" },
+      Australia: { name: "Australia", flag: "🇦🇺" },
+    };
+
+    const targetDest = destMap[newListingForm.destinationCountry] || { name: newListingForm.destinationCountry, flag: "🌐" };
+    const finalCategory = newListingForm.category === "CUSTOM"
+      ? (newListingForm.customCategory || "Custom Commodity")
+      : newListingForm.category;
+
+    const created: UserListing = {
+      id: Date.now(),
+      title: newListingForm.title,
+      category: finalCategory,
+      hsCode: newListingForm.hsCode || "HS-9999",
+      originCountry: "India 🇮🇳",
+      destinationCountry: targetDest.name,
+      destinationFlag: targetDest.flag,
+      price: Number(newListingForm.price),
+      unit: newListingForm.unit || "unit",
+      leadCount: 0,
+      status: "ACTIVE",
+    };
+
+    setListings([created, ...listings]);
+    setIsAddListingModalOpen(false);
+    setSuccessMessage(`Export commodity "${created.title}" published successfully to active inventory!`);
+    setTimeout(() => setSuccessMessage(""), 4000);
+
+    // Reset form
+    setNewListingForm({
+      title: "",
+      category: "Makhana & Superfoods",
+      customCategory: "",
+      hsCode: "HS-1904",
+      destinationCountry: "USA",
+      price: 15.0,
+      unit: "kg",
+      description: "",
+    });
+  };
+
   // Read User Session on Mount & Enforce Route Protection
   React.useEffect(() => {
     if (typeof window !== "undefined") {
@@ -332,6 +394,15 @@ export default function UserDashboardPage() {
                     : "Track target commodities and port clearance status from Indian exporters"}
                 </p>
               </div>
+
+              {profile.role === "SUPPLIER" && (
+                <button
+                  onClick={() => setIsAddListingModalOpen(true)}
+                  className="px-4 py-2 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs rounded-xl shadow-md shadow-cyan-500/20 transition-colors duration-200 cursor-pointer flex items-center gap-1.5 whitespace-nowrap"
+                >
+                  <span>+ Add New Listing</span>
+                </button>
+              )}
             </div>
 
             <div className="overflow-x-auto">
@@ -490,7 +561,153 @@ export default function UserDashboardPage() {
           </div>
         )}
 
-      </div>
+      {/* --- ADD NEW LISTING MODAL --- */}
+      {isAddListingModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <div>
+                <span className="text-xs font-mono text-cyan-400">EXPORTER INVENTORY PUBLISHER</span>
+                <h3 className="text-lg font-bold text-white mt-0.5">Add Export Commodity Listing</h3>
+              </div>
+              <button
+                onClick={() => setIsAddListingModalOpen(false)}
+                className="text-slate-400 hover:text-slate-200 text-sm cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateListing} className="space-y-4">
+              <div>
+                <label className="block text-xs font-medium text-slate-400 mb-1">Product / Commodity Title *</label>
+                <input
+                  type="text"
+                  required
+                  value={newListingForm.title}
+                  onChange={(e) => setNewListingForm({ ...newListingForm, title: e.target.value })}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-slate-100 focus:outline-none focus:border-cyan-500/50"
+                  placeholder="e.g. Organic Turmeric Powder & Spices"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-medium text-slate-400 mb-1">Category *</label>
+                  <select
+                    value={newListingForm.category}
+                    onChange={(e) => setNewListingForm({ ...newListingForm, category: e.target.value })}
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-slate-100 focus:outline-none focus:border-cyan-500/50 cursor-pointer"
+                  >
+                    <option value="Makhana & Superfoods">Makhana & Superfoods</option>
+                    <option value="Fresh Produce">Fresh Produce (Onions/Potatoes)</option>
+                    <option value="Poultry & Eggs">Poultry & Eggs</option>
+                    <option value="Meat Exports">Meat Exports</option>
+                    <option value="Machinery & Engineering">Machinery & Engineering</option>
+                    <option value="CUSTOM">✨ Custom Product / Other</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-medium text-slate-400 mb-1">HS Code *</label>
+                  <input
+                    type="text"
+                    required
+                    value={newListingForm.hsCode}
+                    onChange={(e) => setNewListingForm({ ...newListingForm, hsCode: e.target.value })}
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-slate-100 focus:outline-none focus:border-cyan-500/50 font-mono text-cyan-400"
+                    placeholder="e.g. HS-0910"
+                  />
+                </div>
+              </div>
+
+              {/* Custom Category Input if CUSTOM selected */}
+              {newListingForm.category === "CUSTOM" && (
+                <div>
+                  <label className="block text-xs font-medium text-cyan-400 mb-1">Custom Commodity Name *</label>
+                  <input
+                    type="text"
+                    required
+                    value={newListingForm.customCategory}
+                    onChange={(e) => setNewListingForm({ ...newListingForm, customCategory: e.target.value })}
+                    className="w-full bg-slate-950 border border-cyan-500/40 rounded-xl px-3.5 py-2 text-sm text-slate-100 focus:outline-none focus:border-cyan-400"
+                    placeholder="e.g. Spices & Essential Oils, Textiles, Garments..."
+                  />
+                </div>
+              )}
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-medium text-slate-400 mb-1">Target Destination</label>
+                  <select
+                    value={newListingForm.destinationCountry}
+                    onChange={(e) => setNewListingForm({ ...newListingForm, destinationCountry: e.target.value })}
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-slate-100 focus:outline-none focus:border-cyan-500/50 cursor-pointer"
+                  >
+                    <option value="USA">United States 🇺🇸</option>
+                    <option value="Oman">Oman 🇴🇲</option>
+                    <option value="Netherlands">Netherlands 🇳🇱</option>
+                    <option value="Poland">Poland 🇵🇱</option>
+                    <option value="China">China 🇨🇳</option>
+                    <option value="Australia">Australia 🇦🇺</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-medium text-slate-400 mb-1">Export Price ($)</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    required
+                    value={newListingForm.price}
+                    onChange={(e) => setNewListingForm({ ...newListingForm, price: Number(e.target.value) })}
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-slate-100 focus:outline-none focus:border-cyan-500/50 font-mono"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-slate-400 mb-1">Unit of Measurement</label>
+                <input
+                  type="text"
+                  value={newListingForm.unit}
+                  onChange={(e) => setNewListingForm({ ...newListingForm, unit: e.target.value })}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-slate-100 focus:outline-none focus:border-cyan-500/50"
+                  placeholder="e.g. kg, metric ton, crate, machine unit..."
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-slate-400 mb-1">Specifications & Phytosanitary Notes</label>
+                <textarea
+                  rows={3}
+                  value={newListingForm.description}
+                  onChange={(e) => setNewListingForm({ ...newListingForm, description: e.target.value })}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-sm text-slate-100 focus:outline-none focus:border-cyan-500/50"
+                  placeholder="Describe trade packaging, grade, moisture levels, APEDA certificates..."
+                ></textarea>
+              </div>
+
+              <div className="flex justify-end gap-3 pt-3 border-t border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setIsAddListingModalOpen(false)}
+                  className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 text-sm hover:bg-slate-700 transition-colors duration-200 cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-sm transition-colors duration-200 shadow-md shadow-cyan-500/20 cursor-pointer"
+                >
+                  Publish Commodity Listing
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
