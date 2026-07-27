@@ -426,11 +426,11 @@ export default function ExpandedTradeCatalogPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-lg bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center text-slate-950 font-black text-xl shadow-lg shadow-cyan-500/20">
-              🇮🇳
+              🌏
             </div>
             <div>
-              <span className="font-extrabold text-lg tracking-tight text-white">Antigravity ExIm</span>
-              <span className="text-xs text-cyan-400 font-mono ml-2">Makhana, Eggs, Meat & Machinery Hub</span>
+              <span className="font-extrabold text-lg tracking-tight text-white">Sino Magan Undus</span>
+              <span className="text-xs text-cyan-400 font-mono ml-2">Global Trade Engine</span>
             </div>
           </div>
 
@@ -498,15 +498,15 @@ export default function ExpandedTradeCatalogPage() {
       <section className="relative overflow-hidden pt-16 pb-12 border-b border-slate-800/60 bg-gradient-to-b from-slate-900/50 via-slate-950 to-slate-950">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10 space-y-6">
           <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 text-xs font-medium">
-            <span>🪷 Makhana • 🧅 Onions • 🥚 Eggs • 🥔 Potatoes • 🥩 Meat • ⚙️ Machinery Engine</span>
+            <span>🌏 SINO MAGAN UNDUS GLOBAL TRADE • EXIM NETWORK</span>
           </div>
 
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight bg-gradient-to-r from-white via-slate-100 to-slate-400 bg-clip-text text-transparent max-w-5xl mx-auto leading-tight">
-            Export Leads & Buyer Discovery from India 🇮🇳
+            Sino Magan Undus Global Trade
           </h1>
 
           <p className="text-slate-400 text-base sm:text-lg max-w-3xl mx-auto">
-            Direct B2B buyer lead matching for Foxnuts (Makhana), Nashik Onions, Table Eggs, Cold Storage Potatoes, Halal Meat, and Industrial Machinery targeting <strong>Poland 🇵🇱</strong>, <strong>Netherlands 🇳🇱</strong>, <strong>Australia 🇦🇺</strong>, <strong>Oman 🇴🇲</strong>, <strong>China 🇨🇳</strong>, and <strong>USA 🇺🇸</strong>.
+            Premier B2B cross-border trade engine connecting verified Indian exporters of Makhana, Onions, Eggs, Potatoes, Meat & Machinery with global importers across Poland 🇵🇱, Netherlands 🇳🇱, Australia 🇦🇺, Oman 🇴🇲, China 🇨🇳, USA 🇺🇸, and custom corridors.
           </p>
 
           {/* Search Bar */}
@@ -898,6 +898,19 @@ export default function ExpandedTradeCatalogPage() {
           </div>
         </div>
       )}
+
+      {/* --- FOOTER --- */}
+      <footer className="border-t border-slate-800/80 bg-slate-950/90 py-8 text-slate-500 text-xs mt-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <span className="text-base">🌏</span>
+            <span className="font-bold text-slate-300">Sino Magan Undus Global Trade</span>
+            <span className="text-slate-600">|</span>
+            <span>Cross-Border ExIm Lead Engine</span>
+          </div>
+          <p>© 2026 Sino Magan Undus Global Trade. All rights reserved.</p>
+        </div>
+      </footer>
 
     </div>
   );

@@ -245,11 +245,11 @@ export default function UserDashboardPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3 group">
             <div className="w-9 h-9 rounded-lg bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center text-slate-950 font-black text-xl shadow-lg shadow-cyan-500/20 group-hover:scale-105 transition-transform duration-200">
-              ⚡
+              🌏
             </div>
             <div>
-              <span className="font-extrabold text-lg tracking-tight text-white">Project Antigravity</span>
-              <span className="text-xs text-cyan-400 font-mono ml-2">User Dashboard</span>
+              <span className="font-extrabold text-lg tracking-tight text-white">Sino Magan Undus</span>
+              <span className="text-xs text-cyan-400 font-mono ml-2">Global Trade Dashboard</span>
             </div>
           </Link>
 

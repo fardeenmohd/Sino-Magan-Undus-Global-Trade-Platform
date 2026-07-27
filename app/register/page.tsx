@@ -95,9 +95,9 @@ export default function RegisterPage() {
         <div className="text-center space-y-2">
           <Link href="/" className="inline-flex items-center gap-2 mb-2 group">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center text-slate-950 font-black text-2xl shadow-lg shadow-cyan-500/20 group-hover:scale-105 transition-transform duration-200">
-              ⚡
+              🌏
             </div>
-            <span className="text-xl font-extrabold tracking-tight text-white">Project Antigravity</span>
+            <span className="text-xl font-extrabold tracking-tight text-white">Sino Magan Undus</span>
           </Link>
           <h2 className="text-2xl font-bold tracking-tight text-white">Create ExIm Account</h2>
           <p className="text-xs text-slate-400">
