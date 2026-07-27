@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { registerUserApi } from "../lib/api";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -20,7 +21,7 @@ export default function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-  const handleRegister = (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage("");
 
@@ -43,25 +44,47 @@ export default function RegisterPage() {
 
     setIsLoading(true);
 
-    setTimeout(() => {
-      setIsLoading(false);
+    try {
+      const apiRes = await registerUserApi(
+        formData.name,
+        formData.email,
+        formData.password,
+        formData.company || "Global Trade Enterprise",
+        formData.role,
+        formData.location
+      );
 
-      const userSession = {
-        name: formData.name,
-        email: formData.email,
-        company: formData.company || "Global Trade Enterprise",
-        role: formData.role,
-        avatarUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
-        token: "ag_token_" + Date.now(),
-      };
+      let userSession;
+      if (apiRes && apiRes.user) {
+        userSession = {
+          name: apiRes.user.name,
+          email: apiRes.user.email,
+          company: apiRes.user.company,
+          role: apiRes.user.role,
+          avatarUrl: apiRes.user.avatarUrl || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+          token: apiRes.token,
+        };
+      } else {
+        userSession = {
+          name: formData.name,
+          email: formData.email,
+          company: formData.company || "Global Trade Enterprise",
+          role: formData.role,
+          avatarUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+          token: "ag_token_" + Date.now(),
+        };
+      }
 
       if (typeof window !== "undefined") {
         localStorage.setItem("antigravity_user_session", JSON.stringify(userSession));
       }
 
-      // Redirect directly to Dashboard
       router.push("/dashboard");
-    }, 600);
+    } catch (err) {
+      setErrorMessage("Registration failed. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

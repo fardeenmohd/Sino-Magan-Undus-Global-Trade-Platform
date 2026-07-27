@@ -2,6 +2,7 @@
 
 import React, { useState, useMemo } from "react";
 import Link from "next/link";
+import { findLeadsCompute } from "./lib/api";
 
 export type UserRole = "BUYER" | "SUPPLIER" | "LEAD_PROSPECT" | "COMPUTE_AGENT";
 
@@ -301,12 +302,28 @@ export default function ExpandedTradeCatalogPage() {
   ];
 
   // Trigger Python FastAPI Compute Engine
-  const handleTriggerComputeAgent = (product: TradeProduct) => {
+  const handleTriggerComputeAgent = async (product: TradeProduct) => {
     setSelectedProduct(product);
     setIsComputing(true);
     setIsLeadModalOpen(true);
 
-    setTimeout(() => {
+    try {
+      const res = await findLeadsCompute(
+        product.id,
+        product.title,
+        product.category,
+        product.hsCode,
+        product.originCountry,
+        product.destinationCountry
+      );
+
+      if (res && res.leads && res.leads.length > 0) {
+        setDiscoveredLeads(res.leads as any);
+      } else {
+        throw new Error("No leads returned");
+      }
+    } catch (err) {
+      console.warn("Falling back to local lead data", err);
       const mockDiscoveredLeads: Record<string, TradeLeadProspect[]> = {
         "United States": [
           {
@@ -321,95 +338,12 @@ export default function ExpandedTradeCatalogPage() {
             match_score: 97.5,
             confidence_reason: `FDA Registered Importer ready for ${product.hsCode} ($250k annual budget)`,
           },
-          {
-            user_id: 407,
-            name: "Jennifer Hayes",
-            email: "j.hayes@wholeorganics.com",
-            company: "Whole Organics Distribution Corp",
-            role: "LEAD_PROSPECT",
-            destination_country: "United States 🇺🇸",
-            port_hub: "Port of Newark",
-            tariff_estimate_pct: 3.5,
-            match_score: 94.2,
-            confidence_reason: "High volume monthly retail packaging contract requirement",
-          },
-        ],
-        Oman: [
-          {
-            user_id: 402,
-            name: "Nasser Al-Harthy",
-            email: "nasser@muscatimport.om",
-            company: "Muscat Fresh Produce & Foodstuffs LLC",
-            role: "LEAD_PROSPECT",
-            destination_country: "Oman 🇴🇲",
-            port_hub: "Port of Salalah",
-            tariff_estimate_pct: 5.0,
-            match_score: 98.0,
-            confidence_reason: `GCC Phytosanitary import permit pre-approved for ${product.hsCode}`,
-          },
-        ],
-        Netherlands: [
-          {
-            user_id: 403,
-            name: "Sophie van der Meer",
-            email: "sophie@amsterdambakery.nl",
-            company: "Amsterdam Bakery Ingredients BV",
-            role: "LEAD_PROSPECT",
-            destination_country: "Netherlands 🇳🇱",
-            port_hub: "Port of Rotterdam",
-            tariff_estimate_pct: 2.8,
-            match_score: 95.8,
-            confidence_reason: "Rotterdam port customs pre-clearance ready",
-          },
-        ],
-        Poland: [
-          {
-            user_id: 404,
-            name: "Piotr Wisniewski",
-            email: "p.wisniewski@polandfoods.pl",
-            company: "Warsaw Agri Importers Sp. z o.o.",
-            role: "LEAD_PROSPECT",
-            destination_country: "Poland 🇵🇱",
-            port_hub: "Port of Gdańsk",
-            tariff_estimate_pct: 4.0,
-            match_score: 93.6,
-            confidence_reason: "EU cold chain distribution warehouse pre-booked",
-          },
-        ],
-        China: [
-          {
-            user_id: 405,
-            name: "Li Gang",
-            email: "ligang@chinameat.cn",
-            company: "China National Cold Chain Meat Corp",
-            role: "LEAD_PROSPECT",
-            destination_country: "China 🇨🇳",
-            port_hub: "Port of Shanghai",
-            tariff_estimate_pct: 6.5,
-            match_score: 96.9,
-            confidence_reason: "GACC import registration & Bank L/C issued ($600k)",
-          },
-        ],
-        Australia: [
-          {
-            user_id: 406,
-            name: "Harrison Forde",
-            email: "hforde@ozmachinery.com.au",
-            company: "Australia Industrial & Mining Equipment",
-            role: "LEAD_PROSPECT",
-            destination_country: "Australia 🇦🇺",
-            port_hub: "Port of Sydney",
-            tariff_estimate_pct: 4.0,
-            match_score: 94.7,
-            confidence_reason: "Australian Customs compliance verification completed",
-          },
         ],
       };
-
-      const matchedList = mockDiscoveredLeads[product.destinationCountry] || mockDiscoveredLeads["United States"];
-      setDiscoveredLeads(matchedList);
+      setDiscoveredLeads(mockDiscoveredLeads[product.destinationCountry] || mockDiscoveredLeads["United States"]);
+    } finally {
       setIsComputing(false);
-    }, 1200);
+    }
   };
 
   const handleCreateProduct = (e: React.FormEvent) => {

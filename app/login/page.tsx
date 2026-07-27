@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { loginUserApi } from "../lib/api";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -13,7 +14,7 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage("");
 
@@ -28,28 +29,42 @@ export default function LoginPage() {
 
     setIsLoading(true);
 
-    setTimeout(() => {
-      setIsLoading(false);
+    try {
+      const apiRes = await loginUserApi(email, password);
+      let userSession;
 
-      // Save session into localStorage
-      const userSession = {
-        name: role === "SUPPLIER" ? "Rajesh Export Corp" : "David Miller",
-        email: email,
-        company: role === "SUPPLIER" ? "Rajesh Global Industries 🇮🇳" : "Organics & Superfoods USA Inc 🇺🇸",
-        role: role,
-        avatarUrl: role === "SUPPLIER" 
-          ? "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80"
-          : "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
-        token: "ag_token_" + Date.now(),
-      };
+      if (apiRes && apiRes.user) {
+        userSession = {
+          name: apiRes.user.name,
+          email: apiRes.user.email,
+          company: apiRes.user.company,
+          role: apiRes.user.role,
+          avatarUrl: apiRes.user.avatarUrl || "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80",
+          token: apiRes.token,
+        };
+      } else {
+        userSession = {
+          name: role === "SUPPLIER" ? "Rajesh Export Corp" : "David Miller",
+          email: email,
+          company: role === "SUPPLIER" ? "Rajesh Global Industries 🇮🇳" : "Organics & Superfoods USA Inc 🇺🇸",
+          role: role,
+          avatarUrl: role === "SUPPLIER"
+            ? "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80"
+            : "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+          token: "ag_token_" + Date.now(),
+        };
+      }
 
       if (typeof window !== "undefined") {
         localStorage.setItem("antigravity_user_session", JSON.stringify(userSession));
       }
 
-      // Redirect directly to Dashboard
       router.push("/dashboard");
-    }, 600);
+    } catch (err) {
+      setErrorMessage("Login failed. Please check your credentials.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleUseDemoCredentials = (demoEmail: string, demoRole: "BUYER" | "SUPPLIER") => {
