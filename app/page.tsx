@@ -263,13 +263,45 @@ export default function ExpandedTradeCatalogPage() {
     title: "",
     description: "",
     category: "Makhana & Superfoods",
+    customCategory: "",
     hsCode: "HS-1904",
     destinationCountry: "USA",
+    customCountry: "",
+    customPortHub: "",
     tariffRatePct: 3.5,
     price: 14.5,
     unit: "kg",
     imageUrl: "https://images.unsplash.com/photo-1599488615731-7e5c2823ff28?w=600&auto=format&fit=crop&q=80",
   });
+
+  // Dynamically extract unique Destination Corridors from product catalog
+  const activeCorridors = useMemo(() => {
+    const list: { code: string; name: string; flag: string; hub?: string }[] = [
+      { code: "ALL", name: "All Destinations", flag: "🌐" },
+    ];
+
+    const added = new Set<string>();
+
+    DESTINATION_COUNTRIES.slice(1).forEach((d) => {
+      list.push(d);
+      added.add(d.name.toLowerCase());
+    });
+
+    products.forEach((p) => {
+      const key = p.destinationCountry.toLowerCase();
+      if (!added.has(key)) {
+        added.add(key);
+        list.push({
+          code: p.destinationCountry,
+          name: p.destinationCountry,
+          flag: p.destinationFlag || "🌐",
+          hub: p.portHub || "Custom Sea Port",
+        });
+      }
+    });
+
+    return list;
+  }, [products]);
 
   // Filtered Catalog
   const filteredProducts = useMemo(() => {
@@ -348,7 +380,19 @@ export default function ExpandedTradeCatalogPage() {
 
   const handleCreateProduct = (e: React.FormEvent) => {
     e.preventDefault();
-    const destObj = DESTINATION_COUNTRIES.find((d) => d.code === newProductForm.destinationCountry) || DESTINATION_COUNTRIES[1];
+    let targetName = "";
+    let targetFlag = "🌐";
+    let targetHub = "Main Sea Port";
+
+    if (newProductForm.destinationCountry === "CUSTOM") {
+      targetName = newProductForm.customCountry.trim() || "Custom Destination";
+      targetHub = newProductForm.customPortHub.trim() || "Custom Sea Port";
+    } else {
+      const destObj = DESTINATION_COUNTRIES.find((d) => d.code === newProductForm.destinationCountry) || DESTINATION_COUNTRIES[1];
+      targetName = destObj.name;
+      targetFlag = destObj.flag;
+      targetHub = destObj.hub || "Main Sea Port";
+    }
 
     const created: TradeProduct = {
       id: Date.now(),
@@ -357,9 +401,9 @@ export default function ExpandedTradeCatalogPage() {
       category: newProductForm.category,
       hsCode: newProductForm.hsCode.trim() || "HS-AUTO",
       originCountry: "India 🇮🇳",
-      destinationCountry: destObj.name,
-      destinationFlag: destObj.flag,
-      portHub: destObj.hub || "Main Sea Port",
+      destinationCountry: targetName,
+      destinationFlag: targetFlag,
+      portHub: targetHub,
       tariffRatePct: Number(newProductForm.tariffRatePct),
       price: Number(newProductForm.price),
       unit: newProductForm.unit,
@@ -489,11 +533,11 @@ export default function ExpandedTradeCatalogPage() {
         <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 backdrop-blur-sm space-y-3">
           <div className="flex items-center justify-between text-xs text-slate-400 font-mono">
             <span>SELECT DESTINATION COUNTRY CORRIDOR FROM INDIA 🇮🇳</span>
-            <span>6 TARGET TRADE DESTINATIONS</span>
+            <span>{activeCorridors.length - 1} TARGET TRADE DESTINATIONS</span>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2.5">
-            {DESTINATION_COUNTRIES.map((dest) => (
+            {activeCorridors.map((dest) => (
               <button
                 key={dest.code}
                 onClick={() => setSelectedDestination(dest.code)}
@@ -756,9 +800,37 @@ export default function ExpandedTradeCatalogPage() {
                     <option value="Poland">Poland 🇵🇱</option>
                     <option value="China">China 🇨🇳</option>
                     <option value="Australia">Australia 🇦🇺</option>
+                    <option value="CUSTOM">✨ Custom Destination / New Country</option>
                   </select>
                 </div>
               </div>
+
+              {/* Custom Destination Inputs */}
+              {newProductForm.destinationCountry === "CUSTOM" && (
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-medium text-cyan-400 mb-1">Custom Destination Country *</label>
+                    <input
+                      type="text"
+                      required
+                      value={newProductForm.customCountry}
+                      onChange={(e) => setNewProductForm({ ...newProductForm, customCountry: e.target.value })}
+                      className="w-full bg-slate-950 border border-cyan-500/40 rounded-xl px-3 py-1.5 text-sm text-slate-100 focus:outline-none focus:border-cyan-400"
+                      placeholder="e.g. Germany 🇩🇪, UAE 🇦🇪, Japan 🇯🇵"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-slate-400 mb-1">Sea Port Hub</label>
+                    <input
+                      type="text"
+                      value={newProductForm.customPortHub}
+                      onChange={(e) => setNewProductForm({ ...newProductForm, customPortHub: e.target.value })}
+                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-sm text-slate-100 focus:outline-none focus:border-cyan-500/50"
+                      placeholder="e.g. Port of Hamburg, Jebel Ali Port"
+                    />
+                  </div>
+                </div>
+              )}
 
               <div className="grid grid-cols-2 gap-3">
                 <div>

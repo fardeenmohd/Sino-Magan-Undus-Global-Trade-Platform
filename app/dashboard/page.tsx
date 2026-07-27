@@ -119,8 +119,10 @@ export default function UserDashboardPage() {
     title: "",
     category: "Makhana & Superfoods",
     customCategory: "",
-    hsCode: "HS-1904",
+    hsCode: "",
     destinationCountry: "USA",
+    customCountry: "",
+    customPortHub: "",
     price: 15.0,
     unit: "kg",
     description: "",
@@ -129,16 +131,25 @@ export default function UserDashboardPage() {
   const handleCreateListing = (e: React.FormEvent) => {
     e.preventDefault();
 
-    const destMap: Record<string, { name: string; flag: string }> = {
-      USA: { name: "United States", flag: "🇺🇸" },
-      Oman: { name: "Oman", flag: "🇴🇲" },
-      Netherlands: { name: "Netherlands", flag: "🇳🇱" },
-      Poland: { name: "Poland", flag: "🇵🇱" },
-      China: { name: "China", flag: "🇨🇳" },
-      Australia: { name: "Australia", flag: "🇦🇺" },
-    };
+    let targetName = "";
+    let targetFlag = "🌐";
 
-    const targetDest = destMap[newListingForm.destinationCountry] || { name: newListingForm.destinationCountry, flag: "🌐" };
+    if (newListingForm.destinationCountry === "CUSTOM") {
+      targetName = newListingForm.customCountry.trim() || "Custom Destination";
+    } else {
+      const destMap: Record<string, { name: string; flag: string }> = {
+        USA: { name: "United States", flag: "🇺🇸" },
+        Oman: { name: "Oman", flag: "🇴🇲" },
+        Netherlands: { name: "Netherlands", flag: "🇳🇱" },
+        Poland: { name: "Poland", flag: "🇵🇱" },
+        China: { name: "China", flag: "🇨🇳" },
+        Australia: { name: "Australia", flag: "🇦🇺" },
+      };
+      const found = destMap[newListingForm.destinationCountry] || { name: newListingForm.destinationCountry, flag: "🌐" };
+      targetName = found.name;
+      targetFlag = found.flag;
+    }
+
     const finalCategory = newListingForm.category === "CUSTOM"
       ? (newListingForm.customCategory || "Custom Commodity")
       : newListingForm.category;
@@ -149,8 +160,8 @@ export default function UserDashboardPage() {
       category: finalCategory,
       hsCode: newListingForm.hsCode.trim() || "HS-AUTO",
       originCountry: "India 🇮🇳",
-      destinationCountry: targetDest.name,
-      destinationFlag: targetDest.flag,
+      destinationCountry: targetName,
+      destinationFlag: targetFlag,
       price: Number(newListingForm.price),
       unit: newListingForm.unit || "unit",
       leadCount: 0,
@@ -159,7 +170,7 @@ export default function UserDashboardPage() {
 
     setListings([created, ...listings]);
     setIsAddListingModalOpen(false);
-    setSuccessMessage(`Export commodity "${created.title}" published successfully to active inventory!`);
+    setSuccessMessage(`Commodity "${created.title}" published successfully!`);
     setTimeout(() => setSuccessMessage(""), 4000);
 
     // Reset form
@@ -169,6 +180,8 @@ export default function UserDashboardPage() {
       customCategory: "",
       hsCode: "",
       destinationCountry: "USA",
+      customCountry: "",
+      customPortHub: "",
       price: 15.0,
       unit: "kg",
       description: "",
@@ -693,6 +706,7 @@ export default function UserDashboardPage() {
                     <option value="Poland">Poland 🇵🇱</option>
                     <option value="China">China 🇨🇳</option>
                     <option value="Australia">Australia 🇦🇺</option>
+                    <option value="CUSTOM">✨ Custom Destination / New Country</option>
                   </select>
                 </div>
 
@@ -708,6 +722,33 @@ export default function UserDashboardPage() {
                   />
                 </div>
               </div>
+
+              {/* Custom Destination Inputs */}
+              {newListingForm.destinationCountry === "CUSTOM" && (
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-medium text-cyan-400 mb-1">Custom Destination Country *</label>
+                    <input
+                      type="text"
+                      required
+                      value={newListingForm.customCountry}
+                      onChange={(e) => setNewListingForm({ ...newListingForm, customCountry: e.target.value })}
+                      className="w-full bg-slate-950 border border-cyan-500/40 rounded-xl px-3.5 py-2 text-sm text-slate-100 focus:outline-none focus:border-cyan-400"
+                      placeholder="e.g. Germany 🇩🇪, UAE 🇦🇪, Japan 🇯🇵"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-slate-400 mb-1">Sea Port Hub</label>
+                    <input
+                      type="text"
+                      value={newListingForm.customPortHub}
+                      onChange={(e) => setNewListingForm({ ...newListingForm, customPortHub: e.target.value })}
+                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-slate-100 focus:outline-none focus:border-cyan-500/50"
+                      placeholder="e.g. Port of Hamburg, Jebel Ali Port"
+                    />
+                  </div>
+                </div>
+              )}
 
               <div>
                 <label className="block text-xs font-medium text-slate-400 mb-1">Unit of Measurement</label>
