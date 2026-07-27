@@ -196,29 +196,49 @@ export default function AdminDashboardPage() {
           const newLeads = event.leads as any;
           setIsComputing(false);
 
-          // 1. Add new commodity product to Master Catalog
-          const newProduct: AdminProduct = {
-            id: Date.now(),
-            title: computeForm.title,
-            category: computeForm.category,
-            hsCode: computeForm.hsCode,
-            destinationCountry: computeForm.destinationCountry,
-            portHub: computeForm.portHub,
-            price: computeForm.price,
-            unit: computeForm.unit,
-            leadCount: newLeads.length,
-            status: "ACTIVE",
-            supplier: computeForm.supplier,
-          };
+          // 1. Add or update commodity product in Master Catalog (Deduplicated)
+          setProducts((prev) => {
+            const exists = prev.some(
+              (p) =>
+                p.title.toLowerCase().trim() === computeForm.title.toLowerCase().trim() ||
+                (p.hsCode === computeForm.hsCode && p.destinationCountry === computeForm.destinationCountry)
+            );
+            if (exists) {
+              return prev.map((p) =>
+                p.title.toLowerCase().trim() === computeForm.title.toLowerCase().trim() ||
+                (p.hsCode === computeForm.hsCode && p.destinationCountry === computeForm.destinationCountry)
+                  ? { ...p, leadCount: p.leadCount + newLeads.length }
+                  : p
+              );
+            }
+            const newProduct: AdminProduct = {
+              id: Date.now(),
+              title: computeForm.title,
+              category: computeForm.category,
+              hsCode: computeForm.hsCode,
+              destinationCountry: computeForm.destinationCountry,
+              portHub: computeForm.portHub,
+              price: computeForm.price,
+              unit: computeForm.unit,
+              leadCount: newLeads.length,
+              status: "ACTIVE",
+              supplier: computeForm.supplier,
+            };
+            return [newProduct, ...prev];
+          });
 
-          setProducts((prev) => [newProduct, ...prev]);
-
-          // 2. Prepend newly scraped prospects to Master Leads Table
-          setLeads((prev) => [...newLeads, ...prev]);
+          // 2. Prepend newly scraped prospects to Master Leads Table (Deduplicated)
+          setLeads((prev) => {
+            const existingEmails = new Set(prev.map((l) => l.email?.toLowerCase()));
+            const uniqueNewLeads = newLeads.filter(
+              (l: TradeLeadProspect) => !existingEmails.has(l.email?.toLowerCase())
+            );
+            return [...uniqueNewLeads, ...prev];
+          });
 
           // 3. Trigger Toast Notification
           setLastExtensionToast(
-            `✨ Success! Extended Master Catalog with "${computeForm.title}" and added ${newLeads.length} new Importer Leads for ${computeForm.destinationCountry}!`
+            `✨ Success! Extended Master Catalog with "${computeForm.title}" and added unique Importer Leads for ${computeForm.destinationCountry}!`
           );
         }
       }

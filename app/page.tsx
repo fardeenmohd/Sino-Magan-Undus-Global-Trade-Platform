@@ -825,9 +825,14 @@ export default function ExpandedTradeCatalogPage() {
 
                       <button
                         onClick={() => {
-                          const existing = JSON.parse(localStorage.getItem("antigravity_imported_leads") || "[]");
-                          localStorage.setItem("antigravity_imported_leads", JSON.stringify([lead, ...existing]));
-                          alert(`✅ Buyer Prospect ${lead.name} (${lead.company}) successfully saved & imported into your Lead Dashboard!`);
+                          const existing: TradeLeadProspect[] = JSON.parse(localStorage.getItem("antigravity_imported_leads") || "[]");
+                          const isDup = existing.some((l) => l.email?.toLowerCase() === lead.email?.toLowerCase() || (l.company === lead.company && l.destination_country === lead.destination_country));
+                          if (isDup) {
+                            alert(`ℹ️ Buyer Prospect ${lead.name} (${lead.company}) is already saved in your Lead Dashboard!`);
+                          } else {
+                            localStorage.setItem("antigravity_imported_leads", JSON.stringify([lead, ...existing]));
+                            alert(`✅ Buyer Prospect ${lead.name} (${lead.company}) successfully saved & imported into your Lead Dashboard!`);
+                          }
                         }}
                         className="px-3.5 py-2 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs rounded-lg transition-colors duration-200 whitespace-nowrap cursor-pointer shadow-md"
                       >

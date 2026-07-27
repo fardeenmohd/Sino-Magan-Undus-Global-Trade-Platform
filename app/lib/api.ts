@@ -33,6 +33,21 @@ export interface SSEStreamStage {
 }
 
 /**
+ * Deduplicate array of TradeLeadProspect objects by email & company+country
+ */
+export function deduplicateLeads(leads: TradeLeadProspect[]): TradeLeadProspect[] {
+  const seen = new Set<string>();
+  return leads.filter((lead) => {
+    const key = (lead.email || `${lead.company}-${lead.destination_country}`).toLowerCase().trim();
+    if (seen.has(key)) {
+      return false;
+    }
+    seen.add(key);
+    return true;
+  });
+}
+
+/**
  * Dynamically construct product-specific & country-specific buyer prospects
  */
 export function generateDynamicLeadsClient(
