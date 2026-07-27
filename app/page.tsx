@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
-import { findLeadsCompute, fetchProductsApi, streamLeadsCompute } from "./lib/api";
+import { findLeadsCompute, fetchProductsApi, streamLeadsCompute, getSharedProductsFromDb, saveProductsToSharedDb, getSharedLeadsFromDb, saveLeadsToSharedDb, TradeLeadProspect } from "./lib/api";
 
 export type UserRole = "BUYER" | "SUPPLIER" | "LEAD_PROSPECT" | "COMPUTE_AGENT";
 
@@ -37,18 +37,7 @@ export interface TradeProduct {
   createdAt: string;
 }
 
-export interface TradeLeadProspect {
-  user_id: number;
-  name: string;
-  email: string;
-  company: string;
-  role: UserRole;
-  destination_country: string;
-  port_hub: string;
-  tariff_estimate_pct: number;
-  match_score: number;
-  confidence_reason: string;
-}
+
 
 // Target Destinations
 const DESTINATION_COUNTRIES = [
@@ -242,26 +231,17 @@ export default function ExpandedTradeCatalogPage() {
         }
       }
 
-      const savedProducts = localStorage.getItem("antigravity_global_products");
-      if (savedProducts) {
-        try {
-          const parsed = JSON.parse(savedProducts);
-          if (Array.isArray(parsed) && parsed.length > 0) {
-            setProducts(parsed);
-          }
-        } catch (e) {
-          console.warn("Failed to load persistent products from localStorage", e);
-        }
-      } else {
-        localStorage.setItem("antigravity_global_products", JSON.stringify(INITIAL_TRADE_PRODUCTS));
+      const sharedProducts = getSharedProductsFromDb(INITIAL_TRADE_PRODUCTS);
+      if (sharedProducts && sharedProducts.length > 0) {
+        setProducts(sharedProducts);
       }
     }
   }, []);
 
-  // Sync products state to localStorage whenever updated
+  // Sync products state to shared DB layer whenever updated
   useEffect(() => {
     if (typeof window !== "undefined" && products.length > 0) {
-      localStorage.setItem("antigravity_global_products", JSON.stringify(products));
+      saveProductsToSharedDb(products);
     }
   }, [products]);
 
@@ -846,13 +826,13 @@ export default function ExpandedTradeCatalogPage() {
 
                       <button
                         onClick={() => {
-                          const existing: TradeLeadProspect[] = JSON.parse(localStorage.getItem("antigravity_imported_leads") || "[]");
+                          const existing = getSharedLeadsFromDb([]);
                           const isDup = existing.some((l) => l.email?.toLowerCase() === lead.email?.toLowerCase() || (l.company === lead.company && l.destination_country === lead.destination_country));
                           if (isDup) {
-                            alert(`ℹ️ Buyer Prospect ${lead.name} (${lead.company}) is already saved in your Lead Dashboard!`);
+                            alert(`ℹ️ Buyer Prospect ${lead.name} (${lead.company}) is already saved in the platform database!`);
                           } else {
-                            localStorage.setItem("antigravity_imported_leads", JSON.stringify([lead, ...existing]));
-                            alert(`✅ Buyer Prospect ${lead.name} (${lead.company}) successfully saved & imported into your Lead Dashboard!`);
+                            saveLeadsToSharedDb([lead, ...existing]);
+                            alert(`✅ Buyer Prospect ${lead.name} (${lead.company}) successfully saved & imported into the platform database!`);
                           }
                         }}
                         className="px-3.5 py-2 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs rounded-lg transition-colors duration-200 whitespace-nowrap cursor-pointer shadow-md"

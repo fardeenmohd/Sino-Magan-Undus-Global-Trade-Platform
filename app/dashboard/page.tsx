@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { getSharedProductsFromDb, saveProductsToSharedDb, getSharedLeadsFromDb, saveLeadsToSharedDb, TradeLeadProspect } from "../lib/api";
 
 export type UserRole = "BUYER" | "SUPPLIER" | "LEAD_PROSPECT" | "COMPUTE_AGENT";
 
@@ -110,8 +111,40 @@ export default function UserDashboardPage() {
   const [activeTab, setActiveTab] = useState<"overview" | "listings" | "profile">("overview");
   const [profile, setProfile] = useState<UserProfile>(INITIAL_PROFILE);
   const [listings, setListings] = useState<UserListing[]>(INITIAL_MY_LISTINGS);
+  const [savedLeads, setSavedLeads] = useState<TradeLeadProspect[]>([]);
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
+
+  // Sync Shared DB on Mount & Updates
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const sharedProducts = getSharedProductsFromDb(INITIAL_MY_LISTINGS);
+      if (sharedProducts && sharedProducts.length > 0) {
+        setListings(sharedProducts.map((p: any) => ({
+          id: p.id,
+          title: p.title,
+          category: p.category,
+          hsCode: p.hsCode,
+          originCountry: p.originCountry || "India 🇮🇳",
+          destinationCountry: p.destinationCountry,
+          destinationFlag: p.destinationFlag || "🌐",
+          price: p.price,
+          unit: p.unit,
+          leadCount: p.leadCount || 10,
+          status: p.status || "ACTIVE",
+        })));
+      }
+
+      const sharedLeads = getSharedLeadsFromDb([]);
+      setSavedLeads(sharedLeads);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && listings.length > 0) {
+      saveProductsToSharedDb(listings);
+    }
+  }, [listings]);
 
   // Add Listing Modal State
   const [isAddListingModalOpen, setIsAddListingModalOpen] = useState(false);

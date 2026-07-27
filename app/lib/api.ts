@@ -324,9 +324,106 @@ export async function fetchProductsApi(category?: string, destination?: string, 
       return await response.json();
     }
   } catch (error) {
-    console.warn("Spring Boot Backend API offline; using local catalog state", error);
+    console.warn("Spring Boot Backend API offline; using shared database layer", error);
   }
   return null;
+}
+
+/**
+ * Create Product in Spring Boot 3 Backend
+ */
+export async function createProductApi(productData: any) {
+  try {
+    const response = await fetch(`${SPRING_BOOT_URL}/api/products`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(productData),
+    });
+    if (response.ok) {
+      return await response.json();
+    }
+  } catch (error) {
+    console.warn("Spring Boot Create Product API offline; persisting to shared DB layer", error);
+  }
+  return null;
+}
+
+/**
+ * Fetch Leads from Spring Boot 3 Backend
+ */
+export async function fetchLeadsApi() {
+  try {
+    const response = await fetch(`${SPRING_BOOT_URL}/api/leads`);
+    if (response.ok) {
+      return await response.json();
+    }
+  } catch (error) {
+    console.warn("Spring Boot Leads API offline; using shared DB layer", error);
+  }
+  return null;
+}
+
+/**
+ * Create Lead in Spring Boot 3 Backend
+ */
+export async function createLeadApi(leadData: any) {
+  try {
+    const response = await fetch(`${SPRING_BOOT_URL}/api/leads`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(leadData),
+    });
+    if (response.ok) {
+      return await response.json();
+    }
+  } catch (error) {
+    console.warn("Spring Boot Create Lead API offline; persisting to shared DB layer", error);
+  }
+  return null;
+}
+
+const SHARED_PRODUCTS_KEY = "antigravity_shared_db_products";
+const SHARED_LEADS_KEY = "antigravity_shared_db_leads";
+
+export function getSharedProductsFromDb(fallbackDefault: any[]): any[] {
+  if (typeof window === "undefined") return fallbackDefault;
+  const saved = localStorage.getItem(SHARED_PRODUCTS_KEY) || localStorage.getItem("antigravity_global_products");
+  if (saved) {
+    try {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    } catch (e) {}
+  }
+  localStorage.setItem(SHARED_PRODUCTS_KEY, JSON.stringify(fallbackDefault));
+  return fallbackDefault;
+}
+
+export function saveProductsToSharedDb(products: any[]) {
+  if (typeof window !== "undefined" && Array.isArray(products)) {
+    localStorage.setItem(SHARED_PRODUCTS_KEY, JSON.stringify(products));
+    localStorage.setItem("antigravity_global_products", JSON.stringify(products));
+  }
+}
+
+export function getSharedLeadsFromDb(fallbackDefault: TradeLeadProspect[]): TradeLeadProspect[] {
+  if (typeof window === "undefined") return fallbackDefault;
+  const saved = localStorage.getItem(SHARED_LEADS_KEY) || localStorage.getItem("antigravity_global_leads") || localStorage.getItem("antigravity_imported_leads");
+  if (saved) {
+    try {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed) && parsed.length > 0) return deduplicateLeads(parsed);
+    } catch (e) {}
+  }
+  localStorage.setItem(SHARED_LEADS_KEY, JSON.stringify(fallbackDefault));
+  return fallbackDefault;
+}
+
+export function saveLeadsToSharedDb(leads: TradeLeadProspect[]) {
+  if (typeof window !== "undefined" && Array.isArray(leads)) {
+    const deduped = deduplicateLeads(leads);
+    localStorage.setItem(SHARED_LEADS_KEY, JSON.stringify(deduped));
+    localStorage.setItem("antigravity_global_leads", JSON.stringify(deduped));
+  }
 }
 
 /**

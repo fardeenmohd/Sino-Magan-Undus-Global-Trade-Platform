@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { streamLeadsCompute, TradeLeadProspect } from "../lib/api";
+import { streamLeadsCompute, getSharedProductsFromDb, saveProductsToSharedDb, getSharedLeadsFromDb, saveLeadsToSharedDb, TradeLeadProspect } from "../lib/api";
 
 export interface AdminProduct {
   id: number;
@@ -152,7 +152,7 @@ export default function AdminDashboardPage() {
   const [streamMessage, setStreamMessage] = useState("");
   const [lastExtensionToast, setLastExtensionToast] = useState("");
 
-  // Load session or localStorage on mount
+  // Load session & shared DB on mount
   useEffect(() => {
     if (typeof window !== "undefined") {
       const session = localStorage.getItem("antigravity_admin_session");
@@ -160,56 +160,42 @@ export default function AdminDashboardPage() {
         setIsAdminAuthenticated(true);
       }
 
-      const savedProducts = localStorage.getItem("antigravity_global_products");
-      if (savedProducts) {
-        try {
-          const parsed = JSON.parse(savedProducts);
-          if (Array.isArray(parsed) && parsed.length > 0) {
-            const mapped: AdminProduct[] = parsed.map((p: any) => ({
-              id: p.id,
-              title: p.title,
-              category: p.category,
-              hsCode: p.hsCode,
-              destinationCountry: p.destinationCountry,
-              portHub: p.portHub || "Main Sea Port",
-              price: p.price,
-              unit: p.unit,
-              leadCount: p.leadCount || 10,
-              status: p.status || "ACTIVE",
-              supplier: p.listedBy?.company || p.listedBy?.name || p.supplier || "Exporter",
-            }));
-            setProducts(mapped);
-          }
-        } catch (e) {
-          console.warn("Failed to parse admin products", e);
-        }
+      const sharedProducts = getSharedProductsFromDb(products);
+      if (sharedProducts && sharedProducts.length > 0) {
+        const mapped: AdminProduct[] = sharedProducts.map((p: any) => ({
+          id: p.id,
+          title: p.title,
+          category: p.category,
+          hsCode: p.hsCode,
+          destinationCountry: p.destinationCountry,
+          portHub: p.portHub || "Main Sea Port",
+          price: p.price,
+          unit: p.unit,
+          leadCount: p.leadCount || 10,
+          status: p.status || "ACTIVE",
+          supplier: p.listedBy?.company || p.listedBy?.name || p.supplier || "Exporter",
+        }));
+        setProducts(mapped);
       }
 
-      const savedLeads = localStorage.getItem("antigravity_global_leads");
-      if (savedLeads) {
-        try {
-          const parsed = JSON.parse(savedLeads);
-          if (Array.isArray(parsed) && parsed.length > 0) {
-            setLeads(parsed);
-          }
-        } catch (e) {
-          console.warn("Failed to parse admin leads", e);
-        }
+      const sharedLeads = getSharedLeadsFromDb(leads);
+      if (sharedLeads && sharedLeads.length > 0) {
+        setLeads(sharedLeads);
       }
     }
   }, []);
 
-  // Sync leads to localStorage whenever updated
+  // Sync leads to shared DB layer whenever updated
   useEffect(() => {
     if (typeof window !== "undefined" && leads.length > 0) {
-      localStorage.setItem("antigravity_global_leads", JSON.stringify(leads));
+      saveLeadsToSharedDb(leads);
     }
   }, [leads]);
 
-  // Sync products to localStorage whenever updated
+  // Sync products to shared DB layer whenever updated
   useEffect(() => {
     if (typeof window !== "undefined" && products.length > 0) {
-      localStorage.setItem("antigravity_global_products", JSON.stringify(products));
+      saveProductsToSharedDb(products);
     }
   }, [products]);
 
