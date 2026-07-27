@@ -152,6 +152,16 @@ export function generateDynamicLeadsClient(
         { name: "Astrid Norberg", company: `Gothenburg Snus & Commodity Trade AB`, email: "astrid@gothenburgsnus.se" }
       ]
     },
+    "United Kingdom": {
+      flag: "🇬🇧",
+      ports: ["Port of London", "Port of Felixstowe"],
+      tariff: 3.2,
+      compliance: "MHRA Herbal Medicines & UK Food Standards Agency Approved",
+      contacts: [
+        { name: "Oliver Bennett", company: `London Wellness & Botanical Imports Ltd`, email: "obennett@londonbotanicals.co.uk" },
+        { name: "Charlotte Hughes", company: `British Herbal Supplies Ltd`, email: "c.hughes@britishherbal.co.uk" }
+      ]
+    },
     "Japan": {
       flag: "🇯🇵",
       ports: ["Port of Yokohama", "Port of Tokyo"],

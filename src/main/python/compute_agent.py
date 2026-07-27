@@ -172,6 +172,17 @@ def generate_dynamic_leads_for_product(
                 {"name": "Lars Svensson", "company": f"Stockholm Wholesale Logistics Group", "email": "l.svensson@stockholmexim.se"}
             ]
         },
+        "United Kingdom": {
+            "flag": "🇬🇧",
+            "ports": ["Port of London", "Port of Felixstowe", "Port of Southampton"],
+            "base_tariff": 3.2,
+            "compliance": "MHRA Herbal Medicines & UK Food Standards Agency Approved",
+            "contacts": [
+                {"name": "Oliver Bennett", "company": f"London Wellness & Botanical Imports Ltd", "email": "obennett@londonbotanicals.co.uk"},
+                {"name": "Charlotte Hughes", "company": f"British Herbal & Nutraceutical Supplies Ltd", "email": "c.hughes@britishherbal.co.uk"},
+                {"name": "George Davies", "company": f"Felixstowe Trade & Distribution Group", "email": "g.davies@felixstowetrade.co.uk"}
+            ]
+        },
         "Japan": {
             "flag": "🇯🇵",
             "ports": ["Port of Yokohama", "Port of Tokyo", "Port of Kobe"],

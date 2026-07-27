@@ -512,6 +512,23 @@ export default function AdminDashboardPage() {
                 <button
                   onClick={() =>
                     setPresetCorridor({
+                      title: "Organic Indian KSM-66 Ashwagandha Root Extract & Powder (HS 1211)",
+                      category: "Ayurvedic & Herbal Extracts",
+                      hsCode: "HS-1211",
+                      destinationCountry: "United States 🇺🇸",
+                      portHub: "Port of Los Angeles",
+                      price: 18.5,
+                      unit: "kg",
+                    })
+                  }
+                  className="px-3 py-1.5 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded-lg text-xs font-mono text-cyan-400 cursor-pointer"
+                >
+                  🇺🇸 Organic Ashwagandha Extract
+                </button>
+
+                <button
+                  onClick={() =>
+                    setPresetCorridor({
                       title: "Tobacco-Free White Nicotine Pouches & Swedish Style Snus (HS 2404)",
                       category: "Tobacco & Nicotine Pouches",
                       hsCode: "HS-2404",

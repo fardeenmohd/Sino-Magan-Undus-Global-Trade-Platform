@@ -94,8 +94,27 @@ const INITIAL_INDIAN_SUPPLIERS: CatalogUser[] = [
   },
 ];
 
-// Expanded Product Catalog featuring Nicotine Pouches, Makhana, Onions, Eggs, Potatoes, Meat, Machinery
+// Expanded Product Catalog featuring Ashwagandha, Nicotine Pouches, Makhana, Onions, Eggs, Potatoes, Meat, Machinery
 const INITIAL_TRADE_PRODUCTS: TradeProduct[] = [
+  {
+    id: 299,
+    title: "Organic Indian KSM-66 Ashwagandha Root Extract & Powder (HS 1211)",
+    description: "HPLC standardized 5% Withanolides full-spectrum Ashwagandha root extract (Withania somnifera). USDA Organic, cGMP & ISO 22000 certified for US & EU nutraceutical brand manufacturing.",
+    category: "Ayurvedic & Herbal Extracts",
+    hsCode: "HS-1211",
+    originCountry: "India 🇮🇳",
+    destinationCountry: "United States",
+    destinationFlag: "🇺🇸",
+    portHub: "Port of Los Angeles / Hamburg",
+    tariffRatePct: 2.8,
+    price: 18.50,
+    unit: "kg",
+    listedBy: INITIAL_INDIAN_SUPPLIERS[0],
+    imageUrl: "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=600&auto=format&fit=crop&q=80",
+    leadCount: 44,
+    status: "ACTIVE",
+    createdAt: "2026-07-26T09:00:00Z",
+  },
   {
     id: 300,
     title: "Tobacco-Free White Nicotine Pouches & Swedish Style Snus (HS 2404)",
@@ -348,6 +367,7 @@ export default function ExpandedTradeCatalogPage() {
 
   const categories = [
     "ALL",
+    "Ayurvedic & Herbal Extracts",
     "Tobacco & Nicotine Pouches",
     "Makhana & Superfoods",
     "Fresh Produce",
