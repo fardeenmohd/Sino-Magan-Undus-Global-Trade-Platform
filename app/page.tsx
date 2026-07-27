@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import { findLeadsCompute, fetchProductsApi, streamLeadsCompute } from "./lib/api";
 
@@ -241,8 +241,29 @@ export default function ExpandedTradeCatalogPage() {
           console.error(e);
         }
       }
+
+      const savedProducts = localStorage.getItem("antigravity_global_products");
+      if (savedProducts) {
+        try {
+          const parsed = JSON.parse(savedProducts);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            setProducts(parsed);
+          }
+        } catch (e) {
+          console.warn("Failed to load persistent products from localStorage", e);
+        }
+      } else {
+        localStorage.setItem("antigravity_global_products", JSON.stringify(INITIAL_TRADE_PRODUCTS));
+      }
     }
   }, []);
+
+  // Sync products state to localStorage whenever updated
+  useEffect(() => {
+    if (typeof window !== "undefined" && products.length > 0) {
+      localStorage.setItem("antigravity_global_products", JSON.stringify(products));
+    }
+  }, [products]);
 
   const handleSignOut = () => {
     if (typeof window !== "undefined") {

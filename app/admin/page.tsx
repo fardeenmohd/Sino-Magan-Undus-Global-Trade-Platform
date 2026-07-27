@@ -152,13 +152,66 @@ export default function AdminDashboardPage() {
   const [streamMessage, setStreamMessage] = useState("");
   const [lastExtensionToast, setLastExtensionToast] = useState("");
 
-  // Load session or localStorage
+  // Load session or localStorage on mount
   useEffect(() => {
-    const session = localStorage.getItem("antigravity_admin_session");
-    if (session) {
-      setIsAdminAuthenticated(true);
+    if (typeof window !== "undefined") {
+      const session = localStorage.getItem("antigravity_admin_session");
+      if (session) {
+        setIsAdminAuthenticated(true);
+      }
+
+      const savedProducts = localStorage.getItem("antigravity_global_products");
+      if (savedProducts) {
+        try {
+          const parsed = JSON.parse(savedProducts);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            const mapped: AdminProduct[] = parsed.map((p: any) => ({
+              id: p.id,
+              title: p.title,
+              category: p.category,
+              hsCode: p.hsCode,
+              destinationCountry: p.destinationCountry,
+              portHub: p.portHub || "Main Sea Port",
+              price: p.price,
+              unit: p.unit,
+              leadCount: p.leadCount || 10,
+              status: p.status || "ACTIVE",
+              supplier: p.listedBy?.company || p.listedBy?.name || p.supplier || "Exporter",
+            }));
+            setProducts(mapped);
+          }
+        } catch (e) {
+          console.warn("Failed to parse admin products", e);
+        }
+      }
+
+      const savedLeads = localStorage.getItem("antigravity_global_leads");
+      if (savedLeads) {
+        try {
+          const parsed = JSON.parse(savedLeads);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            setLeads(parsed);
+          }
+        } catch (e) {
+          console.warn("Failed to parse admin leads", e);
+        }
+      }
     }
   }, []);
+
+  // Sync leads to localStorage whenever updated
+  useEffect(() => {
+    if (typeof window !== "undefined" && leads.length > 0) {
+      localStorage.setItem("antigravity_global_leads", JSON.stringify(leads));
+    }
+  }, [leads]);
+
+  // Sync products to localStorage whenever updated
+  useEffect(() => {
+    if (typeof window !== "undefined" && products.length > 0) {
+      localStorage.setItem("antigravity_global_products", JSON.stringify(products));
+    }
+  }, [products]);
 
   const handleAdminLogin = (e: React.FormEvent) => {
     e.preventDefault();
