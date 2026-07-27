@@ -561,6 +561,8 @@ export default function UserDashboardPage() {
           </div>
         )}
 
+      </div>
+
       {/* --- ADD NEW LISTING MODAL --- */}
       {isAddListingModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">

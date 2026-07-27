@@ -4,6 +4,10 @@ All notable changes to Project Antigravity will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed
+- **JSX Syntax Fix in [`app/dashboard/page.tsx`](file:///C:/Users/fardi/Documents/antigravity/joyful-raman/app/dashboard/page.tsx)**:
+  - Fixed missing closing `</div>` tag for the main container layout (`max-w-7xl`), resolving SWC JSX compilation error.
+
 ### Added
 - **Dashboard "+ Add New Listing" Button & Custom Product Option**:
   - Added **"+ Add New Listing"** button directly inside the **My Export Listings** tab header on [`app/dashboard/page.tsx`](file:///C:/Users/fardi/Documents/antigravity/joyful-raman/app/dashboard/page.tsx).
