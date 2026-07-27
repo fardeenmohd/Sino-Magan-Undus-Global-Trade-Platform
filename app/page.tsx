@@ -355,7 +355,7 @@ export default function ExpandedTradeCatalogPage() {
       title: newProductForm.title,
       description: newProductForm.description,
       category: newProductForm.category,
-      hsCode: newProductForm.hsCode,
+      hsCode: newProductForm.hsCode.trim() || "HS-AUTO",
       originCountry: "India 🇮🇳",
       destinationCountry: destObj.name,
       destinationFlag: destObj.flag,
@@ -737,14 +737,13 @@ export default function ExpandedTradeCatalogPage() {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-medium text-slate-400 mb-1">HS Code *</label>
+                  <label className="block text-xs font-medium text-slate-400 mb-1">HS Code (Optional)</label>
                   <input
                     type="text"
-                    required
                     value={newProductForm.hsCode}
                     onChange={(e) => setNewProductForm({ ...newProductForm, hsCode: e.target.value })}
                     className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-sm text-slate-100 focus:outline-none focus:border-cyan-500/50"
-                    placeholder="e.g. HS-1904"
+                    placeholder="e.g. HS-1904 (Auto-assigned if left blank)"
                   />
                 </div>
 

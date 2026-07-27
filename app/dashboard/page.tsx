@@ -147,7 +147,7 @@ export default function UserDashboardPage() {
       id: Date.now(),
       title: newListingForm.title,
       category: finalCategory,
-      hsCode: newListingForm.hsCode || "HS-9999",
+      hsCode: newListingForm.hsCode.trim() || "HS-AUTO",
       originCountry: "India 🇮🇳",
       destinationCountry: targetDest.name,
       destinationFlag: targetDest.flag,
@@ -167,7 +167,7 @@ export default function UserDashboardPage() {
       title: "",
       category: "Makhana & Superfoods",
       customCategory: "",
-      hsCode: "HS-1904",
+      hsCode: "",
       destinationCountry: "USA",
       price: 15.0,
       unit: "kg",
@@ -611,14 +611,13 @@ export default function UserDashboardPage() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-slate-400 mb-1">HS Code *</label>
+                  <label className="block text-xs font-medium text-slate-400 mb-1">HS Code (Optional)</label>
                   <input
                     type="text"
-                    required
                     value={newListingForm.hsCode}
                     onChange={(e) => setNewListingForm({ ...newListingForm, hsCode: e.target.value })}
                     className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-slate-100 focus:outline-none focus:border-cyan-500/50 font-mono text-cyan-400"
-                    placeholder="e.g. HS-0910"
+                    placeholder="e.g. HS-0910 (Auto-assigned if left blank)"
                   />
                 </div>
               </div>
