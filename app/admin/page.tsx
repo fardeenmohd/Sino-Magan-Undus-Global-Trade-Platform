@@ -8,6 +8,8 @@ import {
   saveProductsToSharedDb,
   getSharedLeadsFromDb,
   saveLeadsToSharedDb,
+  clearSharedProductsFromDb,
+  clearSharedLeadsFromDb,
   TradeLeadProspect,
   searchCommodityAutocomplete,
   AutocompleteCommodity,
@@ -592,6 +594,20 @@ export default function AdminDashboardPage() {
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
               FastAPI v4.0 Live
             </span>
+            <button
+              onClick={() => {
+                clearSharedProductsFromDb();
+                clearSharedLeadsFromDb();
+                setProducts([]);
+                setLeads([]);
+                setScrapedOpportunities([]);
+                setLastExtensionToast("🧹 Success! All data caches purged. Platform reset to a clean slate.");
+                setTimeout(() => setLastExtensionToast(""), 4000);
+              }}
+              className="px-3 py-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 text-xs font-semibold font-mono rounded-lg transition-colors duration-200 cursor-pointer"
+            >
+              🧹 Reset Data Slate
+            </button>
             <button
               onClick={handleAdminLogout}
               className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold rounded-lg transition-colors duration-200 cursor-pointer"

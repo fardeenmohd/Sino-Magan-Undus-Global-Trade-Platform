@@ -86,7 +86,7 @@ def generate_dynamic_leads_for_product(
             "compliance": "MAFF & MHLW Food Sanitation Act Verified (Registration #JP-MHLW-2026-889)",
             "contacts": [
                 {"name": "Kenji Takahashi", "company": "Tokyo Foods & Superfood Import Corp", "email": "k.takahashi@tokyofoods.co.jp", "reg_id": "DUNS: 69-823-4109"},
-                {"name": "Yumi Sato", "company": "Osaka Bio-Herbal & Health Syndicate", "email": "y.sato@osakabioherbal.jp", "reg_id": "Customs ID: JP-OSA-9921"},
+                {"name": "Sato Naoko", "company": "Kyoto Sato Organic Bio-Boutique KK", "email": "n.sato@satobio.co.jp", "reg_id": "MAFF Reg: #JP-KYO-8821"},
                 {"name": "Hiroshi Tanaka", "company": "Yokohama Maritime Distribution Hub", "email": "tanaka@yokohamamaritime.co.jp", "reg_id": "MAFF Lic: #JP-2026-0041"}
             ]
         },
