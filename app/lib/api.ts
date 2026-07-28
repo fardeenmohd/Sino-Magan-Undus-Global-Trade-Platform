@@ -3,6 +3,37 @@
 const SPRING_BOOT_URL = process.env.NEXT_PUBLIC_SPRING_BOOT_URL || "http://localhost:8080";
 const COMPUTE_ENGINE_URL = process.env.NEXT_PUBLIC_COMPUTE_ENGINE_URL || "http://localhost:8000";
 
+export interface CatalogUser {
+  id?: number;
+  name: string;
+  email: string;
+  company: string;
+  role: string;
+  location: string;
+  rating?: number;
+  avatarUrl?: string;
+}
+
+export interface TradeProduct {
+  id: number;
+  title: string;
+  description: string;
+  category: string;
+  hsCode: string;
+  originCountry: string;
+  destinationCountry: string;
+  destinationFlag: string;
+  portHub: string;
+  tariffRatePct: number;
+  price: number;
+  unit: string;
+  listedBy: CatalogUser;
+  imageUrl: string;
+  leadCount: number;
+  status: "ACTIVE" | "INACTIVE";
+  createdAt: string;
+}
+
 export interface TradeLeadProspect {
   user_id: number;
   name: string;
@@ -1074,5 +1105,240 @@ export function getProductIntelligenceDetails(product: any): ProductIntelligence
       `Includes 100% trace-back batch QR code label on all master packaging units.`,
     ],
     localDistributors: distributors,
+  };
+}
+
+export interface CountryCorridorReport {
+  slug: string;
+  name: string;
+  flag: string;
+  region: string;
+  primaryPorts: string[];
+  averageTariffPct: number;
+  tradeAgreement: string;
+  regulatoryAgency: string;
+  mandatoryCerts: string[];
+  marketOverview: string;
+}
+
+export function getCountryCorridorDetails(rawSlug: string): CountryCorridorReport {
+  const clean = (rawSlug || "japan").toLowerCase().trim();
+
+  if (clean.includes("japan")) {
+    return {
+      slug: "japan",
+      name: "Japan 🇯🇵",
+      flag: "🇯🇵",
+      region: "East Asia",
+      primaryPorts: ["Port of Yokohama", "Port of Tokyo", "Port of Kobe"],
+      averageTariffPct: 3.2,
+      tradeAgreement: "India-Japan Comprehensive Economic Partnership Agreement (CEPA)",
+      regulatoryAgency: "Ministry of Agriculture, Forestry and Fisheries (MAFF) & MHLW Food Sanitation Act",
+      mandatoryCerts: ["JAS Organic Clearance", "MHLW Chemical Residue Certificate", "Phytosanitary Health Certificate", "Certificate of Origin"],
+      marketOverview: "High-value premium market requiring strict zero-defect packaging, pesticide residue testing, and MAFF Agricultural certification.",
+    };
+  }
+
+  if (clean.includes("germany")) {
+    return {
+      slug: "germany",
+      name: "Germany 🇩🇪",
+      flag: "🇩🇪",
+      region: "European Union (EU)",
+      primaryPorts: ["Port of Hamburg", "Port of Bremen"],
+      averageTariffPct: 2.8,
+      tradeAgreement: "EU-India Bilateral Trade & Investment Corridor",
+      regulatoryAgency: "European Food Safety Authority (EFSA) & TRACES NT System",
+      mandatoryCerts: ["EU CE & TRACES Digital Entry", "Eurofins Heavy Metal Test Report", "ISO 22000 / HACCP", "Phytosanitary Certificate"],
+      marketOverview: "Europe's largest economy with high demand for organic superfoods, KSM-66 ashwagandha, spices, and heavy engineering machinery.",
+    };
+  }
+
+  if (clean.includes("sweden")) {
+    return {
+      slug: "sweden",
+      name: "Sweden 🇸🇪",
+      flag: "🇸🇪",
+      region: "Europe (Nordic EU)",
+      primaryPorts: ["Port of Gothenburg", "Port of Stockholm"],
+      averageTariffPct: 2.5,
+      tradeAgreement: "EU-India Single Market Corridor",
+      regulatoryAgency: "Swedish Food Agency (Livsmedelsverket) & TPD2 Tobacco Authority",
+      mandatoryCerts: ["TPD2 Nicotine Pouch Compliance", "Eurofins Lab Test", "Phytosanitary Certificate", "Certificate of Origin"],
+      marketOverview: "Nordic trade hub leading European demand for tobacco-free white nicotine pouches, superfoods, and eco-packaged agricultural produce.",
+    };
+  }
+
+  if (clean.includes("poland")) {
+    return {
+      slug: "poland",
+      name: "Poland 🇵🇱",
+      flag: "🇵🇱",
+      region: "Central Europe (EU)",
+      primaryPorts: ["Port of Gdańsk", "Port of Gdynia"],
+      averageTariffPct: 4.0,
+      tradeAgreement: "EU Single Market Access",
+      regulatoryAgency: "Polish Agricultural & Food Quality Inspection (IJHARS)",
+      mandatoryCerts: ["EU TRACES Registration", "Eurofins Chemical Purity Test", "Phytosanitary Certificate", "HACCP"],
+      marketOverview: "Rapidly growing logistics and agricultural distribution hub connecting Central & Eastern European wholesale networks.",
+    };
+  }
+
+  if (clean.includes("netherlands")) {
+    return {
+      slug: "netherlands",
+      name: "Netherlands 🇳🇱",
+      flag: "🇳🇱",
+      region: "Western Europe (EU Gateway)",
+      primaryPorts: ["Port of Rotterdam", "Port of Amsterdam"],
+      averageTariffPct: 2.8,
+      tradeAgreement: "EU Maritime Freight Gateway Agreement",
+      regulatoryAgency: "Netherlands Food and Consumer Product Safety Authority (NVWA)",
+      mandatoryCerts: ["NVWA Customs Pre-Clearance", "GlobalGAP Audit", "TRACES BCP Entry", "Phytosanitary Certificate"],
+      marketOverview: "The gateway to Europe — Port of Rotterdam processes over 40% of all Asian agricultural and industrial imports into the EU.",
+    };
+  }
+
+  if (clean.includes("australia")) {
+    return {
+      slug: "australia",
+      name: "Australia 🇦🇺",
+      flag: "🇦🇺",
+      region: "Oceania",
+      primaryPorts: ["Port of Sydney", "Port of Melbourne"],
+      averageTariffPct: 4.0,
+      tradeAgreement: "India-Australia Economic Cooperation and Trade Agreement (ECTA)",
+      regulatoryAgency: "Biosecurity Australia & BICON Import Clearance System",
+      mandatoryCerts: ["BICON Import Clearance", "ISO 9001 Quality Audit", "Phytosanitary Certificate", "Certificate of Origin"],
+      marketOverview: "ECTA agreement provides zero-duty or reduced tariff access for over 85% of Indian agricultural produce and engineering machinery.",
+    };
+  }
+
+  if (clean.includes("oman") || clean.includes("uae")) {
+    return {
+      slug: "gulf-gcc",
+      name: "Gulf GCC Region (Oman 🇴🇲 / UAE 🇦🇪)",
+      flag: "🇴🇲",
+      region: "Middle East (GCC)",
+      primaryPorts: ["Port of Salalah", "Port of Jebel Ali (Dubai)"],
+      averageTariffPct: 4.5,
+      tradeAgreement: "India-UAE CEPA & GCC Common External Tariff",
+      regulatoryAgency: "GCC Standardization Organization (GSO) & ESMA Halal Authority",
+      mandatoryCerts: ["GSO Halal Export Certificate", "Ministry of Commerce Clearance", "Phytosanitary Certificate", "Certificate of Origin"],
+      marketOverview: "Premier Middle East re-export hub with high demand for halal meats, fresh onions, rice, makhana, and engineering equipment.",
+    };
+  }
+
+  return {
+    slug: clean,
+    name: `${rawSlug.toUpperCase()} Corridor`,
+    flag: "🌐",
+    region: "Global Trade Network",
+    primaryPorts: ["International Maritime Freight Hub"],
+    averageTariffPct: 3.5,
+    tradeAgreement: "WTO General Agreement on Tariffs and Trade (GATT)",
+    regulatoryAgency: "International Maritime & Customs Authority",
+    mandatoryCerts: ["Phytosanitary Certificate", "Certificate of Origin", "HACCP & ISO 22000"],
+    marketOverview: "Active international import-export corridor with established Indian supplier routes.",
+  };
+}
+
+export interface ExporterProfileReport {
+  id: number;
+  name: string;
+  company: string;
+  email: string;
+  role: string;
+  location: string;
+  rating: number;
+  avatarUrl: string;
+  iecNumber: string;
+  apedaRegistration: string;
+  fssaiLicense: string;
+  exportFacilities: string[];
+  annualCapacity: string;
+  establishedYear: number;
+  activeCorridors: string[];
+}
+
+export function getExporterProfileDetails(exporterId: number | string): ExporterProfileReport {
+  const idNum = Number(exporterId) || 10;
+
+  if (idNum === 10) {
+    return {
+      id: 10,
+      name: "Bihar Organic Agro & Makhana Exim",
+      company: "Bihar Makhana & Superfoods Ltd",
+      email: "makhana@biharagro.in",
+      role: "SUPPLIER",
+      location: "Patna, Bihar 🇮🇳",
+      rating: 5.0,
+      avatarUrl: "https://images.unsplash.com/photo-1544717305-2782549b5136?w=150&auto=format&fit=crop&q=80",
+      iecNumber: "IEC #0318992018",
+      apedaRegistration: "APEDA Reg: APEDA/AGR/2026/88921",
+      fssaiLicense: "FSSAI Lic: 10020031004589",
+      exportFacilities: ["GI-Tagged Bihar Makhana Processing Plant", "Nitrogen Flush Vacuum Packaging Line", "SGS Certified Quality Control Lab"],
+      annualCapacity: "1,200 Metric Tons / Year",
+      establishedYear: 2014,
+      activeCorridors: ["Japan 🇯🇵", "Germany 🇩🇪", "Poland 🇵🇱", "Netherlands 🇳🇱"],
+    };
+  }
+
+  if (idNum === 11) {
+    return {
+      id: 11,
+      name: "Nashik Onion & Agri Producers Co.",
+      company: "Nashik Fresh Produce & Cold Chain",
+      email: "export@nashikonions.co.in",
+      role: "SUPPLIER",
+      location: "Nashik, Maharashtra 🇮🇳",
+      rating: 4.9,
+      avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80",
+      iecNumber: "IEC #0319882109",
+      apedaRegistration: "APEDA Reg: APEDA/VEG/2026/99120",
+      fssaiLicense: "FSSAI Lic: 10019022003144",
+      exportFacilities: ["10,000 MT Cold Storage Facility", "Automated Optical Sorting & Grading Unit", "Dehydrated Onion Flakes Processing"],
+      annualCapacity: "15,000 Metric Tons / Year",
+      establishedYear: 2011,
+      activeCorridors: ["Oman 🇴🇲", "UAE 🇦🇪", "Poland 🇵🇱", "Germany 🇩🇪"],
+    };
+  }
+
+  if (idNum === 12) {
+    return {
+      id: 12,
+      name: "Deccan Poultry & Egg Farms",
+      company: "Deccan Agro & Poultry Exports",
+      email: "eggs@deccanpoultry.in",
+      role: "SUPPLIER",
+      location: "Hyderabad, Telangana 🇮🇳",
+      rating: 4.8,
+      avatarUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80",
+      iecNumber: "IEC #0320119821",
+      apedaRegistration: "APEDA Reg: APEDA/POULTRY/2026/77102",
+      fssaiLicense: "FSSAI Lic: 10018041002981",
+      exportFacilities: ["Biosecure Automated Layer Farm", "Refrigerated Export Egg Packing Hub", "Salmonella & Avian Influenza Screened Lab"],
+      annualCapacity: "45 Million Eggs / Year",
+      establishedYear: 2016,
+      activeCorridors: ["Oman 🇴🇲", "UAE 🇦🇪", "Netherlands 🇳🇱"],
+    };
+  }
+
+  return {
+    id: idNum,
+    name: "Gujarat Engineering & Machinery Works",
+    company: "Gujarat Industrial Equipment Ltd",
+    email: "machinery@gujarateng.in",
+    role: "SUPPLIER",
+    location: "Rajkot, Gujarat 🇮🇳",
+    rating: 4.9,
+    avatarUrl: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80",
+    iecNumber: "IEC #0317889012",
+    apedaRegistration: "EEPC Reg: EEPC/ENG/2026/88291",
+    fssaiLicense: "ISO 9001:2015 & CE Certified",
+    exportFacilities: ["CNC Precision Machining Center", "Heavy Duty Hydraulic Press Assembly Facility", "Crated Wooden Export Packing Unit"],
+    annualCapacity: "2,500 Heavy Machine Units / Year",
+    establishedYear: 2008,
+    activeCorridors: ["Australia 🇦🇺", "Japan 🇯🇵", "Germany 🇩🇪"],
   };
 }

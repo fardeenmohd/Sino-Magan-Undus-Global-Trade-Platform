@@ -741,9 +741,12 @@ export default function ExpandedTradeCatalogPage() {
                   <span className="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-slate-950/90 text-cyan-400 border border-cyan-500/30 backdrop-blur-sm">
                     {product.hsCode}
                   </span>
-                  <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-950/90 text-slate-200 border border-slate-700 backdrop-blur-sm">
+                  <Link
+                    href={`/countries/${product.destinationCountry.toLowerCase()}`}
+                    className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-950/90 text-slate-200 border border-slate-700 backdrop-blur-sm hover:border-cyan-400 hover:text-cyan-400 transition-colors"
+                  >
                     {product.destinationFlag} {product.destinationCountry}
-                  </span>
+                  </Link>
                 </div>
                 <span className="absolute bottom-3 right-3 px-2.5 py-1 rounded-lg bg-emerald-950/90 text-emerald-400 border border-emerald-800/40 text-xs font-mono font-semibold backdrop-blur-sm">
                   ⚡ {product.leadCount} Buyer Leads
@@ -776,17 +779,20 @@ export default function ExpandedTradeCatalogPage() {
                   </div>
 
                   {/* Exporter Info */}
-                  <div className="flex items-center gap-2.5 pt-1">
+                  <Link
+                    href={`/exporters/${product.listedBy?.id || 10}`}
+                    className="flex items-center gap-2.5 pt-1 group/exporter hover:opacity-80 transition-opacity"
+                  >
                     <img
                       src={product.listedBy.avatarUrl}
                       alt={product.listedBy.name}
                       className="w-7 h-7 rounded-full object-cover border border-slate-700"
                     />
                     <div className="text-xs truncate">
-                      <span className="text-slate-200 font-medium">{product.listedBy.company}</span>
+                      <span className="text-slate-200 font-medium group-hover/exporter:text-cyan-400 transition-colors">{product.listedBy.company}</span>
                       <div className="text-slate-400 text-[10px]">{product.listedBy.location}</div>
                     </div>
-                  </div>
+                  </Link>
 
                   {/* Action Button */}
                   <div className="grid grid-cols-1 gap-2 pt-1">

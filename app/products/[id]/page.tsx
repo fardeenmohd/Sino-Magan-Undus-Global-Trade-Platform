@@ -221,9 +221,12 @@ export default function ProductDetailPage() {
                 <span className="px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 font-mono text-xs font-bold">
                   {product.category}
                 </span>
-                <span className="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono text-xs font-bold flex items-center gap-1">
+                <Link
+                  href={`/countries/${product.destinationCountry.toLowerCase()}`}
+                  className="px-3 py-1 rounded-full bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 font-mono text-xs font-bold flex items-center gap-1 transition-colors"
+                >
                   <span>{product.originCountry}</span> ➔ <span>{product.destinationCountry}</span>
-                </span>
+                </Link>
                 <span className="px-3 py-1 rounded-full bg-slate-800 text-slate-300 font-mono text-xs">
                   Port: {product.portHub}
                 </span>
@@ -254,10 +257,13 @@ export default function ProductDetailPage() {
                   <div className="text-base font-bold font-mono text-emerald-400">{productLeads.length} Leads Found</div>
                 </div>
 
-                <div className="p-3 bg-slate-950/80 border border-slate-800 rounded-xl">
-                  <div className="text-[10px] font-mono text-slate-400 uppercase">Supplier Role</div>
-                  <div className="text-base font-bold text-slate-200">{product.listedBy?.name || "Verified Exporter"}</div>
-                </div>
+                <Link
+                  href={`/exporters/${product.listedBy?.id || 10}`}
+                  className="p-3 bg-slate-950/80 border border-slate-800 hover:border-cyan-500/50 rounded-xl transition-colors group/exp"
+                >
+                  <div className="text-[10px] font-mono text-slate-400 uppercase">Verified Exporter</div>
+                  <div className="text-base font-bold text-slate-200 group-hover/exp:text-cyan-400 truncate">{product.listedBy?.company || "Bihar Makhana & Superfoods Ltd"}</div>
+                </Link>
               </div>
 
               {/* Quick Actions */}
