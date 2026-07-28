@@ -854,17 +854,6 @@ export default function UserDashboardPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-400 mb-1">Unit of Measurement</label>
-                <input
-                  type="text"
-                  value={newListingForm.unit}
-                  onChange={(e) => setNewListingForm({ ...newListingForm, unit: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-slate-100 focus:outline-none focus:border-cyan-500/50"
-                  placeholder="e.g. kg, metric ton, crate, machine unit..."
-                />
-              </div>
-
-              <div>
                 <label className="block text-xs font-medium text-slate-400 mb-1">Specifications & Phytosanitary Notes</label>
                 <textarea
                   rows={3}

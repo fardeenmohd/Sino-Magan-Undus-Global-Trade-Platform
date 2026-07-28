@@ -4,11 +4,12 @@ All notable changes to Project Antigravity will be documented in this file.
 
 ## [Unreleased]
 
-### Fixed & Enhanced
-- **🎯 Click-Outside Popover Dismissal & Custom Category Support ([`app/page.tsx`](file:///C:/Users/fardi/Documents/antigravity/joyful-raman/app/page.tsx), [`app/dashboard/page.tsx`](file:///C:/Users/fardi/Documents/antigravity/joyful-raman/app/dashboard/page.tsx), [`app/admin/page.tsx`](file:///C:/Users/fardi/Documents/antigravity/joyful-raman/app/admin/page.tsx))**:
-  - Added global click-outside listeners (`useRef` + `mousedown`) for all autocomplete containers (Commodity Autocomplete & Country Autocomplete) so clicking anywhere outside automatically closes active popovers.
-  - Added **`✨ Custom Category / New Sector`** option to category selectors in both the Public Post Import Requirement (RFQ) modal (`app/page.tsx`) and Exporter Add Listing modal (`app/dashboard/page.tsx`).
-  - Selecting custom category reveals a dedicated text input field allowing users to enter custom sector names (e.g. `Bio-Pharmaceuticals`, `Renewable Energy Equipment`, `Organic Oils & Resins`).
+### Refactored & Streamlined
+- **✨ Removal of Manual Unit of Measurement Inputs ([`app/dashboard/page.tsx`](file:///C:/Users/fardi/Documents/antigravity/joyful-raman/app/dashboard/page.tsx))**:
+  - Removed manual `Unit of Measurement` input fields across product listing and lead submission forms.
+  - Units are automatically handled/defaulted behind the scenes in data structures (`unit: "metric_ton"` / `"kg"` / `"unit"`).
+
+- **🎯 Click-Outside Popover Dismissal & Custom Category Support**.
 
 - **✨ Removal of Manual Sea Port Hub & Export Price Inputs**.
 
