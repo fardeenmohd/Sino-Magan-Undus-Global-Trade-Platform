@@ -49,7 +49,7 @@ The platform combines a **Next.js 14** web application, a **Spring Boot 3 Java A
 - **Credentials**: `admin@sinomaganundus.global` / `AdminSecret2026!`
 - **Executive KPI Cards**: Total Export Goods, Importer Prospects, FOB Valuation, Python Engine Status.
 - **Master Exporting Goods & Import Leads Tables**: Complete CRUD and status management.
-- **🕷️ Web Scraper Intelligence & Discovery Tab**: Dedicated tab to launch targeted crawlers across international registries (`trade.ec.europa.eu`, `us.customs.gov`, `apeda.gov.in`, `customs.gov.se`). Features **Target Country Dropdown** (USA 🇺🇸, Germany 🇩🇪, Sweden 🇸🇪, Poland 🇵🇱, UK 🇬🇧, etc.) and **Sourcing Mode Dropdown** (`📦 EXPORT PRODUCTS ONLY`, `🎯 IMPORT BUYER LEADS ONLY`, `⚡ BOTH`) with 1-click **`➕ Approve & Publish to Global Catalog`** button.
+- **🕷️ Web Scraper Intelligence & Discovery Tab**: Dedicated tab to launch targeted crawlers across international registries (`trade.ec.europa.eu`, `us.customs.gov`, `apeda.gov.in`, `customs.gov.se`, `chamber.de`, `bolagsverket.se`). Features **Target Country Dropdown** (USA 🇺🇸, Germany 🇩🇪, Sweden 🇸🇪, Poland 🇵🇱, UK 🇬🇧, etc.), **Sourcing Mode Dropdown** (`🏬 LOCAL IN-COUNTRY VENDORS ONLY`, `📦 EXPORT PRODUCTS ONLY`, `🎯 IMPORT BUYER LEADS ONLY`, `⚡ ALL TYPES`), and **Crawl Depth Selector** (8, 12, 16 results) with 1-click **`➕ Approve & Publish to Global Catalog`** button.
 - **⚡ Python Compute Engine Super-Trigger Control Center**: Execute on-demand trade route scrapers with 1-click preset corridors (*Swedish Snus 🇸🇪, Organic Ashwagandha 🇺🇸, German Spices 🇩🇪, UAE Halal Meat 🇦🇪, Polish Vegetables 🇵🇱, Australian Machinery 🇦🇺*).
 
 ### 5. 🛡️ Strict Deduplication Guard

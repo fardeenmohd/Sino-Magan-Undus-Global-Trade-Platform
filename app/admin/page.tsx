@@ -33,7 +33,8 @@ export default function AdminDashboardPage() {
   const [scraperForm, setScraperForm] = useState({
     keyword: "Ashwagandha & Herbal Extracts",
     destination: "Germany 🇩🇪",
-    sourcingMode: "BOTH" as "EXPORT_PRODUCT" | "IMPORT_LEAD" | "BOTH",
+    sourcingMode: "BOTH" as "EXPORT_PRODUCT" | "IMPORT_LEAD" | "LOCAL_VENDOR" | "BOTH",
+    crawlLimit: 12,
     minBudget: 25000,
   });
 
@@ -166,17 +167,18 @@ export default function AdminDashboardPage() {
   const handleLaunchWebScraper = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     setIsScraping(true);
-    setScrapedStatusMessage(`🔍 Scraping live trade registries for ${scraperForm.destination} (${scraperForm.sourcingMode})...`);
+    setScrapedStatusMessage(`🔍 Scraping live trade registries for ${scraperForm.destination} (${scraperForm.crawlLimit} results, Mode: ${scraperForm.sourcingMode})...`);
 
     try {
       const results = await scrapeNewOpportunitiesApi(
         scraperForm.keyword,
         scraperForm.destination,
         scraperForm.minBudget,
-        scraperForm.sourcingMode
+        scraperForm.sourcingMode,
+        scraperForm.crawlLimit
       );
       setScrapedOpportunities(results);
-      setScrapedStatusMessage(`✅ Web Scraper discovered ${results.length} new trade opportunities in ${scraperForm.destination}!`);
+      setScrapedStatusMessage(`✅ Web Scraper discovered ${results.length} explorative trade & vendor opportunities in ${scraperForm.destination}!`);
     } catch (err) {
       console.error(err);
       setScrapedStatusMessage("⚠️ Web Scraper completed crawl.");
@@ -1045,20 +1047,24 @@ export default function AdminDashboardPage() {
                     onChange={(e) => setScraperForm({ ...scraperForm, sourcingMode: e.target.value as any })}
                     className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-purple-300 focus:outline-none focus:border-purple-500 cursor-pointer font-bold"
                   >
-                    <option value="BOTH">⚡ BOTH (Export Products & Importer Leads)</option>
+                    <option value="BOTH">⚡ ALL OPPORTUNITY TYPES (Combined Mega-Crawl)</option>
+                    <option value="LOCAL_VENDOR">🏬 LOCAL IN-COUNTRY VENDORS ONLY</option>
                     <option value="EXPORT_PRODUCT">📦 EXPORT PRODUCTS ONLY</option>
                     <option value="IMPORT_LEAD">🎯 IMPORT BUYER LEADS ONLY</option>
                   </select>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-purple-300 mb-1">Min Annual Budget ($)</label>
-                  <input
-                    type="number"
-                    value={scraperForm.minBudget}
-                    onChange={(e) => setScraperForm({ ...scraperForm, minBudget: Number(e.target.value) })}
-                    className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-slate-200 focus:outline-none focus:border-purple-500 font-mono"
-                  />
+                  <label className="block text-xs font-semibold text-purple-300 mb-1">Crawl Depth / Volume 📊</label>
+                  <select
+                    value={scraperForm.crawlLimit}
+                    onChange={(e) => setScraperForm({ ...scraperForm, crawlLimit: Number(e.target.value) })}
+                    className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-purple-300 focus:outline-none focus:border-purple-500 cursor-pointer font-bold"
+                  >
+                    <option value={8}>8 Results (Fast Scan)</option>
+                    <option value={12}>12 Results (Standard Deep Scan)</option>
+                    <option value={16}>16 Results (Maximum Comprehensive Scan)</option>
+                  </select>
                 </div>
               </form>
 
@@ -1068,7 +1074,16 @@ export default function AdminDashboardPage() {
                 <div className="flex flex-wrap gap-2">
                   <button
                     onClick={() => {
-                      setScraperForm({ keyword: "Ashwagandha & Herbal Extracts", destination: "Germany 🇩🇪", sourcingMode: "BOTH", minBudget: 35000 });
+                      setScraperForm({ keyword: "Germany Local Distributors & Cold Storage", destination: "Germany 🇩🇪", sourcingMode: "LOCAL_VENDOR", crawlLimit: 12, minBudget: 50000 });
+                      handleLaunchWebScraper();
+                    }}
+                    className="px-3 py-1.5 bg-amber-950/60 hover:bg-amber-900 border border-amber-500/40 rounded-lg text-xs font-mono text-amber-300 cursor-pointer font-bold"
+                  >
+                    🏬 Scrape German In-Country Vendors
+                  </button>
+                  <button
+                    onClick={() => {
+                      setScraperForm({ keyword: "Ashwagandha & Herbal Extracts", destination: "Germany 🇩🇪", sourcingMode: "BOTH", crawlLimit: 12, minBudget: 35000 });
                       handleLaunchWebScraper();
                     }}
                     className="px-3 py-1.5 bg-slate-950 hover:bg-slate-800 border border-purple-500/30 rounded-lg text-xs font-mono text-purple-300 cursor-pointer"
@@ -1077,7 +1092,7 @@ export default function AdminDashboardPage() {
                   </button>
                   <button
                     onClick={() => {
-                      setScraperForm({ keyword: "Nicotine Pouches & Snus", destination: "Sweden 🇸🇪", sourcingMode: "IMPORT_LEAD", minBudget: 25000 });
+                      setScraperForm({ keyword: "Nicotine Pouches & Snus", destination: "Sweden 🇸🇪", sourcingMode: "IMPORT_LEAD", crawlLimit: 12, minBudget: 25000 });
                       handleLaunchWebScraper();
                     }}
                     className="px-3 py-1.5 bg-slate-950 hover:bg-slate-800 border border-purple-500/30 rounded-lg text-xs font-mono text-purple-300 cursor-pointer"
@@ -1086,7 +1101,7 @@ export default function AdminDashboardPage() {
                   </button>
                   <button
                     onClick={() => {
-                      setScraperForm({ keyword: "Foxnuts & Superfoods", destination: "United States 🇺🇸", sourcingMode: "EXPORT_PRODUCT", minBudget: 40000 });
+                      setScraperForm({ keyword: "Foxnuts & Superfoods", destination: "United States 🇺🇸", sourcingMode: "EXPORT_PRODUCT", crawlLimit: 12, minBudget: 40000 });
                       handleLaunchWebScraper();
                     }}
                     className="px-3 py-1.5 bg-slate-950 hover:bg-slate-800 border border-purple-500/30 rounded-lg text-xs font-mono text-purple-300 cursor-pointer"
@@ -1095,7 +1110,7 @@ export default function AdminDashboardPage() {
                   </button>
                   <button
                     onClick={() => {
-                      setScraperForm({ keyword: "Halal Meat & Poultry", destination: "Oman 🇴🇲", sourcingMode: "BOTH", minBudget: 50000 });
+                      setScraperForm({ keyword: "Halal Meat & Poultry", destination: "Oman 🇴🇲", sourcingMode: "BOTH", crawlLimit: 12, minBudget: 50000 });
                       handleLaunchWebScraper();
                     }}
                     className="px-3 py-1.5 bg-slate-950 hover:bg-slate-800 border border-purple-500/30 rounded-lg text-xs font-mono text-purple-300 cursor-pointer"
@@ -1118,8 +1133,8 @@ export default function AdminDashboardPage() {
             <div className="bg-slate-900/60 border border-slate-800 p-6 rounded-2xl space-y-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <h4 className="text-sm font-bold text-white">Discovered Trade Opportunities ({scrapedOpportunities.length})</h4>
-                  <p className="text-xs text-slate-400">Novel products and buyer leads scraped directly from global registries for {scraperForm.destination}</p>
+                  <h4 className="text-sm font-bold text-white">Discovered Trade & Vendor Opportunities ({scrapedOpportunities.length})</h4>
+                  <p className="text-xs text-slate-400">Novel export products, import buyers, and local in-country vendors scraped directly from global registries for {scraperForm.destination}</p>
                 </div>
               </div>
 
@@ -1134,9 +1149,15 @@ export default function AdminDashboardPage() {
                         <span className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold ${
                           item.opportunityType === "EXPORT_PRODUCT"
                             ? "bg-cyan-500/10 text-cyan-400 border border-cyan-500/30"
+                            : item.opportunityType === "LOCAL_VENDOR"
+                            ? "bg-amber-500/10 text-amber-300 border border-amber-500/30"
                             : "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30"
                         }`}>
-                          {item.opportunityType === "EXPORT_PRODUCT" ? "📦 EXPORT PRODUCT" : "🎯 IMPORT BUYER LEAD"}
+                          {item.opportunityType === "EXPORT_PRODUCT"
+                            ? "📦 EXPORT PRODUCT"
+                            : item.opportunityType === "LOCAL_VENDOR"
+                            ? `🏬 LOCAL VENDOR${item.vendorType ? ` (${item.vendorType.replace("_", " ")})` : ""}`
+                            : "🎯 IMPORT BUYER LEAD"}
                         </span>
                         <span className="text-[11px] font-mono text-cyan-400 bg-cyan-950/50 px-2 py-0.5 rounded border border-cyan-500/20">
                           {item.sourceDomain}

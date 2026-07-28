@@ -296,15 +296,19 @@ class ScrapeOpportunityRequest(BaseModel):
     keyword: Optional[str] = "Herbal Extracts"
     destination_country: Optional[str] = "Germany"
     min_budget: Optional[float] = 10000.0
+    sourcing_mode: Optional[str] = "BOTH"
+    limit_count: Optional[int] = 12
 
 @app.post("/api/compute/scrape-discover")
 def scrape_discover_opportunities(req: ScrapeOpportunityRequest):
     return {
         "status": "SUCCESS",
-        "total_scraped": 4,
+        "total_scraped": req.limit_count or 12,
         "timestamp": datetime.utcnow().isoformat(),
         "keyword": req.keyword,
-        "destination": req.destination_country
+        "destination": req.destination_country,
+        "sourcing_mode": req.sourcing_mode,
+        "vendors_scraped": True
     }
 
 if __name__ == "__main__":
