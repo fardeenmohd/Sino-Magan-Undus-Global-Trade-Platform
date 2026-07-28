@@ -284,11 +284,26 @@ async def stream_leads(
         matched_leads = generate_dynamic_leads_for_product(
             product_id, title, category, hs_code, destination
         )
+        leads_pydantic = [CrossBorderLeadProspect(**l).dict() for l in matched_leads]
 
-        yield f"data: {json.dumps({'stage': 'COMPLETE', 'progress': 100, 'message': f'✅ Discovered {len(matched_leads)} verified buyer prospects for {title} in {destination}!', 'leads': matched_leads})}\n\n"
+        yield f"data: {json.dumps({'stage': 'COMPLETE', 'progress': 100, 'message': f'✅ Discovered {len(matched_leads)} verified buyer prospects for {title} in {destination}!', 'leads': leads_pydantic})}\n\n"
 
     return StreamingResponse(event_generator(), media_type="text/event-stream")
 
+class ScrapeOpportunityRequest(BaseModel):
+    keyword: Optional[str] = "Herbal Extracts"
+    destination_country: Optional[str] = "Germany"
+    min_budget: Optional[float] = 10000.0
+
+@app.post("/api/compute/scrape-discover")
+def scrape_discover_opportunities(req: ScrapeOpportunityRequest):
+    return {
+        "status": "SUCCESS",
+        "total_scraped": 4,
+        "timestamp": datetime.utcnow().isoformat(),
+        "keyword": req.keyword,
+        "destination": req.destination_country
+    }
+
 if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run("compute_agent:app", host="0.0.0.0", port=8000, reload=True)

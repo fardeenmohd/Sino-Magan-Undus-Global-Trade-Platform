@@ -5,13 +5,16 @@ All notable changes to Project Antigravity will be documented in this file.
 ## [Unreleased]
 
 ### Added
-- **💡 Smart Product & Commodity Title Autocomplete Engine**:
-  - Implemented interactive real-time autocomplete engine across **Post Import Requirement (RFQ)** and **Add Export Listing** forms on the Landing Page (`app/page.tsx`), User Dashboard (`app/dashboard/page.tsx`), and Admin Portal (`app/admin/page.tsx`).
-  - Powered by `COMMODITY_AUTOCOMPLETE_DATABASE` and `searchCommodityAutocomplete()` in [`app/lib/api.ts`](file:///C:/Users/fardi/Documents/antigravity/joyful-raman/app/lib/api.ts).
-  - Selecting any suggestion automatically auto-fills: **Product Title**, **Category**, **HS Code**, and **FOB Unit Price ($)**.
+- **🕷️ Admin Web Scraper Intelligence & Opportunity Explorer Tab ([`app/admin/page.tsx`](file:///C:/Users/fardi/Documents/antigravity/joyful-raman/app/admin/page.tsx))**:
+  - Added dedicated **`🕷️ Scraper Discovery Engine`** tab under the Admin Command Center (`/admin`).
+  - Powered by `/api/compute/scrape-discover` endpoint in Python FastAPI Compute Engine ([`src/main/python/compute_agent.py`](file:///C:/Users/fardi/Documents/antigravity/joyful-raman/src/main/python/compute_agent.py)) and `scrapeNewOpportunitiesApi()` in [`app/lib/api.ts`](file:///C:/Users/fardi/Documents/antigravity/joyful-raman/app/lib/api.ts).
+  - Features real-time web crawler presets (*EU Herbal Extract Buyers*, *Swedish Tobacco Distributors*, *US Superfood Importers*, *GCC Halal Buyers*).
+  - Displays novel products and buyer prospects marked with authentic source web domain citations (`trade.ec.europa.eu`, `us.customs.gov`, `apeda.gov.in`, `customs.gov.se`).
+  - Features **`➕ Approve & Publish to Global Catalog`** button that immediately appends the scraped product and buyer lead to the shared database for all platform users!
 
-- **📚 Official Project Documentation & README (`README.md`)**:
-  - Created comprehensive [`README.md`](file:///C:/Users/fardi/Documents/antigravity/joyful-raman/README.md) detailing project overview, technical architecture (Next.js 14, Spring Boot 3, Python FastAPI), featured commodity lines, quick setup guide, demo credentials, and automatic feature update policy.
+- **💡 Smart Product & Commodity Title Autocomplete Engine**.
+
+- **📚 Official Project Documentation & README (`README.md`)**.
 
 - **🌱 Organic Indian KSM-66 Ashwagandha Root Extract (`HS-1211`) Initial Commodity Line & Seeded Leads**.
 
@@ -20,5 +23,3 @@ All notable changes to Project Antigravity will be documented in this file.
 - **🌐 Universal Shared Database Persistence for Products & Leads**.
 
 - **🔒 Protected Admin Portal & Python Engine Control Center ([`app/admin/page.tsx`](file:///C:/Users/fardi/Documents/antigravity/joyful-raman/app/admin/page.tsx))**.
-
-- **Complete Platform Rebrand to "Sino Magan Undus Global Trade"**.

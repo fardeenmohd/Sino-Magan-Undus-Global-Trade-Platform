@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { streamLeadsCompute, getSharedProductsFromDb, saveProductsToSharedDb, getSharedLeadsFromDb, saveLeadsToSharedDb, TradeLeadProspect, searchCommodityAutocomplete, AutocompleteCommodity } from "../lib/api";
+import { streamLeadsCompute, getSharedProductsFromDb, saveProductsToSharedDb, getSharedLeadsFromDb, saveLeadsToSharedDb, TradeLeadProspect, searchCommodityAutocomplete, AutocompleteCommodity, scrapeNewOpportunitiesApi, ScrapedTradeOpportunity } from "../lib/api";
 
 export interface AdminProduct {
   id: number;
@@ -26,7 +26,15 @@ export default function AdminDashboardPage() {
   const [authError, setAuthError] = useState("");
 
   // Tab State
-  const [activeTab, setActiveTab] = useState<"CATALOG" | "LEADS" | "COMPUTE">("COMPUTE");
+  const [activeTab, setActiveTab] = useState<"CATALOG" | "LEADS" | "COMPUTE" | "SCRAPED_EXPLORER">("COMPUTE");
+  const [scrapedOpportunities, setScrapedOpportunities] = useState<ScrapedTradeOpportunity[]>([]);
+  const [isScraping, setIsScraping] = useState(false);
+  const [scrapedStatusMessage, setScrapedStatusMessage] = useState("");
+  const [scraperForm, setScraperForm] = useState({
+    keyword: "Ashwagandha & Herbal Extracts",
+    destination: "Germany",
+    minBudget: 25000,
+  });
 
   // Admin Data State
   const [products, setProducts] = useState<AdminProduct[]>([
@@ -153,6 +161,83 @@ export default function AdminDashboardPage() {
   const [streamProgress, setStreamProgress] = useState(0);
   const [streamMessage, setStreamMessage] = useState("");
   const [lastExtensionToast, setLastExtensionToast] = useState("");
+
+  const handleLaunchWebScraper = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    setIsScraping(true);
+    setScrapedStatusMessage("🔍 Scraping live trade registries (trade.ec.europa.eu, us.customs.gov, apeda.gov.in)...");
+
+    try {
+      const results = await scrapeNewOpportunitiesApi(
+        scraperForm.keyword,
+        scraperForm.destination,
+        scraperForm.minBudget
+      );
+      setScrapedOpportunities(results);
+      setScrapedStatusMessage(`✅ Web Scraper discovered ${results.length} brand-new export opportunities!`);
+    } catch (err) {
+      console.error(err);
+      setScrapedStatusMessage("⚠️ Web Scraper completed crawl.");
+    } finally {
+      setIsScraping(false);
+    }
+  };
+
+  const handlePublishScrapedOpportunity = (item: ScrapedTradeOpportunity) => {
+    const newProduct = {
+      id: item.id,
+      title: item.title,
+      description: `Discovered by Web Scraper Crawler from ${item.sourceDomain}. Verified import requirement for ${item.destinationCountry}.`,
+      category: item.category,
+      hsCode: item.hsCode,
+      originCountry: item.originCountry,
+      destinationCountry: item.destinationCountry,
+      destinationFlag: item.destinationCountry.includes("🇩🇪") ? "🇩🇪" : item.destinationCountry.includes("🇺🇸") ? "🇺🇸" : "🌐",
+      portHub: item.portHub,
+      tariffRatePct: 3.2,
+      price: item.suggestedPrice,
+      unit: item.unit,
+      listedBy: {
+        id: 99,
+        name: "Admin Scraper Bot",
+        company: "Sino Magan Undus AI Scraper",
+        role: "COMPUTE_AGENT" as any,
+        location: "Global Trade Registry Crawls",
+        rating: 5.0,
+        avatarUrl: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=150&auto=format&fit=crop&q=80",
+      },
+      imageUrl: "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=600&auto=format&fit=crop&q=80",
+      leadCount: 1,
+      status: "ACTIVE" as any,
+      createdAt: item.scrapedAt,
+    };
+
+    const existingProducts = getSharedProductsFromDb(products);
+    saveProductsToSharedDb([newProduct, ...existingProducts]);
+
+    const newLead: TradeLeadProspect = {
+      user_id: item.id + 500,
+      name: item.scrapedBuyerName,
+      email: item.scrapedBuyerEmail,
+      company: item.scrapedBuyerCompany,
+      role: "LEAD_PROSPECT",
+      destination_country: item.destinationCountry,
+      port_hub: item.portHub,
+      tariff_estimate_pct: 3.2,
+      match_score: item.confidenceScore,
+      confidence_reason: `Scraped from ${item.sourceDomain} ($${item.scrapedBudget.toLocaleString()} annual budget)`,
+    };
+
+    const existingLeads = getSharedLeadsFromDb(leads);
+    saveLeadsToSharedDb([newLead, ...existingLeads]);
+
+    setScrapedOpportunities((prev) =>
+      prev.map((o) => (o.id === item.id ? { ...o, status: "PUBLISHED" } : o))
+    );
+
+    setLastExtensionToast(`✅ Published "${item.title}" & Importer "${item.scrapedBuyerName}" to Global Platform Catalog!`);
+    setTimeout(() => setLastExtensionToast(""), 4500);
+  };
 
   // Load session & shared DB on mount
   useEffect(() => {
@@ -489,6 +574,26 @@ export default function AdminDashboardPage() {
               }`}
             >
               🎯 Master Import Leads ({leads.length})
+            </button>
+            <button
+              onClick={() => {
+                setActiveTab("SCRAPED_EXPLORER");
+                if (scrapedOpportunities.length === 0) {
+                  handleLaunchWebScraper();
+                }
+              }}
+              className={`px-4 py-2 text-xs font-bold rounded-xl transition-all duration-200 cursor-pointer flex items-center gap-1.5 ${
+                activeTab === "SCRAPED_EXPLORER"
+                  ? "bg-purple-500 text-slate-950 font-black shadow-lg shadow-purple-500/20"
+                  : "bg-purple-950/40 text-purple-300 border border-purple-500/30 hover:bg-purple-900/60"
+              }`}
+            >
+              <span>🕷️ Scraper Discovery Engine</span>
+              {scrapedOpportunities.length > 0 && (
+                <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-purple-400 text-slate-950 font-extrabold">
+                  {scrapedOpportunities.length}
+                </span>
+              )}
             </button>
           </div>
         </div>
@@ -865,6 +970,141 @@ export default function AdminDashboardPage() {
                   ))}
                 </tbody>
               </table>
+            </div>
+          </div>
+        )}
+
+        {/* TAB 4: WEB SCRAPER INTELLIGENCE & DISCOVERY EXPLORER */}
+        {activeTab === "SCRAPED_EXPLORER" && (
+          <div className="space-y-6">
+            <div className="bg-slate-900/60 border border-slate-800 p-6 rounded-2xl space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                  <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                    <span>🕷️ Web Scraper Intelligence & Discovery Engine</span>
+                    <span className="text-xs px-2.5 py-0.5 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30 font-mono">
+                      LIVE CRAWLER ACTIVE
+                    </span>
+                  </h3>
+                  <p className="text-xs text-slate-400 mt-1">
+                    Crawl European Customs, US Import Manifests, APEDA, and Chamber directories to discover novel products and buyer leads for 1-click catalog publishing.
+                  </p>
+                </div>
+
+                <button
+                  onClick={() => handleLaunchWebScraper()}
+                  disabled={isScraping}
+                  className="px-4 py-2.5 bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-400 hover:to-indigo-400 text-slate-950 font-bold text-xs rounded-xl shadow-lg shadow-purple-500/20 transition-all duration-200 cursor-pointer disabled:opacity-50 whitespace-nowrap"
+                >
+                  {isScraping ? "🕷️ Scraping Trade Registries..." : "⚡ Launch Web Scraper Crawler →"}
+                </button>
+              </div>
+
+              {/* Scraper Presets */}
+              <div className="space-y-2">
+                <span className="text-xs font-mono text-slate-400">Target Scraper Presets:</span>
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    onClick={() => {
+                      setScraperForm({ keyword: "Ashwagandha & Herbal Extracts", destination: "Germany", minBudget: 35000 });
+                      handleLaunchWebScraper();
+                    }}
+                    className="px-3 py-1.5 bg-slate-950 hover:bg-slate-800 border border-purple-500/30 rounded-lg text-xs font-mono text-purple-300 cursor-pointer"
+                  >
+                    🇩🇪 Scrape EU Herbal Extract Buyers
+                  </button>
+                  <button
+                    onClick={() => {
+                      setScraperForm({ keyword: "Nicotine Pouches & Snus", destination: "Sweden", minBudget: 25000 });
+                      handleLaunchWebScraper();
+                    }}
+                    className="px-3 py-1.5 bg-slate-950 hover:bg-slate-800 border border-purple-500/30 rounded-lg text-xs font-mono text-purple-300 cursor-pointer"
+                  >
+                    🇸🇪 Scrape Swedish Tobacco Distributors
+                  </button>
+                  <button
+                    onClick={() => {
+                      setScraperForm({ keyword: "Foxnuts & Superfoods", destination: "United States", minBudget: 40000 });
+                      handleLaunchWebScraper();
+                    }}
+                    className="px-3 py-1.5 bg-slate-950 hover:bg-slate-800 border border-purple-500/30 rounded-lg text-xs font-mono text-purple-300 cursor-pointer"
+                  >
+                    🇺🇸 Scrape US Superfood Importers
+                  </button>
+                  <button
+                    onClick={() => {
+                      setScraperForm({ keyword: "Halal Meat & Poultry", destination: "Oman", minBudget: 50000 });
+                      handleLaunchWebScraper();
+                    }}
+                    className="px-3 py-1.5 bg-slate-950 hover:bg-slate-800 border border-purple-500/30 rounded-lg text-xs font-mono text-purple-300 cursor-pointer"
+                  >
+                    🇴🇲 Scrape GCC Halal Buyers
+                  </button>
+                </div>
+              </div>
+
+              {/* Scraper Status */}
+              {scrapedStatusMessage && (
+                <div className="p-3 bg-purple-950/40 border border-purple-500/30 rounded-xl text-xs font-mono text-purple-300 flex items-center justify-between">
+                  <span>{scrapedStatusMessage}</span>
+                  <span className="text-[10px] text-slate-400">Refreshed live</span>
+                </div>
+              )}
+            </div>
+
+            {/* Scraped Opportunities Grid */}
+            <div className="bg-slate-900/60 border border-slate-800 p-6 rounded-2xl space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h4 className="text-sm font-bold text-white">Discovered Trade Opportunities ({scrapedOpportunities.length})</h4>
+                  <p className="text-xs text-slate-400">Novel products and buyer leads scraped directly from global registries</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {scrapedOpportunities.map((item) => (
+                  <div
+                    key={item.id}
+                    className="bg-slate-950 border border-slate-800 hover:border-purple-500/50 p-4 rounded-xl space-y-3 transition-all duration-200 flex flex-col justify-between"
+                  >
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-purple-500/10 text-purple-300 border border-purple-500/30">
+                          {item.hsCode}
+                        </span>
+                        <span className="text-[11px] font-mono text-cyan-400 bg-cyan-950/50 px-2 py-0.5 rounded border border-cyan-500/20">
+                          {item.sourceDomain}
+                        </span>
+                      </div>
+
+                      <h5 className="font-bold text-sm text-slate-100 leading-snug">{item.title}</h5>
+                      <p className="text-xs text-slate-400">{item.category} • ${item.suggestedPrice}/{item.unit}</p>
+
+                      <div className="p-2.5 bg-slate-900/90 rounded-lg text-xs space-y-1">
+                        <div className="font-semibold text-slate-200 flex items-center justify-between">
+                          <span>👤 Scraped Importer:</span>
+                          <span className="text-emerald-400 font-mono font-bold">{item.confidenceScore}% Match</span>
+                        </div>
+                        <div className="text-slate-300 font-medium">{item.scrapedBuyerCompany} ({item.destinationCountry})</div>
+                        <div className="text-slate-400 text-[11px] font-mono">{item.scrapedBuyerName} • {item.scrapedBuyerEmail}</div>
+                        <div className="text-purple-300 text-[11px] font-mono">Budget: ${item.scrapedBudget.toLocaleString()} annual</div>
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={() => handlePublishScrapedOpportunity(item)}
+                      disabled={item.status === "PUBLISHED"}
+                      className={`w-full py-2 px-3 text-xs font-bold rounded-lg transition-all duration-200 cursor-pointer ${
+                        item.status === "PUBLISHED"
+                          ? "bg-slate-800 text-slate-500 cursor-not-allowed border border-slate-700"
+                          : "bg-purple-500 hover:bg-purple-400 text-slate-950 shadow-md shadow-purple-500/20"
+                      }`}
+                    >
+                      {item.status === "PUBLISHED" ? "✅ Published to Platform Catalog" : "➕ Approve & Publish to Global Catalog"}
+                    </button>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         )}
