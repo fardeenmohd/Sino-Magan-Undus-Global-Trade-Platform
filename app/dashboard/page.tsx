@@ -178,7 +178,7 @@ export default function UserDashboardPage() {
 
   const [newListingForm, setNewListingForm] = useState({
     title: "",
-    category: "Makhana & Superfoods",
+    category: "",
     customCategory: "",
     hsCode: "",
     destinationCountry: "",
@@ -748,10 +748,12 @@ export default function UserDashboardPage() {
                 <div>
                   <label className="block text-xs font-medium text-slate-400 mb-1">Category *</label>
                   <select
+                    required
                     value={newListingForm.category}
                     onChange={(e) => setNewListingForm({ ...newListingForm, category: e.target.value })}
                     className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-slate-100 focus:outline-none focus:border-cyan-500/50 cursor-pointer"
                   >
+                    <option value="" disabled hidden>Select Category / Sector...</option>
                     <option value="Makhana & Superfoods">Makhana & Superfoods</option>
                     <option value="Fresh Produce">Fresh Produce (Onions/Potatoes)</option>
                     <option value="Poultry & Eggs">Poultry & Eggs</option>

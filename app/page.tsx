@@ -329,7 +329,7 @@ export default function ExpandedTradeCatalogPage() {
   const [newProductForm, setNewProductForm] = useState({
     title: "",
     description: "",
-    category: "Makhana & Superfoods",
+    category: "",
     customCategory: "",
     hsCode: "",
     destinationCountry: "",
@@ -1068,10 +1068,12 @@ export default function ExpandedTradeCatalogPage() {
               <div>
                 <label className="block text-xs font-medium text-slate-400 mb-1">Category *</label>
                 <select
+                  required
                   value={newProductForm.category}
                   onChange={(e) => setNewProductForm({ ...newProductForm, category: e.target.value })}
                   className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-sm text-slate-100 focus:outline-none focus:border-cyan-500/50 cursor-pointer"
                 >
+                  <option value="" disabled hidden>Select Category / Sector...</option>
                   <option value="Makhana & Superfoods">Makhana & Superfoods</option>
                   <option value="Fresh Produce">Fresh Produce (Onions/Potatoes)</option>
                   <option value="Poultry & Eggs">Poultry & Eggs</option>

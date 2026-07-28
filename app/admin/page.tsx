@@ -890,6 +890,7 @@ export default function AdminDashboardPage() {
                   type="text"
                   value={computeForm.category}
                   onChange={(e) => setComputeForm({ ...computeForm, category: e.target.value })}
+                  placeholder="e.g. Superfoods, Spices, Machinery..."
                   className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-slate-200 focus:outline-none focus:border-cyan-500"
                 />
               </div>
