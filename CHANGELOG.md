@@ -4,19 +4,16 @@ All notable changes to Project Antigravity will be documented in this file.
 
 ## [Unreleased]
 
-### Added & Enhanced
-- **🇯🇵 Japan Trade Corridor Integration ([`app/lib/api.ts`](file:///C:/Users/fardi/Documents/antigravity/joyful-raman/app/lib/api.ts), [`app/page.tsx`](file:///C:/Users/fardi/Documents/antigravity/joyful-raman/app/page.tsx), [`app/admin/page.tsx`](file:///C:/Users/fardi/Documents/antigravity/joyful-raman/app/admin/page.tsx))**:
-  - Integrated Japan 🇯🇵 (`Port of Yokohama / Tokyo`) into `DESTINATION_COUNTRIES` and country autocomplete databases platform-wide.
-  - Added preset Super-Trigger corridor for Japanese Nicotine Pouches & Superfoods (`HS-2404` / `HS-1904`).
+### Aligned & Refactored
+- **🇮🇳 India-Only Exporters Focus & USA Corridor Removal ([`app/lib/api.ts`](file:///C:/Users/fardi/Documents/antigravity/joyful-raman/app/lib/api.ts), [`app/page.tsx`](file:///C:/Users/fardi/Documents/antigravity/joyful-raman/app/page.tsx), [`app/admin/page.tsx`](file:///C:/Users/fardi/Documents/antigravity/joyful-raman/app/admin/page.tsx), [`app/products/[id]/page.tsx`](file:///C:/Users/fardi/Documents/antigravity/joyful-raman/app/products/[id]/page.tsx))**:
+  - Aligned all export product listings, suppliers, and scraper engines strictly to **India 🇮🇳**.
+  - Hardcoded `originCountry: "India 🇮🇳"` across product forms and lead generators.
+  - Completely removed USA 🇺🇸 / United States 🇺🇸 from `DESTINATION_COUNTRIES`, country autocomplete databases, preset trade corridors, sample catalog data, and import lead generators.
+  - Replaced USA lead targets with active international trade corridors (Japan 🇯🇵, Germany 🇩🇪, Sweden 🇸🇪, Poland 🇵🇱, Netherlands 🇳🇱, Australia 🇦🇺, Oman 🇴🇲, UAE 🇦🇪).
 
-- **📄 Product Intelligence & Export Compliance Details Page ([`app/products/[id]/page.tsx`](file:///C:/Users/fardi/Documents/antigravity/joyful-raman/app/products/[id]/page.tsx))**:
-  - Created a dedicated Product Intelligence Page accessible from Public Catalog (`/`), User Dashboard (`/dashboard`), and Admin Master Table (`/admin`).
-  - Features:
-    - **Export Technical Specifications**: Quality grade, purity, moisture limit, shelf life, packaging standard, warehouse storage conditions.
-    - **Regulatory Clearance Matrix**: Agency requirements (Japan MAFF/MHLW Food Sanitation Act, US FDA, EU EFSA/TRACES, GSO Halal) and mandatory certificates (Phytosanitary, Certificate of Origin, JAS Organic, HACCP, ISO 22000).
-    - **Verified Import Buyer Prospects Network**: Scraped and matched international buyer leads with contact info, companies, and match scores.
-    - **In-Country Local Export Distributors**: Wholesalers, bonded warehouse operators, and port customs clearance partners.
-    - **1-Click Actions**: Live Python compute lead engine trigger and official customs dossier PDF generator.
+- **🇯🇵 Japan Trade Corridor Integration**.
+
+- **📄 Product Intelligence & Export Compliance Details Page (`/products/[id]`)**.
 
 - **✨ Removal of Pre-filled Category Defaults**.
 

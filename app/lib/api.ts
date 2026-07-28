@@ -538,7 +538,7 @@ export interface CountryAutocompleteEntry {
 }
 
 export const COUNTRY_AUTOCOMPLETE_DATABASE: CountryAutocompleteEntry[] = [
-  { country: "United States", flag: "🇺🇸", formattedName: "United States 🇺🇸", primaryPortHub: "Port of Los Angeles / Newark", region: "North America" },
+  { country: "Japan", flag: "🇯🇵", formattedName: "Japan 🇯🇵", primaryPortHub: "Port of Yokohama", region: "East Asia" },
   { country: "Germany", flag: "🇩🇪", formattedName: "Germany 🇩🇪", primaryPortHub: "Port of Hamburg", region: "Europe (EU)" },
   { country: "Sweden", flag: "🇸🇪", formattedName: "Sweden 🇸🇪", primaryPortHub: "Port of Gothenburg", region: "Europe (Nordic)" },
   { country: "Poland", flag: "🇵🇱", formattedName: "Poland 🇵🇱", primaryPortHub: "Port of Gdańsk", region: "Europe (EU)" },
@@ -918,7 +918,7 @@ export async function scrapeNewOpportunitiesApi(
       title: `${cleanDest} Special Export Batch #${i} - ${cleanKey} (HS-0910)`,
       category: i % 2 === 0 ? "Makhana & Superfoods" : "Fresh Produce",
       hsCode: i % 2 === 0 ? "HS-0910" : "HS-0703",
-      originCountry: i % 3 === 0 ? `${cleanDest}` : "India 🇮🇳",
+      originCountry: "India 🇮🇳",
       destinationCountry: `${cleanDest}`,
       portHub: "Primary Port Hub",
       suggestedPrice: Number((8.5 + i * 1.4).toFixed(2)),
