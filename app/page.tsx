@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
-import { findLeadsCompute, fetchProductsApi, streamLeadsCompute, getSharedProductsFromDb, saveProductsToSharedDb, getSharedLeadsFromDb, saveLeadsToSharedDb, TradeLeadProspect } from "./lib/api";
+import { findLeadsCompute, fetchProductsApi, streamLeadsCompute, getSharedProductsFromDb, saveProductsToSharedDb, getSharedLeadsFromDb, saveLeadsToSharedDb, TradeLeadProspect, searchCommodityAutocomplete, AutocompleteCommodity } from "./lib/api";
 
 export type UserRole = "BUYER" | "SUPPLIER" | "LEAD_PROSPECT" | "COMPUTE_AGENT";
 
@@ -298,6 +298,8 @@ export default function ExpandedTradeCatalogPage() {
   const [streamProgress, setStreamProgress] = useState(0);
   const [streamMessage, setStreamMessage] = useState("");
   const [discoveredLeads, setDiscoveredLeads] = useState<TradeLeadProspect[]>([]);
+  const [autocompleteSuggestions, setAutocompleteSuggestions] = useState<AutocompleteCommodity[]>([]);
+  const [showAutocomplete, setShowAutocomplete] = useState(false);
 
   // List product form state
   const [newProductForm, setNewProductForm] = useState({
@@ -911,16 +913,68 @@ export default function ExpandedTradeCatalogPage() {
             </div>
 
             <form onSubmit={handleCreateProduct} className="space-y-4">
-              <div>
-                <label className="block text-xs font-medium text-slate-400 mb-1">Product Title *</label>
+              <div className="relative">
+                <label className="block text-xs font-medium text-slate-400 mb-1">
+                  Product Title * <span className="text-[10px] text-cyan-400 font-mono">(Smart Autocomplete Active 💡)</span>
+                </label>
                 <input
                   type="text"
                   required
                   value={newProductForm.title}
-                  onChange={(e) => setNewProductForm({ ...newProductForm, title: e.target.value })}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setNewProductForm({ ...newProductForm, title: val });
+                    const matches = searchCommodityAutocomplete(val);
+                    setAutocompleteSuggestions(matches);
+                    setShowAutocomplete(matches.length > 0);
+                  }}
+                  onFocus={() => {
+                    const matches = searchCommodityAutocomplete(newProductForm.title);
+                    setAutocompleteSuggestions(matches);
+                    if (matches.length > 0) setShowAutocomplete(true);
+                  }}
                   className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-sm text-slate-100 focus:outline-none focus:border-cyan-500/50"
-                  placeholder="e.g. Bihar Premium Organic Foxnuts (Makhana)"
+                  placeholder="Type commodity e.g. Ashwagandha, Nicotine Pouches, Makhana, Onions, Eggs..."
                 />
+
+                {/* Autocomplete Suggestions Popover Dropdown */}
+                {showAutocomplete && autocompleteSuggestions.length > 0 && (
+                  <div className="absolute left-0 right-0 top-full mt-1 bg-slate-950/95 border border-cyan-500/30 rounded-xl shadow-2xl backdrop-blur-xl z-50 overflow-hidden max-h-60 overflow-y-auto">
+                    <div className="px-3 py-1.5 bg-slate-900/80 border-b border-slate-800 text-[10px] font-mono text-cyan-400 flex items-center justify-between">
+                      <span>💡 Suggested Export Commodities</span>
+                      <span>Click to auto-fill details</span>
+                    </div>
+                    {autocompleteSuggestions.map((item, idx) => (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() => {
+                          setNewProductForm({
+                            ...newProductForm,
+                            title: item.title,
+                            category: item.category,
+                            hsCode: item.hsCode,
+                            price: item.defaultPrice,
+                            unit: item.unit,
+                          });
+                          setShowAutocomplete(false);
+                        }}
+                        className="w-full px-3 py-2 text-left hover:bg-cyan-500/10 border-b border-slate-800/50 last:border-0 flex items-center justify-between transition-colors duration-150 cursor-pointer"
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className="text-base">{item.icon}</span>
+                          <div>
+                            <div className="text-xs font-semibold text-slate-200">{item.title}</div>
+                            <div className="text-[10px] text-slate-400 font-mono">{item.category} • ${item.defaultPrice}/{item.unit}</div>
+                          </div>
+                        </div>
+                        <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                          {item.hsCode}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
 
               <div className="grid grid-cols-2 gap-3">

@@ -20,7 +20,11 @@ The platform combines a **Next.js 14** web application, a **Spring Boot 3 Java A
 
 ## ✨ Key Features
 
-### 1. ⚡ Real-Time Server-Sent Events (SSE) AI Lead Discovery
+### 1. 💡 Smart Product & Commodity Title Autocomplete Engine
+- Interactive real-time autocomplete popover across **Post Import Requirement (RFQ)** and **Add Export Listing** forms on the Landing Page (`/`), User Dashboard (`/dashboard`), and Admin Portal (`/admin`).
+- Selecting any suggestion automatically auto-fills: **Product Title**, **Category**, **HS Code**, and **FOB Unit Price ($)**.
+
+### 2. ⚡ Real-Time Server-Sent Events (SSE) AI Lead Discovery
 - Stream live 4-stage pipeline execution directly inside the browser:
   - 🔍 **Stage 1 (25%)**: *Global Trade Registry Scraper*
   - 🚢 **Stage 2 (50%)**: *Ocean Freight & Customs Tariff Calculator*

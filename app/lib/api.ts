@@ -32,6 +32,133 @@ export interface SSEStreamStage {
   leads?: TradeLeadProspect[];
 }
 
+export interface AutocompleteCommodity {
+  title: string;
+  category: string;
+  hsCode: string;
+  defaultPrice: number;
+  unit: string;
+  icon: string;
+}
+
+export const COMMODITY_AUTOCOMPLETE_DATABASE: AutocompleteCommodity[] = [
+  {
+    title: "Organic Indian KSM-66 Ashwagandha Root Extract & Powder (HS 1211)",
+    category: "Ayurvedic & Herbal Extracts",
+    hsCode: "HS-1211",
+    defaultPrice: 18.50,
+    unit: "kg",
+    icon: "🌱",
+  },
+  {
+    title: "Tobacco-Free White Nicotine Pouches & Swedish Style Snus (HS 2404)",
+    category: "Tobacco & Nicotine Pouches",
+    hsCode: "HS-2404",
+    defaultPrice: 2.45,
+    unit: "can",
+    icon: "🌿",
+  },
+  {
+    title: "Bihar Premium Organic Foxnuts / Makhana (HS 1904)",
+    category: "Makhana & Superfoods",
+    hsCode: "HS-1904",
+    defaultPrice: 14.50,
+    unit: "kg",
+    icon: "🍿",
+  },
+  {
+    title: "Nashik Red Onions & Dehydrated Flakes (HS 0703)",
+    category: "Fresh Produce",
+    hsCode: "HS-0703",
+    defaultPrice: 0.85,
+    unit: "kg",
+    icon: "🧅",
+  },
+  {
+    title: "Namakkal Fresh White Table Eggs (HS 0407)",
+    category: "Poultry & Eggs",
+    hsCode: "HS-0407",
+    defaultPrice: 2.10,
+    unit: "tray",
+    icon: "🥚",
+  },
+  {
+    title: "Cold Storage Table Potatoes Kufri Jyoti (HS 0701)",
+    category: "Fresh Produce",
+    hsCode: "HS-0701",
+    defaultPrice: 0.45,
+    unit: "kg",
+    icon: "🥔",
+  },
+  {
+    title: "Frozen Halal Boneless Buffalo & Goat Meat (HS 0202)",
+    category: "Meat Exports",
+    hsCode: "HS-0202",
+    defaultPrice: 3.45,
+    unit: "kg",
+    icon: "🥩",
+  },
+  {
+    title: "Industrial CNC Lathe & Hydraulic Machinery (HS 8479)",
+    category: "Machinery & Engineering",
+    hsCode: "HS-8479",
+    defaultPrice: 12500,
+    unit: "unit",
+    icon: "⚙️",
+  },
+  {
+    title: "Salem Nizamabad Organic Turmeric Powder (HS 0910)",
+    category: "Makhana & Superfoods",
+    hsCode: "HS-0910",
+    defaultPrice: 4.80,
+    unit: "kg",
+    icon: "✨",
+  },
+  {
+    title: "1121 Steam & Parboiled Golden Basmati Rice (HS 1006)",
+    category: "Makhana & Superfoods",
+    hsCode: "HS-1006",
+    defaultPrice: 1.25,
+    unit: "kg",
+    icon: "🌾",
+  },
+  {
+    title: "Darjeeling First Flush Organic Whole Leaf Black Tea (HS 0902)",
+    category: "Makhana & Superfoods",
+    hsCode: "HS-0902",
+    defaultPrice: 22.00,
+    unit: "kg",
+    icon: "🍵",
+  },
+  {
+    title: "Alphonso & Kesar Mango Pulp (HS 2008)",
+    category: "Fresh Produce",
+    hsCode: "HS-2008",
+    defaultPrice: 3.20,
+    unit: "kg",
+    icon: "🥭",
+  },
+  {
+    title: "Gujarat Organic Castor Oil & Derivatives (HS 1515)",
+    category: "Machinery & Engineering",
+    hsCode: "HS-1515",
+    defaultPrice: 2.80,
+    unit: "kg",
+    icon: "🧪",
+  },
+];
+
+export function searchCommodityAutocomplete(query: string): AutocompleteCommodity[] {
+  if (!query || query.trim().length < 1) return [];
+  const q = query.toLowerCase().trim();
+  return COMMODITY_AUTOCOMPLETE_DATABASE.filter(
+    (item) =>
+      item.title.toLowerCase().includes(q) ||
+      item.category.toLowerCase().includes(q) ||
+      item.hsCode.toLowerCase().includes(q)
+  );
+}
+
 /**
  * Deduplicate array of TradeLeadProspect objects by email & company+country
  */
