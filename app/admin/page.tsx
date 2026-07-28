@@ -943,29 +943,6 @@ export default function AdminDashboardPage() {
                   </div>
                 )}
               </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Sea Port Hub</label>
-                <input
-                  type="text"
-                  value={computeForm.portHub}
-                  onChange={(e) => setComputeForm({ ...computeForm, portHub: e.target.value })}
-                  placeholder="Auto-filled port e.g. Port of Hamburg"
-                  className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-slate-200 focus:outline-none focus:border-cyan-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Target FOB Price ($)</label>
-                <input
-                  type="number"
-                  step="0.01"
-                  value={computeForm.price || ""}
-                  onChange={(e) => setComputeForm({ ...computeForm, price: parseFloat(e.target.value) || 0 })}
-                  placeholder="e.g. 18.50"
-                  className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-slate-200 focus:outline-none focus:border-cyan-500"
-                />
-              </div>
             </div>
 
             {/* Execution Stream Box */}

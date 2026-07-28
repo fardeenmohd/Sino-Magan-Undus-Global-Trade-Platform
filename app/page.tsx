@@ -1060,41 +1060,18 @@ export default function ExpandedTradeCatalogPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-400 mb-1">Sea Port Hub</label>
-                <input
-                  type="text"
-                  value={newProductForm.customPortHub}
-                  onChange={(e) => setNewProductForm({ ...newProductForm, customPortHub: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-sm text-slate-100 focus:outline-none focus:border-cyan-500/50"
-                  placeholder="Auto-filled port e.g. Port of Hamburg, Port of Rotterdam"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-medium text-slate-400 mb-1">Category</label>
-                  <select
-                    value={newProductForm.category}
-                    onChange={(e) => setNewProductForm({ ...newProductForm, category: e.target.value })}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-sm text-slate-100 focus:outline-none focus:border-cyan-500/50 cursor-pointer"
-                  >
-                    <option value="Makhana & Superfoods">Makhana & Superfoods</option>
-                    <option value="Fresh Produce">Fresh Produce (Onions/Potatoes)</option>
-                    <option value="Poultry & Eggs">Poultry & Eggs</option>
-                    <option value="Meat Exports">Meat Exports</option>
-                    <option value="Machinery & Engineering">Machinery & Engineering</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-medium text-slate-400 mb-1">Export Price ($)</label>
-                  <input
-                    type="number"
-                    value={newProductForm.price}
-                    onChange={(e) => setNewProductForm({ ...newProductForm, price: Number(e.target.value) })}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-sm text-slate-100 focus:outline-none focus:border-cyan-500/50"
-                  />
-                </div>
+                <label className="block text-xs font-medium text-slate-400 mb-1">Category</label>
+                <select
+                  value={newProductForm.category}
+                  onChange={(e) => setNewProductForm({ ...newProductForm, category: e.target.value })}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-sm text-slate-100 focus:outline-none focus:border-cyan-500/50 cursor-pointer"
+                >
+                  <option value="Makhana & Superfoods">Makhana & Superfoods</option>
+                  <option value="Fresh Produce">Fresh Produce (Onions/Potatoes)</option>
+                  <option value="Poultry & Eggs">Poultry & Eggs</option>
+                  <option value="Meat Exports">Meat Exports</option>
+                  <option value="Machinery & Engineering">Machinery & Engineering</option>
+                </select>
               </div>
 
               <div>

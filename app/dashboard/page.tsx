@@ -849,30 +849,6 @@ export default function UserDashboardPage() {
                     </div>
                   )}
                 </div>
-
-                <div>
-                  <label className="block text-xs font-medium text-slate-400 mb-1">Export Price ($)</label>
-                  <input
-                    type="number"
-                    step="0.01"
-                    required
-                    value={newListingForm.price || ""}
-                    onChange={(e) => setNewListingForm({ ...newListingForm, price: Number(e.target.value) || 0 })}
-                    placeholder="e.g. 18.50"
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-slate-100 focus:outline-none focus:border-cyan-500/50 font-mono"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-medium text-slate-400 mb-1">Sea Port Hub</label>
-                <input
-                  type="text"
-                  value={newListingForm.customPortHub}
-                  onChange={(e) => setNewListingForm({ ...newListingForm, customPortHub: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-slate-100 focus:outline-none focus:border-cyan-500/50"
-                  placeholder="Auto-filled port e.g. Port of Hamburg, Port of Rotterdam"
-                />
               </div>
 
               <div>

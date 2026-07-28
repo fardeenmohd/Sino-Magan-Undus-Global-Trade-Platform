@@ -4,10 +4,12 @@ All notable changes to Project Antigravity will be documented in this file.
 
 ## [Unreleased]
 
-### Added & Refactored
-- **🌍 Platform-Wide Smart Country Autocomplete Engine across All User Forms ([`app/page.tsx`](file:///C:/Users/fardi/Documents/antigravity/joyful-raman/app/page.tsx), [`app/dashboard/page.tsx`](file:///C:/Users/fardi/Documents/antigravity/joyful-raman/app/dashboard/page.tsx), [`app/admin/page.tsx`](file:///C:/Users/fardi/Documents/antigravity/joyful-raman/app/admin/page.tsx))**:
-  - Integrated interactive country autocomplete popovers into the **Post Import Requirement (RFQ)** modal (`app/page.tsx`) and **Add Export Listing** modal (`app/dashboard/page.tsx`) for both buyers and exporters.
-  - Standardized destination country targets with flags (e.g., `Germany 🇩🇪`, `United States 🇺🇸`, `Sweden 🇸🇪`, `Poland 🇵🇱`) and auto-populating primary sea port hubs (e.g. `Port of Hamburg`, `Port of Los Angeles / Newark`, `Port of Gothenburg`).
+### Refactored & Streamlined
+- **✨ Removal of Manual Sea Port Hub & Export Price Inputs ([`app/page.tsx`](file:///C:/Users/fardi/Documents/antigravity/joyful-raman/app/page.tsx), [`app/dashboard/page.tsx`](file:///C:/Users/fardi/Documents/antigravity/joyful-raman/app/dashboard/page.tsx), [`app/admin/page.tsx`](file:///C:/Users/fardi/Documents/antigravity/joyful-raman/app/admin/page.tsx))**:
+  - Removed manual `Sea Port Hub` and `Export Price ($)` / `FOB Price` input fields from the Public Post Import Requirement (RFQ) form (`app/page.tsx`), Exporter Add Listing form (`app/dashboard/page.tsx`), and Python Super-Trigger form (`app/admin/page.tsx`).
+  - Sea port hubs are auto-filled behind the scenes from the selected country database (e.g. `Port of Hamburg` for Germany, `Port of Gothenburg` for Sweden), and benchmark prices are computed autonomously by the system.
+
+- **🌍 Platform-Wide Smart Country Autocomplete Engine across All User Forms**.
 
 - **✨ Clean Initial Form States & Scraper Price Field Removal**.
 
