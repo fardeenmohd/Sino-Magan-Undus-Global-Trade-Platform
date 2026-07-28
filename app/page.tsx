@@ -309,6 +309,22 @@ export default function ExpandedTradeCatalogPage() {
   const [countrySuggestionsRfq, setCountrySuggestionsRfq] = useState<CountryAutocompleteEntry[]>([]);
   const [showCountryAutocompleteRfq, setShowCountryAutocompleteRfq] = useState(false);
 
+  const commodityAutocompleteRef = React.useRef<HTMLDivElement>(null);
+  const countryAutocompleteRef = React.useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (commodityAutocompleteRef.current && !commodityAutocompleteRef.current.contains(event.target as Node)) {
+        setShowAutocomplete(false);
+      }
+      if (countryAutocompleteRef.current && !countryAutocompleteRef.current.contains(event.target as Node)) {
+        setShowCountryAutocompleteRfq(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   // List product form state
   const [newProductForm, setNewProductForm] = useState({
     title: "",
@@ -505,30 +521,20 @@ export default function ExpandedTradeCatalogPage() {
 
   const handleCreateProduct = (e: React.FormEvent) => {
     e.preventDefault();
-    let targetName = "";
-    let targetFlag = "🌐";
-    let targetHub = "Main Sea Port";
-
-    if (newProductForm.destinationCountry === "CUSTOM") {
-      targetName = newProductForm.customCountry.trim() || "Custom Destination";
-      targetHub = newProductForm.customPortHub.trim() || "Custom Sea Port";
-    } else {
-      const destObj = DESTINATION_COUNTRIES.find((d) => d.code === newProductForm.destinationCountry) || DESTINATION_COUNTRIES[1];
-      targetName = destObj.name;
-      targetFlag = destObj.flag;
-      targetHub = destObj.hub || "Main Sea Port";
-    }
+    const effectiveCategory = newProductForm.category === "CUSTOM"
+      ? (newProductForm.customCategory.trim() || "General Exports")
+      : newProductForm.category;
 
     const created: TradeProduct = {
       id: Date.now(),
       title: newProductForm.title,
       description: newProductForm.description,
-      category: newProductForm.category,
+      category: effectiveCategory,
       hsCode: newProductForm.hsCode.trim() || "HS-AUTO",
       originCountry: "India 🇮🇳",
-      destinationCountry: targetName,
-      destinationFlag: targetFlag,
-      portHub: targetHub,
+      destinationCountry: newProductForm.destinationCountry || "Global Markets 🌐",
+      destinationFlag: "🌐",
+      portHub: newProductForm.customPortHub || "Primary Maritime Port",
       tariffRatePct: Number(newProductForm.tariffRatePct),
       price: Number(newProductForm.price),
       unit: newProductForm.unit,
@@ -921,7 +927,7 @@ export default function ExpandedTradeCatalogPage() {
             </div>
 
             <form onSubmit={handleCreateProduct} className="space-y-4">
-              <div className="relative">
+              <div className="relative" ref={commodityAutocompleteRef}>
                 <label className="block text-xs font-medium text-slate-400 mb-1">
                   Product Title * <span className="text-[10px] text-cyan-400 font-mono">(Smart Autocomplete Active 💡)</span>
                 </label>
@@ -997,7 +1003,7 @@ export default function ExpandedTradeCatalogPage() {
                   />
                 </div>
 
-                <div className="relative">
+                <div className="relative" ref={countryAutocompleteRef}>
                   <label className="block text-xs font-medium text-slate-400 mb-1">
                     Target Destination Country <span className="text-[10px] text-cyan-400 font-mono">(Country Autocomplete 🌍)</span>
                   </label>
@@ -1060,7 +1066,7 @@ export default function ExpandedTradeCatalogPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-400 mb-1">Category</label>
+                <label className="block text-xs font-medium text-slate-400 mb-1">Category *</label>
                 <select
                   value={newProductForm.category}
                   onChange={(e) => setNewProductForm({ ...newProductForm, category: e.target.value })}
@@ -1071,8 +1077,26 @@ export default function ExpandedTradeCatalogPage() {
                   <option value="Poultry & Eggs">Poultry & Eggs</option>
                   <option value="Meat Exports">Meat Exports</option>
                   <option value="Machinery & Engineering">Machinery & Engineering</option>
+                  <option value="Ayurvedic & Herbal Extracts">Ayurvedic & Herbal Extracts</option>
+                  <option value="Tobacco & Nicotine Pouches">Tobacco & Nicotine Pouches</option>
+                  <option value="CUSTOM">✨ Custom Category / New Sector</option>
                 </select>
               </div>
+
+              {/* Custom Category Input if CUSTOM selected */}
+              {newProductForm.category === "CUSTOM" && (
+                <div>
+                  <label className="block text-xs font-medium text-cyan-400 mb-1">Custom Category Name *</label>
+                  <input
+                    type="text"
+                    required
+                    value={newProductForm.customCategory}
+                    onChange={(e) => setNewProductForm({ ...newProductForm, customCategory: e.target.value })}
+                    className="w-full bg-slate-950 border border-cyan-500/40 rounded-xl px-3 py-1.5 text-sm text-slate-100 focus:outline-none focus:border-cyan-400"
+                    placeholder="e.g. Bio-Pharmaceuticals, Renewable Energy, Spices..."
+                  />
+                </div>
+              )}
 
               <div>
                 <label className="block text-xs font-medium text-slate-400 mb-1">Description *</label>

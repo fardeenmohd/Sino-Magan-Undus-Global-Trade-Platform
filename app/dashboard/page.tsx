@@ -159,6 +159,23 @@ export default function UserDashboardPage() {
   const [showAutocomplete, setShowAutocomplete] = useState(false);
   const [countrySuggestionsListing, setCountrySuggestionsListing] = useState<CountryAutocompleteEntry[]>([]);
   const [showCountryAutocompleteListing, setShowCountryAutocompleteListing] = useState(false);
+
+  const commodityAutocompleteRef = React.useRef<HTMLDivElement>(null);
+  const countryAutocompleteRef = React.useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (commodityAutocompleteRef.current && !commodityAutocompleteRef.current.contains(event.target as Node)) {
+        setShowAutocomplete(false);
+      }
+      if (countryAutocompleteRef.current && !countryAutocompleteRef.current.contains(event.target as Node)) {
+        setShowCountryAutocompleteListing(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   const [newListingForm, setNewListingForm] = useState({
     title: "",
     category: "Makhana & Superfoods",
@@ -175,27 +192,10 @@ export default function UserDashboardPage() {
   const handleCreateListing = (e: React.FormEvent) => {
     e.preventDefault();
 
-    let targetName = "";
-    let targetFlag = "🌐";
-
-    if (newListingForm.destinationCountry === "CUSTOM") {
-      targetName = newListingForm.customCountry.trim() || "Custom Destination";
-    } else {
-      const destMap: Record<string, { name: string; flag: string }> = {
-        USA: { name: "United States", flag: "🇺🇸" },
-        Oman: { name: "Oman", flag: "🇴🇲" },
-        Netherlands: { name: "Netherlands", flag: "🇳🇱" },
-        Poland: { name: "Poland", flag: "🇵🇱" },
-        China: { name: "China", flag: "🇨🇳" },
-        Australia: { name: "Australia", flag: "🇦🇺" },
-      };
-      const found = destMap[newListingForm.destinationCountry] || { name: newListingForm.destinationCountry, flag: "🌐" };
-      targetName = found.name;
-      targetFlag = found.flag;
-    }
+    const targetName = newListingForm.destinationCountry || "Global Markets 🌐";
 
     const finalCategory = newListingForm.category === "CUSTOM"
-      ? (newListingForm.customCategory || "Custom Commodity")
+      ? (newListingForm.customCategory.trim() || "General Exports")
       : newListingForm.category;
 
     const created: UserListing = {
@@ -205,7 +205,7 @@ export default function UserDashboardPage() {
       hsCode: newListingForm.hsCode.trim() || "HS-AUTO",
       originCountry: "India 🇮🇳",
       destinationCountry: targetName,
-      destinationFlag: targetFlag,
+      destinationFlag: "🌐",
       price: Number(newListingForm.price),
       unit: newListingForm.unit || "unit",
       leadCount: 0,
@@ -680,9 +680,9 @@ export default function UserDashboardPage() {
             </div>
 
             <form onSubmit={handleCreateListing} className="space-y-4">
-              <div className="relative">
+              <div className="relative" ref={commodityAutocompleteRef}>
                 <label className="block text-xs font-medium text-slate-400 mb-1">
-                  Product / Commodity Title * <span className="text-[10px] text-cyan-400 font-mono">(Smart Autocomplete Active 💡)</span>
+                  Commodity Title * <span className="text-[10px] text-cyan-400 font-mono">(Smart Autocomplete Active 💡)</span>
                 </label>
                 <input
                   type="text"
@@ -757,7 +757,9 @@ export default function UserDashboardPage() {
                     <option value="Poultry & Eggs">Poultry & Eggs</option>
                     <option value="Meat Exports">Meat Exports</option>
                     <option value="Machinery & Engineering">Machinery & Engineering</option>
-                    <option value="CUSTOM">✨ Custom Product / Other</option>
+                    <option value="Ayurvedic & Herbal Extracts">Ayurvedic & Herbal Extracts</option>
+                    <option value="Tobacco & Nicotine Pouches">Tobacco & Nicotine Pouches</option>
+                    <option value="CUSTOM">✨ Custom Category / New Sector</option>
                   </select>
                 </div>
 
@@ -776,20 +778,20 @@ export default function UserDashboardPage() {
               {/* Custom Category Input if CUSTOM selected */}
               {newListingForm.category === "CUSTOM" && (
                 <div>
-                  <label className="block text-xs font-medium text-cyan-400 mb-1">Custom Commodity Name *</label>
+                  <label className="block text-xs font-medium text-cyan-400 mb-1">Custom Category Name *</label>
                   <input
                     type="text"
                     required
                     value={newListingForm.customCategory}
                     onChange={(e) => setNewListingForm({ ...newListingForm, customCategory: e.target.value })}
                     className="w-full bg-slate-950 border border-cyan-500/40 rounded-xl px-3.5 py-2 text-sm text-slate-100 focus:outline-none focus:border-cyan-400"
-                    placeholder="e.g. Spices & Essential Oils, Textiles, Garments..."
+                    placeholder="e.g. Bio-Pharmaceuticals, Renewable Energy, Spices..."
                   />
                 </div>
               )}
 
               <div className="grid grid-cols-2 gap-3">
-                <div className="relative">
+                <div className="relative" ref={countryAutocompleteRef}>
                   <label className="block text-xs font-medium text-slate-400 mb-1">
                     Target Destination Country <span className="text-[10px] text-cyan-400 font-mono">(Country Autocomplete 🌍)</span>
                   </label>

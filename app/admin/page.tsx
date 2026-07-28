@@ -182,6 +182,26 @@ export default function AdminDashboardPage() {
   const [streamMessage, setStreamMessage] = useState("");
   const [lastExtensionToast, setLastExtensionToast] = useState("");
 
+  const commodityAutocompleteRef = React.useRef<HTMLDivElement>(null);
+  const countryAutocompleteSuperTriggerRef = React.useRef<HTMLDivElement>(null);
+  const countryAutocompleteScraperRef = React.useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (commodityAutocompleteRef.current && !commodityAutocompleteRef.current.contains(event.target as Node)) {
+        setShowAutocomplete(false);
+      }
+      if (countryAutocompleteSuperTriggerRef.current && !countryAutocompleteSuperTriggerRef.current.contains(event.target as Node)) {
+        setShowCountryAutocompleteSuperTrigger(false);
+      }
+      if (countryAutocompleteScraperRef.current && !countryAutocompleteScraperRef.current.contains(event.target as Node)) {
+        setShowCountryAutocompleteScraper(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   const handleLaunchWebScraper = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     setIsScraping(true);
@@ -801,7 +821,7 @@ export default function AdminDashboardPage() {
 
             {/* Compute Form */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 bg-slate-950 border border-slate-800 p-4 rounded-xl">
-              <div className="relative">
+              <div className="relative" ref={commodityAutocompleteRef}>
                 <label className="block text-xs font-semibold text-slate-300 mb-1">
                   Commodity Title <span className="text-[10px] text-cyan-400 font-mono">(Smart Autocomplete 💡)</span>
                 </label>
@@ -884,7 +904,7 @@ export default function AdminDashboardPage() {
                 />
               </div>
 
-              <div className="relative">
+              <div className="relative" ref={countryAutocompleteSuperTriggerRef}>
                 <label className="block text-xs font-semibold text-slate-300 mb-1">
                   Target Destination <span className="text-[10px] text-cyan-400 font-mono">(Country Autocomplete 🌍)</span>
                 </label>
@@ -1121,7 +1141,7 @@ export default function AdminDashboardPage() {
                   />
                 </div>
 
-                <div className="relative">
+                <div className="relative" ref={countryAutocompleteScraperRef}>
                   <label className="block text-xs font-semibold text-purple-300 mb-1">
                     Target Country <span className="text-[10px] text-purple-400 font-mono">(Country Autocomplete 🌍)</span>
                   </label>

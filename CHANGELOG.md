@@ -4,14 +4,15 @@ All notable changes to Project Antigravity will be documented in this file.
 
 ## [Unreleased]
 
-### Refactored & Streamlined
-- **✨ Removal of Manual Sea Port Hub & Export Price Inputs ([`app/page.tsx`](file:///C:/Users/fardi/Documents/antigravity/joyful-raman/app/page.tsx), [`app/dashboard/page.tsx`](file:///C:/Users/fardi/Documents/antigravity/joyful-raman/app/dashboard/page.tsx), [`app/admin/page.tsx`](file:///C:/Users/fardi/Documents/antigravity/joyful-raman/app/admin/page.tsx))**:
-  - Removed manual `Sea Port Hub` and `Export Price ($)` / `FOB Price` input fields from the Public Post Import Requirement (RFQ) form (`app/page.tsx`), Exporter Add Listing form (`app/dashboard/page.tsx`), and Python Super-Trigger form (`app/admin/page.tsx`).
-  - Sea port hubs are auto-filled behind the scenes from the selected country database (e.g. `Port of Hamburg` for Germany, `Port of Gothenburg` for Sweden), and benchmark prices are computed autonomously by the system.
+### Fixed & Enhanced
+- **🎯 Click-Outside Popover Dismissal & Custom Category Support ([`app/page.tsx`](file:///C:/Users/fardi/Documents/antigravity/joyful-raman/app/page.tsx), [`app/dashboard/page.tsx`](file:///C:/Users/fardi/Documents/antigravity/joyful-raman/app/dashboard/page.tsx), [`app/admin/page.tsx`](file:///C:/Users/fardi/Documents/antigravity/joyful-raman/app/admin/page.tsx))**:
+  - Added global click-outside listeners (`useRef` + `mousedown`) for all autocomplete containers (Commodity Autocomplete & Country Autocomplete) so clicking anywhere outside automatically closes active popovers.
+  - Added **`✨ Custom Category / New Sector`** option to category selectors in both the Public Post Import Requirement (RFQ) modal (`app/page.tsx`) and Exporter Add Listing modal (`app/dashboard/page.tsx`).
+  - Selecting custom category reveals a dedicated text input field allowing users to enter custom sector names (e.g. `Bio-Pharmaceuticals`, `Renewable Energy Equipment`, `Organic Oils & Resins`).
+
+- **✨ Removal of Manual Sea Port Hub & Export Price Inputs**.
 
 - **🌍 Platform-Wide Smart Country Autocomplete Engine across All User Forms**.
-
-- **✨ Clean Initial Form States & Scraper Price Field Removal**.
 
 - **🌐 Real-Time Database Synchronization across Scraper & Python Super-Trigger**.
 
