@@ -549,6 +549,8 @@ export function saveProductsToSharedDb(products: any[]) {
   if (typeof window !== "undefined" && Array.isArray(products)) {
     localStorage.setItem(SHARED_PRODUCTS_KEY, JSON.stringify(products));
     localStorage.setItem("antigravity_global_products", JSON.stringify(products));
+    window.dispatchEvent(new Event("antigravity_db_updated"));
+    window.dispatchEvent(new Event("storage"));
   }
 }
 
@@ -570,6 +572,9 @@ export function saveLeadsToSharedDb(leads: TradeLeadProspect[]) {
     const deduped = deduplicateLeads(leads);
     localStorage.setItem(SHARED_LEADS_KEY, JSON.stringify(deduped));
     localStorage.setItem("antigravity_global_leads", JSON.stringify(deduped));
+    localStorage.setItem("antigravity_imported_leads", JSON.stringify(deduped));
+    window.dispatchEvent(new Event("antigravity_db_updated"));
+    window.dispatchEvent(new Event("storage"));
   }
 }
 

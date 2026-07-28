@@ -188,25 +188,39 @@ export default function AdminDashboardPage() {
   };
 
   const handlePublishScrapedOpportunity = (item: ScrapedTradeOpportunity) => {
-    const newProduct = {
+    const adminMappedProduct: AdminProduct = {
+      id: item.id,
+      title: item.title,
+      category: item.category,
+      hsCode: item.hsCode,
+      destinationCountry: item.destinationCountry,
+      portHub: item.portHub,
+      price: item.suggestedPrice,
+      unit: item.unit,
+      leadCount: 1,
+      status: "ACTIVE",
+      supplier: item.scrapedBuyerCompany,
+    };
+
+    const sharedTradeProduct = {
       id: item.id,
       title: item.title,
       description: `Discovered by Web Scraper Crawler from ${item.sourceDomain}. Verified import requirement for ${item.destinationCountry}.`,
       category: item.category,
       hsCode: item.hsCode,
-      originCountry: item.originCountry,
+      originCountry: item.originCountry || "India 🇮🇳",
       destinationCountry: item.destinationCountry,
-      destinationFlag: item.destinationCountry.includes("🇩🇪") ? "🇩🇪" : item.destinationCountry.includes("🇺🇸") ? "🇺🇸" : "🌐",
+      destinationFlag: item.destinationCountry.includes("🇩🇪") ? "🇩🇪" : item.destinationCountry.includes("🇸🇪") ? "🇸🇪" : item.destinationCountry.includes("🇺🇸") ? "🇺🇸" : "🌐",
       portHub: item.portHub,
       tariffRatePct: 3.2,
       price: item.suggestedPrice,
       unit: item.unit,
       listedBy: {
         id: 99,
-        name: "Admin Scraper Bot",
-        company: "Sino Magan Undus AI Scraper",
-        role: "COMPUTE_AGENT" as any,
-        location: "Global Trade Registry Crawls",
+        name: item.scrapedBuyerName,
+        company: item.scrapedBuyerCompany,
+        role: "BUYER" as any,
+        location: item.destinationCountry,
         rating: 5.0,
         avatarUrl: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=150&auto=format&fit=crop&q=80",
       },
@@ -215,9 +229,6 @@ export default function AdminDashboardPage() {
       status: "ACTIVE" as any,
       createdAt: item.scrapedAt,
     };
-
-    const existingProducts = getSharedProductsFromDb(products);
-    saveProductsToSharedDb([newProduct, ...existingProducts]);
 
     const newLead: TradeLeadProspect = {
       user_id: item.id + 500,
@@ -232,8 +243,16 @@ export default function AdminDashboardPage() {
       confidence_reason: `Scraped from ${item.sourceDomain} ($${item.scrapedBudget.toLocaleString()} annual budget)`,
     };
 
-    const existingLeads = getSharedLeadsFromDb(leads);
-    saveLeadsToSharedDb([newLead, ...existingLeads]);
+    // Update React states for admin dashboard UI!
+    setProducts((prev) => [adminMappedProduct, ...prev.filter((p) => p.id !== item.id)]);
+    setLeads((prev) => [newLead, ...prev]);
+
+    // Save to shared DB layer for all platform users!
+    const existingSharedProducts = getSharedProductsFromDb([]);
+    saveProductsToSharedDb([sharedTradeProduct, ...existingSharedProducts.filter((p: any) => p.id !== item.id)]);
+
+    const existingSharedLeads = getSharedLeadsFromDb([]);
+    saveLeadsToSharedDb([newLead, ...existingSharedLeads]);
 
     setScrapedOpportunities((prev) =>
       prev.map((o) => (o.id === item.id ? { ...o, status: "PUBLISHED" } : o))
@@ -243,52 +262,51 @@ export default function AdminDashboardPage() {
     setTimeout(() => setLastExtensionToast(""), 4500);
   };
 
-  // Load session & shared DB on mount
+  // Load session & shared DB on mount and listen for DB updates
   useEffect(() => {
+    const loadDb = () => {
+      if (typeof window !== "undefined") {
+        const session = localStorage.getItem("antigravity_admin_session");
+        if (session) {
+          setIsAdminAuthenticated(true);
+        }
+
+        const sharedProducts = getSharedProductsFromDb(products);
+        if (sharedProducts && sharedProducts.length > 0) {
+          const mapped: AdminProduct[] = sharedProducts.map((p: any) => ({
+            id: p.id,
+            title: p.title,
+            category: p.category,
+            hsCode: p.hsCode,
+            destinationCountry: p.destinationCountry,
+            portHub: p.portHub || "Main Sea Port",
+            price: p.price,
+            unit: p.unit,
+            leadCount: p.leadCount || 10,
+            status: p.status || "ACTIVE",
+            supplier: p.listedBy?.company || p.listedBy?.name || p.supplier || "Exporter",
+          }));
+          setProducts(mapped);
+        }
+
+        const sharedLeads = getSharedLeadsFromDb(leads);
+        if (sharedLeads && sharedLeads.length > 0) {
+          setLeads(sharedLeads);
+        }
+      }
+    };
+
+    loadDb();
+
     if (typeof window !== "undefined") {
-      const session = localStorage.getItem("antigravity_admin_session");
-      if (session) {
-        setIsAdminAuthenticated(true);
-      }
-
-      const sharedProducts = getSharedProductsFromDb(products);
-      if (sharedProducts && sharedProducts.length > 0) {
-        const mapped: AdminProduct[] = sharedProducts.map((p: any) => ({
-          id: p.id,
-          title: p.title,
-          category: p.category,
-          hsCode: p.hsCode,
-          destinationCountry: p.destinationCountry,
-          portHub: p.portHub || "Main Sea Port",
-          price: p.price,
-          unit: p.unit,
-          leadCount: p.leadCount || 10,
-          status: p.status || "ACTIVE",
-          supplier: p.listedBy?.company || p.listedBy?.name || p.supplier || "Exporter",
-        }));
-        setProducts(mapped);
-      }
-
-      const sharedLeads = getSharedLeadsFromDb(leads);
-      if (sharedLeads && sharedLeads.length > 0) {
-        setLeads(sharedLeads);
-      }
+      window.addEventListener("antigravity_db_updated", loadDb);
+      window.addEventListener("storage", loadDb);
+      return () => {
+        window.removeEventListener("antigravity_db_updated", loadDb);
+        window.removeEventListener("storage", loadDb);
+      };
     }
   }, []);
-
-  // Sync leads to shared DB layer whenever updated
-  useEffect(() => {
-    if (typeof window !== "undefined" && leads.length > 0) {
-      saveLeadsToSharedDb(leads);
-    }
-  }, [leads]);
-
-  // Sync products to shared DB layer whenever updated
-  useEffect(() => {
-    if (typeof window !== "undefined" && products.length > 0) {
-      saveProductsToSharedDb(products);
-    }
-  }, [products]);
 
   const handleAdminLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -366,7 +384,46 @@ export default function AdminDashboardPage() {
             return [...uniqueNewLeads, ...prev];
           });
 
-          // 3. Trigger Toast Notification
+          // 3. Save full TradeProduct and unique leads to shared DB layer for all platform users!
+          const sharedTradeProduct = {
+            id: Date.now(),
+            title: computeForm.title,
+            description: `Export commodity verified by Python Compute Engine for ${computeForm.destinationCountry}.`,
+            category: computeForm.category,
+            hsCode: computeForm.hsCode,
+            originCountry: "India 🇮🇳",
+            destinationCountry: computeForm.destinationCountry,
+            destinationFlag: computeForm.destinationCountry.includes("🇩🇪") ? "🇩🇪" : computeForm.destinationCountry.includes("🇸🇪") ? "🇸🇪" : computeForm.destinationCountry.includes("🇺🇸") ? "🇺🇸" : "🌐",
+            portHub: computeForm.portHub,
+            tariffRatePct: 3.5,
+            price: computeForm.price,
+            unit: computeForm.unit,
+            listedBy: {
+              id: 1,
+              name: computeForm.supplier,
+              company: computeForm.supplier,
+              role: "SUPPLIER" as any,
+              location: "India 🇮🇳",
+              rating: 4.9,
+              avatarUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+            },
+            imageUrl: "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=600&auto=format&fit=crop&q=80",
+            leadCount: newLeads.length,
+            status: "ACTIVE" as any,
+            createdAt: new Date().toISOString(),
+          };
+
+          const currentSharedProducts = getSharedProductsFromDb([]);
+          saveProductsToSharedDb([sharedTradeProduct, ...currentSharedProducts.filter((p: any) => p.title.toLowerCase().trim() !== computeForm.title.toLowerCase().trim())]);
+
+          const currentSharedLeads = getSharedLeadsFromDb([]);
+          const existingEmails = new Set(currentSharedLeads.map((l) => l.email?.toLowerCase()));
+          const uniqueNewLeads = newLeads.filter(
+            (l: TradeLeadProspect) => !existingEmails.has(l.email?.toLowerCase())
+          );
+          saveLeadsToSharedDb([...uniqueNewLeads, ...currentSharedLeads]);
+
+          // 4. Trigger Toast Notification
           setLastExtensionToast(
             `✨ Success! Extended Master Catalog with "${computeForm.title}" and added unique Importer Leads for ${computeForm.destinationCountry}!`
           );

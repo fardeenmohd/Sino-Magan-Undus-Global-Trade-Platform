@@ -257,31 +257,37 @@ export default function ExpandedTradeCatalogPage() {
   const [selectedCategory, setSelectedCategory] = useState("ALL");
   const [userSession, setUserSession] = useState<any>(null);
   
-  // Read session on mount
+  // Read session & sync shared DB on mount + live updates
   React.useEffect(() => {
-    if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("antigravity_user_session");
-      if (saved) {
-        try {
-          setUserSession(JSON.parse(saved));
-        } catch (e) {
-          console.error(e);
+    const loadData = () => {
+      if (typeof window !== "undefined") {
+        const saved = localStorage.getItem("antigravity_user_session");
+        if (saved) {
+          try {
+            setUserSession(JSON.parse(saved));
+          } catch (e) {
+            console.error(e);
+          }
+        }
+
+        const sharedProducts = getSharedProductsFromDb(INITIAL_TRADE_PRODUCTS);
+        if (sharedProducts && sharedProducts.length > 0) {
+          setProducts(sharedProducts);
         }
       }
+    };
 
-      const sharedProducts = getSharedProductsFromDb(INITIAL_TRADE_PRODUCTS);
-      if (sharedProducts && sharedProducts.length > 0) {
-        setProducts(sharedProducts);
-      }
+    loadData();
+
+    if (typeof window !== "undefined") {
+      window.addEventListener("antigravity_db_updated", loadData);
+      window.addEventListener("storage", loadData);
+      return () => {
+        window.removeEventListener("antigravity_db_updated", loadData);
+        window.removeEventListener("storage", loadData);
+      };
     }
   }, []);
-
-  // Sync products state to shared DB layer whenever updated
-  useEffect(() => {
-    if (typeof window !== "undefined" && products.length > 0) {
-      saveProductsToSharedDb(products);
-    }
-  }, [products]);
 
   const handleSignOut = () => {
     if (typeof window !== "undefined") {

@@ -115,36 +115,43 @@ export default function UserDashboardPage() {
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
 
-  // Sync Shared DB on Mount & Updates
+  // Sync Shared DB on Mount & Live Updates
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const sharedProducts = getSharedProductsFromDb(INITIAL_MY_LISTINGS);
-      if (sharedProducts && sharedProducts.length > 0) {
-        setListings(sharedProducts.map((p: any) => ({
-          id: p.id,
-          title: p.title,
-          category: p.category,
-          hsCode: p.hsCode,
-          originCountry: p.originCountry || "India 🇮🇳",
-          destinationCountry: p.destinationCountry,
-          destinationFlag: p.destinationFlag || "🌐",
-          price: p.price,
-          unit: p.unit,
-          leadCount: p.leadCount || 10,
-          status: p.status || "ACTIVE",
-        })));
-      }
+    const loadSharedDb = () => {
+      if (typeof window !== "undefined") {
+        const sharedProducts = getSharedProductsFromDb(INITIAL_MY_LISTINGS);
+        if (sharedProducts && sharedProducts.length > 0) {
+          setListings(sharedProducts.map((p: any) => ({
+            id: p.id,
+            title: p.title,
+            category: p.category,
+            hsCode: p.hsCode,
+            originCountry: p.originCountry || "India 🇮🇳",
+            destinationCountry: p.destinationCountry,
+            destinationFlag: p.destinationFlag || "🌐",
+            price: p.price,
+            unit: p.unit,
+            leadCount: p.leadCount || 10,
+            status: p.status || "ACTIVE",
+          })));
+        }
 
-      const sharedLeads = getSharedLeadsFromDb([]);
-      setSavedLeads(sharedLeads);
+        const sharedLeads = getSharedLeadsFromDb([]);
+        setSavedLeads(sharedLeads);
+      }
+    };
+
+    loadSharedDb();
+
+    if (typeof window !== "undefined") {
+      window.addEventListener("antigravity_db_updated", loadSharedDb);
+      window.addEventListener("storage", loadSharedDb);
+      return () => {
+        window.removeEventListener("antigravity_db_updated", loadSharedDb);
+        window.removeEventListener("storage", loadSharedDb);
+      };
     }
   }, []);
-
-  useEffect(() => {
-    if (typeof window !== "undefined" && listings.length > 0) {
-      saveProductsToSharedDb(listings);
-    }
-  }, [listings]);
 
   // Add Listing Modal State
   const [isAddListingModalOpen, setIsAddListingModalOpen] = useState(false);
