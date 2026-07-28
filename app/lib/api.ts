@@ -14,6 +14,8 @@ export interface TradeLeadProspect {
   tariff_estimate_pct: number;
   match_score: number;
   confidence_reason: string;
+  registration_id?: string;
+  verification_badge?: string;
 }
 
 export interface ComputeTradeResponse {

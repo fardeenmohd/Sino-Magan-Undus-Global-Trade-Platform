@@ -426,10 +426,20 @@ export default function ProductDetailPage() {
                 <tbody className="divide-y divide-slate-800/80">
                   {productLeads.map((lead, idx) => (
                     <tr key={idx} className="hover:bg-slate-900/80 transition-colors">
-                      <td className="p-3.5 font-bold text-white">{lead.name}</td>
+                      <td className="p-3.5">
+                        <div className="font-bold text-white flex flex-col sm:flex-row sm:items-center gap-1">
+                          <span>{lead.name}</span>
+                          <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 font-bold w-fit">
+                            {lead.verification_badge || "🛡️ PLATINUM CUSTOMS VERIFIED"}
+                          </span>
+                        </div>
+                      </td>
                       <td className="p-3.5">
                         <div className="text-slate-200 font-semibold">{lead.company}</div>
-                        <div className="text-slate-400 text-[11px] font-mono">{lead.email}</div>
+                        <div className="text-slate-400 text-[11px] font-mono flex flex-wrap items-center gap-2">
+                          <span>{lead.email}</span>
+                          <span className="text-[10px] text-purple-400 font-bold">{lead.registration_id || "DUNS: 69-823-4109"}</span>
+                        </div>
                       </td>
                       <td className="p-3.5 text-slate-200">{lead.destination_country}</td>
                       <td className="p-3.5 font-mono text-cyan-400">{lead.port_hub}</td>
