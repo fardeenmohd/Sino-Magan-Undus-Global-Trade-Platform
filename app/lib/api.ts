@@ -529,6 +529,47 @@ export async function createLeadApi(leadData: any) {
   return null;
 }
 
+export interface CountryAutocompleteEntry {
+  country: string;
+  flag: string;
+  formattedName: string;
+  primaryPortHub: string;
+  region: string;
+}
+
+export const COUNTRY_AUTOCOMPLETE_DATABASE: CountryAutocompleteEntry[] = [
+  { country: "United States", flag: "🇺🇸", formattedName: "United States 🇺🇸", primaryPortHub: "Port of Los Angeles / Newark", region: "North America" },
+  { country: "Germany", flag: "🇩🇪", formattedName: "Germany 🇩🇪", primaryPortHub: "Port of Hamburg", region: "Europe (EU)" },
+  { country: "Sweden", flag: "🇸🇪", formattedName: "Sweden 🇸🇪", primaryPortHub: "Port of Gothenburg", region: "Europe (Nordic)" },
+  { country: "Poland", flag: "🇵🇱", formattedName: "Poland 🇵🇱", primaryPortHub: "Port of Gdańsk", region: "Europe (EU)" },
+  { country: "Netherlands", flag: "🇳🇱", formattedName: "Netherlands 🇳🇱", primaryPortHub: "Port of Rotterdam", region: "Europe (EU)" },
+  { country: "Australia", flag: "🇦🇺", formattedName: "Australia 🇦🇺", primaryPortHub: "Port of Sydney", region: "Oceania" },
+  { country: "United Kingdom", flag: "🇬🇧", formattedName: "United Kingdom 🇬🇧", primaryPortHub: "Port of London", region: "Europe (Non-EU)" },
+  { country: "Oman", flag: "🇴🇲", formattedName: "Oman 🇴🇲", primaryPortHub: "Port of Salalah", region: "Middle East (GCC)" },
+  { country: "United Arab Emirates", flag: "🇦🇪", formattedName: "UAE 🇦🇪", primaryPortHub: "Port of Jebel Ali", region: "Middle East (GCC)" },
+  { country: "China", flag: "🇨🇳", formattedName: "China 🇨🇳", primaryPortHub: "Port of Shanghai", region: "East Asia" },
+  { country: "Japan", flag: "🇯🇵", formattedName: "Japan 🇯🇵", primaryPortHub: "Port of Yokohama", region: "East Asia" },
+  { country: "India", flag: "🇮🇳", formattedName: "India 🇮🇳", primaryPortHub: "Port of Nhava Sheva (JNPT)", region: "South Asia" },
+  { country: "Canada", flag: "🇨🇦", formattedName: "Canada 🇨🇦", primaryPortHub: "Port of Vancouver", region: "North America" },
+  { country: "France", flag: "🇫🇷", formattedName: "France 🇫🇷", primaryPortHub: "Port of Le Havre", region: "Europe (EU)" },
+  { country: "Italy", flag: "🇮🇹", formattedName: "Italy 🇮🇹", primaryPortHub: "Port of Genoa", region: "Europe (EU)" },
+  { country: "Singapore", flag: "🇸🇬", formattedName: "Singapore 🇸🇬", primaryPortHub: "Port of Singapore", region: "Southeast Asia" },
+  { country: "Saudi Arabia", flag: "🇸🇦", formattedName: "Saudi Arabia 🇸🇦", primaryPortHub: "Jeddah Islamic Port", region: "Middle East (GCC)" },
+  { country: "Global", flag: "🌐", formattedName: "Global All Corridors 🌐", primaryPortHub: "International Maritime Freight", region: "Worldwide" },
+];
+
+export function searchCountryAutocomplete(query: string): CountryAutocompleteEntry[] {
+  if (!query || query.trim() === "") return COUNTRY_AUTOCOMPLETE_DATABASE.slice(0, 6);
+  const clean = query.toLowerCase().trim();
+  return COUNTRY_AUTOCOMPLETE_DATABASE.filter(
+    (c) =>
+      c.country.toLowerCase().includes(clean) ||
+      c.formattedName.toLowerCase().includes(clean) ||
+      c.primaryPortHub.toLowerCase().includes(clean) ||
+      c.region.toLowerCase().includes(clean)
+  );
+}
+
 const SHARED_PRODUCTS_KEY = "antigravity_shared_db_products";
 const SHARED_LEADS_KEY = "antigravity_shared_db_leads";
 

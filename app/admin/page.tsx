@@ -2,7 +2,20 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { streamLeadsCompute, getSharedProductsFromDb, saveProductsToSharedDb, getSharedLeadsFromDb, saveLeadsToSharedDb, TradeLeadProspect, searchCommodityAutocomplete, AutocompleteCommodity, scrapeNewOpportunitiesApi, ScrapedTradeOpportunity } from "../lib/api";
+import {
+  streamLeadsCompute,
+  getSharedProductsFromDb,
+  saveProductsToSharedDb,
+  getSharedLeadsFromDb,
+  saveLeadsToSharedDb,
+  TradeLeadProspect,
+  searchCommodityAutocomplete,
+  AutocompleteCommodity,
+  searchCountryAutocomplete,
+  CountryAutocompleteEntry,
+  scrapeNewOpportunitiesApi,
+  ScrapedTradeOpportunity
+} from "../lib/api";
 
 export interface AdminProduct {
   id: number;
@@ -31,12 +44,15 @@ export default function AdminDashboardPage() {
   const [isScraping, setIsScraping] = useState(false);
   const [scrapedStatusMessage, setScrapedStatusMessage] = useState("");
   const [scraperForm, setScraperForm] = useState({
-    keyword: "Ashwagandha & Herbal Extracts",
-    destination: "Germany 🇩🇪",
+    keyword: "",
+    destination: "",
     sourcingMode: "BOTH" as "EXPORT_PRODUCT" | "IMPORT_LEAD" | "LOCAL_VENDOR" | "BOTH",
     crawlLimit: 12,
-    minBudget: 25000,
+    minBudget: 10000,
   });
+
+  const [countrySuggestionsScraper, setCountrySuggestionsScraper] = useState<CountryAutocompleteEntry[]>([]);
+  const [showCountryAutocompleteScraper, setShowCountryAutocompleteScraper] = useState(false);
 
   // Admin Data State
   const [products, setProducts] = useState<AdminProduct[]>([
@@ -147,19 +163,21 @@ export default function AdminDashboardPage() {
 
   // Python Compute Engine Super-Trigger Form State
   const [computeForm, setComputeForm] = useState({
-    title: "Salem Premium Nizamabad Turmeric Powder",
-    category: "Makhana & Superfoods",
-    hsCode: "HS-0910",
-    destinationCountry: "Germany 🇩🇪",
-    portHub: "Port of Hamburg",
-    price: 4.8,
-    unit: "kg",
-    supplier: "Antigravity Global Trade Admin",
+    title: "",
+    category: "",
+    hsCode: "",
+    destinationCountry: "",
+    portHub: "",
+    price: 0,
+    unit: "",
+    supplier: "",
   });
 
   const [isComputing, setIsComputing] = useState(false);
   const [autocompleteSuggestions, setAutocompleteSuggestions] = useState<AutocompleteCommodity[]>([]);
   const [showAutocomplete, setShowAutocomplete] = useState(false);
+  const [countrySuggestionsSuperTrigger, setCountrySuggestionsSuperTrigger] = useState<CountryAutocompleteEntry[]>([]);
+  const [showCountryAutocompleteSuperTrigger, setShowCountryAutocompleteSuperTrigger] = useState(false);
   const [streamProgress, setStreamProgress] = useState(0);
   const [streamMessage, setStreamMessage] = useState("");
   const [lastExtensionToast, setLastExtensionToast] = useState("");
@@ -866,14 +884,64 @@ export default function AdminDashboardPage() {
                 />
               </div>
 
-              <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Target Destination</label>
+              <div className="relative">
+                <label className="block text-xs font-semibold text-slate-300 mb-1">
+                  Target Destination <span className="text-[10px] text-cyan-400 font-mono">(Country Autocomplete 🌍)</span>
+                </label>
                 <input
                   type="text"
                   value={computeForm.destinationCountry}
-                  onChange={(e) => setComputeForm({ ...computeForm, destinationCountry: e.target.value })}
-                  className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-slate-200 focus:outline-none focus:border-cyan-500"
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setComputeForm({ ...computeForm, destinationCountry: val });
+                    const matches = searchCountryAutocomplete(val);
+                    setCountrySuggestionsSuperTrigger(matches);
+                    setShowCountryAutocompleteSuperTrigger(matches.length > 0);
+                  }}
+                  onFocus={() => {
+                    const matches = searchCountryAutocomplete(computeForm.destinationCountry);
+                    setCountrySuggestionsSuperTrigger(matches);
+                    if (matches.length > 0) setShowCountryAutocompleteSuperTrigger(true);
+                  }}
+                  className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-slate-200 focus:outline-none focus:border-cyan-500 font-medium"
+                  placeholder="Type country e.g. Germany, USA, Sweden..."
                 />
+
+                {/* Country Autocomplete Suggestions Popover */}
+                {showCountryAutocompleteSuperTrigger && countrySuggestionsSuperTrigger.length > 0 && (
+                  <div className="absolute left-0 right-0 top-full mt-1 bg-slate-950/95 border border-cyan-500/30 rounded-xl shadow-2xl backdrop-blur-xl z-50 overflow-hidden max-h-60 overflow-y-auto">
+                    <div className="px-3 py-1.5 bg-slate-900/80 border-b border-slate-800 text-[10px] font-mono text-cyan-400 flex items-center justify-between">
+                      <span>🌍 Standardized Country Corridors</span>
+                      <span>Click to auto-fill Country & Port</span>
+                    </div>
+                    {countrySuggestionsSuperTrigger.map((c, idx) => (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() => {
+                          setComputeForm({
+                            ...computeForm,
+                            destinationCountry: c.formattedName,
+                            portHub: c.primaryPortHub,
+                          });
+                          setShowCountryAutocompleteSuperTrigger(false);
+                        }}
+                        className="w-full px-3 py-2 text-left hover:bg-cyan-500/10 border-b border-slate-800/50 last:border-0 flex items-center justify-between transition-colors duration-150 cursor-pointer"
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className="text-base">{c.flag}</span>
+                          <div>
+                            <div className="text-xs font-semibold text-slate-200">{c.formattedName}</div>
+                            <div className="text-[10px] text-slate-400 font-mono">{c.region}</div>
+                          </div>
+                        </div>
+                        <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                          {c.primaryPortHub}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
 
               <div>
@@ -882,6 +950,7 @@ export default function AdminDashboardPage() {
                   type="text"
                   value={computeForm.portHub}
                   onChange={(e) => setComputeForm({ ...computeForm, portHub: e.target.value })}
+                  placeholder="Auto-filled port e.g. Port of Hamburg"
                   className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-slate-200 focus:outline-none focus:border-cyan-500"
                 />
               </div>
@@ -891,8 +960,9 @@ export default function AdminDashboardPage() {
                 <input
                   type="number"
                   step="0.01"
-                  value={computeForm.price}
+                  value={computeForm.price || ""}
                   onChange={(e) => setComputeForm({ ...computeForm, price: parseFloat(e.target.value) || 0 })}
+                  placeholder="e.g. 18.50"
                   className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-slate-200 focus:outline-none focus:border-cyan-500"
                 />
               </div>
@@ -916,16 +986,16 @@ export default function AdminDashboardPage() {
                   ></div>
                 </div>
 
-                <div className="p-3 bg-slate-900 border border-slate-800 rounded-lg text-xs font-mono text-slate-200">
+                <div className="p-3 bg-slate-900 border border-slate-800 rounded-lg text-xs font-mono text-slate-300">
                   {streamMessage || "⚡ Running Scraper Engine..."}
                 </div>
               </div>
             ) : (
               <button
                 onClick={handleRunComputeEngineSuperTrigger}
-                className="w-full py-4 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-extrabold text-sm rounded-xl shadow-lg shadow-cyan-500/20 transition-all duration-200 cursor-pointer"
+                className="w-full py-3 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold text-xs rounded-xl shadow-lg shadow-cyan-500/20 transition-all duration-200 cursor-pointer"
               >
-                🚀 Execute Python Agent & Extend Catalog + Leads Network →
+                ⚡ Execute Python Compute Engine Super-Trigger →
               </button>
             )}
           </div>
@@ -936,8 +1006,8 @@ export default function AdminDashboardPage() {
           <div className="bg-slate-900/60 border border-slate-800 rounded-2xl overflow-hidden">
             <div className="p-5 border-b border-slate-800 flex items-center justify-between">
               <div>
-                <h3 className="text-base font-bold text-white">Exporting Goods Master Catalog</h3>
-                <p className="text-xs text-slate-400">All registered and AI-extended Indian commodity products</p>
+                <h3 className="text-base font-bold text-white">Master Exporting Commodities Catalog</h3>
+                <p className="text-xs text-slate-400">All export product lines registered across the platform</p>
               </div>
             </div>
 
@@ -949,9 +1019,9 @@ export default function AdminDashboardPage() {
                     <th className="p-3.5">Commodity Title</th>
                     <th className="p-3.5">Category</th>
                     <th className="p-3.5">HS Code</th>
-                    <th className="p-3.5">Target Destination</th>
-                    <th className="p-3.5">Price</th>
-                    <th className="p-3.5">Leads Count</th>
+                    <th className="p-3.5">Destination</th>
+                    <th className="p-3.5">FOB Price</th>
+                    <th className="p-3.5">Scraped Prospects</th>
                     <th className="p-3.5">Status</th>
                     <th className="p-3.5 text-right">Actions</th>
                   </tr>
@@ -964,10 +1034,10 @@ export default function AdminDashboardPage() {
                       <td className="p-3.5 text-slate-300">{p.category}</td>
                       <td className="p-3.5 font-mono text-cyan-400">{p.hsCode}</td>
                       <td className="p-3.5 text-slate-200">{p.destinationCountry}</td>
-                      <td className="p-3.5 font-bold text-slate-100">${p.price} / {p.unit}</td>
-                      <td className="p-3.5 font-mono text-emerald-400">{p.leadCount} Verified</td>
+                      <td className="p-3.5 font-mono font-bold text-slate-100">${p.price} / {p.unit}</td>
+                      <td className="p-3.5 font-mono text-emerald-400 font-bold">{p.leadCount} Verified</td>
                       <td className="p-3.5">
-                        <span className="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono text-[11px]">
+                        <span className="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono text-[10px] font-bold">
                           {p.status}
                         </span>
                       </td>
@@ -1074,27 +1144,63 @@ export default function AdminDashboardPage() {
                   />
                 </div>
 
-                <div>
-                  <label className="block text-xs font-semibold text-purple-300 mb-1">Target Country 🌍</label>
-                  <select
+                <div className="relative">
+                  <label className="block text-xs font-semibold text-purple-300 mb-1">
+                    Target Country <span className="text-[10px] text-purple-400 font-mono">(Country Autocomplete 🌍)</span>
+                  </label>
+                  <input
+                    type="text"
                     value={scraperForm.destination}
-                    onChange={(e) => setScraperForm({ ...scraperForm, destination: e.target.value })}
-                    className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-slate-200 focus:outline-none focus:border-purple-500 cursor-pointer font-medium"
-                  >
-                    <option value="United States 🇺🇸">United States 🇺🇸</option>
-                    <option value="Germany 🇩🇪">Germany 🇩🇪</option>
-                    <option value="Sweden 🇸🇪">Sweden 🇸🇪</option>
-                    <option value="Poland 🇵🇱">Poland 🇵🇱</option>
-                    <option value="Netherlands 🇳🇱">Netherlands 🇳🇱</option>
-                    <option value="Australia 🇦🇺">Australia 🇦🇺</option>
-                    <option value="United Kingdom 🇬🇧">United Kingdom 🇬🇧</option>
-                    <option value="Oman 🇴🇲">Oman 🇴🇲</option>
-                    <option value="UAE 🇦🇪">UAE 🇦🇪</option>
-                    <option value="China 🇨🇳">China 🇨🇳</option>
-                    <option value="Japan 🇯🇵">Japan 🇯🇵</option>
-                    <option value="India 🇮🇳">India 🇮🇳</option>
-                    <option value="Global 🌐">Global All Corridors 🌐</option>
-                  </select>
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setScraperForm({ ...scraperForm, destination: val });
+                      const matches = searchCountryAutocomplete(val);
+                      setCountrySuggestionsScraper(matches);
+                      setShowCountryAutocompleteScraper(matches.length > 0);
+                    }}
+                    onFocus={() => {
+                      const matches = searchCountryAutocomplete(scraperForm.destination);
+                      setCountrySuggestionsScraper(matches);
+                      if (matches.length > 0) setShowCountryAutocompleteScraper(true);
+                    }}
+                    className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-slate-200 focus:outline-none focus:border-purple-500 font-medium"
+                    placeholder="Type country e.g. Germany, Sweden, USA..."
+                  />
+
+                  {/* Country Autocomplete Popover */}
+                  {showCountryAutocompleteScraper && countrySuggestionsScraper.length > 0 && (
+                    <div className="absolute left-0 right-0 top-full mt-1 bg-slate-950/95 border border-purple-500/30 rounded-xl shadow-2xl backdrop-blur-xl z-50 overflow-hidden max-h-60 overflow-y-auto">
+                      <div className="px-3 py-1.5 bg-slate-900/80 border-b border-slate-800 text-[10px] font-mono text-purple-300 flex items-center justify-between">
+                        <span>🌍 Select Scraper Target Country</span>
+                        <span>Click to apply</span>
+                      </div>
+                      {countrySuggestionsScraper.map((c, idx) => (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => {
+                            setScraperForm({
+                              ...scraperForm,
+                              destination: c.formattedName,
+                            });
+                            setShowCountryAutocompleteScraper(false);
+                          }}
+                          className="w-full px-3 py-2 text-left hover:bg-purple-500/10 border-b border-slate-800/50 last:border-0 flex items-center justify-between transition-colors duration-150 cursor-pointer"
+                        >
+                          <div className="flex items-center gap-2">
+                            <span className="text-base">{c.flag}</span>
+                            <div>
+                              <div className="text-xs font-semibold text-slate-200">{c.formattedName}</div>
+                              <div className="text-[10px] text-slate-400 font-mono">{c.region}</div>
+                            </div>
+                          </div>
+                          <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-purple-500/10 text-purple-300 border border-purple-500/20">
+                            {c.primaryPortHub}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 <div>
