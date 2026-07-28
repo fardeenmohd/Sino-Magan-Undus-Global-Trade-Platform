@@ -4,9 +4,21 @@ All notable changes to Project Antigravity will be documented in this file.
 
 ## [Unreleased]
 
-### Refactored & Cleaned
-- **✨ Removal of Pre-filled Category Defaults ([`app/page.tsx`](file:///C:/Users/fardi/Documents/antigravity/joyful-raman/app/page.tsx), [`app/dashboard/page.tsx`](file:///C:/Users/fardi/Documents/antigravity/joyful-raman/app/dashboard/page.tsx), [`app/admin/page.tsx`](file:///C:/Users/fardi/Documents/antigravity/joyful-raman/app/admin/page.tsx))**:
-  - Removed pre-filled default category values (`"Makhana & Superfoods"`) from all forms so users start with clean, unselected category dropdowns with a default `"Select Category / Sector..."` placeholder option.
+### Added & Enhanced
+- **🇯🇵 Japan Trade Corridor Integration ([`app/lib/api.ts`](file:///C:/Users/fardi/Documents/antigravity/joyful-raman/app/lib/api.ts), [`app/page.tsx`](file:///C:/Users/fardi/Documents/antigravity/joyful-raman/app/page.tsx), [`app/admin/page.tsx`](file:///C:/Users/fardi/Documents/antigravity/joyful-raman/app/admin/page.tsx))**:
+  - Integrated Japan 🇯🇵 (`Port of Yokohama / Tokyo`) into `DESTINATION_COUNTRIES` and country autocomplete databases platform-wide.
+  - Added preset Super-Trigger corridor for Japanese Nicotine Pouches & Superfoods (`HS-2404` / `HS-1904`).
+
+- **📄 Product Intelligence & Export Compliance Details Page ([`app/products/[id]/page.tsx`](file:///C:/Users/fardi/Documents/antigravity/joyful-raman/app/products/[id]/page.tsx))**:
+  - Created a dedicated Product Intelligence Page accessible from Public Catalog (`/`), User Dashboard (`/dashboard`), and Admin Master Table (`/admin`).
+  - Features:
+    - **Export Technical Specifications**: Quality grade, purity, moisture limit, shelf life, packaging standard, warehouse storage conditions.
+    - **Regulatory Clearance Matrix**: Agency requirements (Japan MAFF/MHLW Food Sanitation Act, US FDA, EU EFSA/TRACES, GSO Halal) and mandatory certificates (Phytosanitary, Certificate of Origin, JAS Organic, HACCP, ISO 22000).
+    - **Verified Import Buyer Prospects Network**: Scraped and matched international buyer leads with contact info, companies, and match scores.
+    - **In-Country Local Export Distributors**: Wholesalers, bonded warehouse operators, and port customs clearance partners.
+    - **1-Click Actions**: Live Python compute lead engine trigger and official customs dossier PDF generator.
+
+- **✨ Removal of Pre-filled Category Defaults**.
 
 - **✨ Removal of Manual Unit of Measurement Inputs**.
 

@@ -42,6 +42,7 @@ export interface TradeProduct {
 // Target Destinations
 const DESTINATION_COUNTRIES = [
   { code: "ALL", name: "All Destinations", flag: "🌐" },
+  { code: "Japan", name: "Japan", flag: "🇯🇵", hub: "Port of Yokohama" },
   { code: "Poland", name: "Poland", flag: "🇵🇱", hub: "Port of Gdańsk" },
   { code: "Netherlands", name: "Netherlands", flag: "🇳🇱", hub: "Port of Rotterdam" },
   { code: "Australia", name: "Australia", flag: "🇦🇺", hub: "Port of Sydney" },
@@ -788,12 +789,20 @@ export default function ExpandedTradeCatalogPage() {
                   </div>
 
                   {/* Action Button */}
-                  <button
-                    onClick={() => handleTriggerComputeAgent(product)}
-                    className="w-full py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-cyan-500 hover:text-slate-950 text-cyan-400 font-bold text-xs transition-colors duration-200 flex items-center justify-center gap-1.5 cursor-pointer shadow-md"
-                  >
-                    <span>🤖 Run AI Buyer Lead Matcher ({product.destinationCountry})</span>
-                  </button>
+                  <div className="grid grid-cols-1 gap-2 pt-1">
+                    <Link
+                      href={`/products/${product.id}`}
+                      className="w-full py-2 px-3 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 font-bold text-xs transition-colors duration-200 flex items-center justify-center gap-1.5 cursor-pointer"
+                    >
+                      <span>📄 View Product Details & Compliance</span>
+                    </Link>
+                    <button
+                      onClick={() => handleTriggerComputeAgent(product)}
+                      className="w-full py-2 px-3 rounded-xl bg-slate-800 hover:bg-cyan-500 hover:text-slate-950 text-slate-200 font-bold text-xs transition-colors duration-200 flex items-center justify-center gap-1.5 cursor-pointer shadow-md"
+                    >
+                      <span>🤖 Run AI Buyer Lead Matcher ({product.destinationCountry})</span>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>

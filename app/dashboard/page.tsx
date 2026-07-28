@@ -540,12 +540,20 @@ export default function UserDashboardPage() {
                         </span>
                       </td>
                       <td className="py-4 px-6 text-right">
-                        <button
-                          onClick={() => handleToggleStatus(item.id)}
-                          className="text-xs px-3 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 transition-colors duration-200 cursor-pointer"
-                        >
-                          Toggle {item.status === "ACTIVE" ? "Deactivate" : "Activate"}
-                        </button>
+                        <div className="flex items-center justify-end gap-2">
+                          <Link
+                            href={`/products/${item.id}`}
+                            className="text-xs px-2.5 py-1 rounded bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 font-semibold transition-colors duration-200"
+                          >
+                            📄 View Details & Compliance
+                          </Link>
+                          <button
+                            onClick={() => handleToggleStatus(item.id)}
+                            className="text-xs px-3 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 transition-colors duration-200 cursor-pointer"
+                          >
+                            Toggle {item.status === "ACTIVE" ? "Deactivate" : "Activate"}
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}

@@ -816,6 +816,23 @@ export default function AdminDashboardPage() {
                 >
                   🇦🇺 Australian Machinery
                 </button>
+
+                <button
+                  onClick={() =>
+                    setPresetCorridor({
+                      title: "Tobacco-Free White Nicotine Pouches 12mg (HS 2404)",
+                      category: "Tobacco & Nicotine Pouches",
+                      hsCode: "HS-2404",
+                      destinationCountry: "Japan 🇯🇵",
+                      portHub: "Port of Yokohama",
+                      price: 1.85,
+                      unit: "can",
+                    })
+                  }
+                  className="px-3 py-1.5 bg-slate-950 hover:bg-slate-800 border border-purple-500/30 rounded-lg text-xs font-mono text-purple-300 cursor-pointer"
+                >
+                  🇯🇵 Japanese Pouches & Superfoods
+                </button>
               </div>
             </div>
 
@@ -1040,12 +1057,20 @@ export default function AdminDashboardPage() {
                         </span>
                       </td>
                       <td className="p-3.5 text-right">
-                        <button
-                          onClick={() => setProducts((prev) => prev.filter((item) => item.id !== p.id))}
-                          className="px-2.5 py-1 bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 rounded-md text-xs cursor-pointer"
-                        >
-                          Remove
-                        </button>
+                        <div className="flex items-center justify-end gap-2">
+                          <Link
+                            href={`/products/${p.id}`}
+                            className="px-2.5 py-1 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 rounded-md text-xs cursor-pointer font-semibold"
+                          >
+                            📄 View Details & Compliance
+                          </Link>
+                          <button
+                            onClick={() => setProducts((prev) => prev.filter((item) => item.id !== p.id))}
+                            className="px-2.5 py-1 bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 rounded-md text-xs cursor-pointer"
+                          >
+                            Remove
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
