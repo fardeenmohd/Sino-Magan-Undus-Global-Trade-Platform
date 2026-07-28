@@ -7,6 +7,7 @@ import json
 import asyncio
 import re
 import random
+import uvicorn
 from typing import List, Optional
 
 app = FastAPI(

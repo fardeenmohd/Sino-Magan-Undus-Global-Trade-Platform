@@ -32,7 +32,8 @@ export default function AdminDashboardPage() {
   const [scrapedStatusMessage, setScrapedStatusMessage] = useState("");
   const [scraperForm, setScraperForm] = useState({
     keyword: "Ashwagandha & Herbal Extracts",
-    destination: "Germany",
+    destination: "Germany 🇩🇪",
+    sourcingMode: "BOTH" as "EXPORT_PRODUCT" | "IMPORT_LEAD" | "BOTH",
     minBudget: 25000,
   });
 
@@ -165,16 +166,17 @@ export default function AdminDashboardPage() {
   const handleLaunchWebScraper = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     setIsScraping(true);
-    setScrapedStatusMessage("🔍 Scraping live trade registries (trade.ec.europa.eu, us.customs.gov, apeda.gov.in)...");
+    setScrapedStatusMessage(`🔍 Scraping live trade registries for ${scraperForm.destination} (${scraperForm.sourcingMode})...`);
 
     try {
       const results = await scrapeNewOpportunitiesApi(
         scraperForm.keyword,
         scraperForm.destination,
-        scraperForm.minBudget
+        scraperForm.minBudget,
+        scraperForm.sourcingMode
       );
       setScrapedOpportunities(results);
-      setScrapedStatusMessage(`✅ Web Scraper discovered ${results.length} brand-new export opportunities!`);
+      setScrapedStatusMessage(`✅ Web Scraper discovered ${results.length} new trade opportunities in ${scraperForm.destination}!`);
     } catch (err) {
       console.error(err);
       setScrapedStatusMessage("⚠️ Web Scraper completed crawl.");
@@ -1000,13 +1002,73 @@ export default function AdminDashboardPage() {
                 </button>
               </div>
 
+              {/* Controls Form */}
+              <form onSubmit={handleLaunchWebScraper} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 bg-slate-950 border border-purple-500/30 p-4 rounded-xl">
+                <div>
+                  <label className="block text-xs font-semibold text-purple-300 mb-1">Search Keyword / Commodity</label>
+                  <input
+                    type="text"
+                    value={scraperForm.keyword}
+                    onChange={(e) => setScraperForm({ ...scraperForm, keyword: e.target.value })}
+                    className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-slate-200 focus:outline-none focus:border-purple-500 font-mono"
+                    placeholder="e.g. Ashwagandha, Snus..."
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-purple-300 mb-1">Target Country 🌍</label>
+                  <select
+                    value={scraperForm.destination}
+                    onChange={(e) => setScraperForm({ ...scraperForm, destination: e.target.value })}
+                    className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-slate-200 focus:outline-none focus:border-purple-500 cursor-pointer font-medium"
+                  >
+                    <option value="United States 🇺🇸">United States 🇺🇸</option>
+                    <option value="Germany 🇩🇪">Germany 🇩🇪</option>
+                    <option value="Sweden 🇸🇪">Sweden 🇸🇪</option>
+                    <option value="Poland 🇵🇱">Poland 🇵🇱</option>
+                    <option value="Netherlands 🇳🇱">Netherlands 🇳🇱</option>
+                    <option value="Australia 🇦🇺">Australia 🇦🇺</option>
+                    <option value="United Kingdom 🇬🇧">United Kingdom 🇬🇧</option>
+                    <option value="Oman 🇴🇲">Oman 🇴🇲</option>
+                    <option value="UAE 🇦🇪">UAE 🇦🇪</option>
+                    <option value="China 🇨🇳">China 🇨🇳</option>
+                    <option value="Japan 🇯🇵">Japan 🇯🇵</option>
+                    <option value="India 🇮🇳">India 🇮🇳</option>
+                    <option value="Global 🌐">Global All Corridors 🌐</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-purple-300 mb-1">Sourcing Direction / Mode</label>
+                  <select
+                    value={scraperForm.sourcingMode}
+                    onChange={(e) => setScraperForm({ ...scraperForm, sourcingMode: e.target.value as any })}
+                    className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-purple-300 focus:outline-none focus:border-purple-500 cursor-pointer font-bold"
+                  >
+                    <option value="BOTH">⚡ BOTH (Export Products & Importer Leads)</option>
+                    <option value="EXPORT_PRODUCT">📦 EXPORT PRODUCTS ONLY</option>
+                    <option value="IMPORT_LEAD">🎯 IMPORT BUYER LEADS ONLY</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-purple-300 mb-1">Min Annual Budget ($)</label>
+                  <input
+                    type="number"
+                    value={scraperForm.minBudget}
+                    onChange={(e) => setScraperForm({ ...scraperForm, minBudget: Number(e.target.value) })}
+                    className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-slate-200 focus:outline-none focus:border-purple-500 font-mono"
+                  />
+                </div>
+              </form>
+
               {/* Scraper Presets */}
               <div className="space-y-2">
                 <span className="text-xs font-mono text-slate-400">Target Scraper Presets:</span>
                 <div className="flex flex-wrap gap-2">
                   <button
                     onClick={() => {
-                      setScraperForm({ keyword: "Ashwagandha & Herbal Extracts", destination: "Germany", minBudget: 35000 });
+                      setScraperForm({ keyword: "Ashwagandha & Herbal Extracts", destination: "Germany 🇩🇪", sourcingMode: "BOTH", minBudget: 35000 });
                       handleLaunchWebScraper();
                     }}
                     className="px-3 py-1.5 bg-slate-950 hover:bg-slate-800 border border-purple-500/30 rounded-lg text-xs font-mono text-purple-300 cursor-pointer"
@@ -1015,7 +1077,7 @@ export default function AdminDashboardPage() {
                   </button>
                   <button
                     onClick={() => {
-                      setScraperForm({ keyword: "Nicotine Pouches & Snus", destination: "Sweden", minBudget: 25000 });
+                      setScraperForm({ keyword: "Nicotine Pouches & Snus", destination: "Sweden 🇸🇪", sourcingMode: "IMPORT_LEAD", minBudget: 25000 });
                       handleLaunchWebScraper();
                     }}
                     className="px-3 py-1.5 bg-slate-950 hover:bg-slate-800 border border-purple-500/30 rounded-lg text-xs font-mono text-purple-300 cursor-pointer"
@@ -1024,16 +1086,16 @@ export default function AdminDashboardPage() {
                   </button>
                   <button
                     onClick={() => {
-                      setScraperForm({ keyword: "Foxnuts & Superfoods", destination: "United States", minBudget: 40000 });
+                      setScraperForm({ keyword: "Foxnuts & Superfoods", destination: "United States 🇺🇸", sourcingMode: "EXPORT_PRODUCT", minBudget: 40000 });
                       handleLaunchWebScraper();
                     }}
                     className="px-3 py-1.5 bg-slate-950 hover:bg-slate-800 border border-purple-500/30 rounded-lg text-xs font-mono text-purple-300 cursor-pointer"
                   >
-                    🇺🇸 Scrape US Superfood Importers
+                    🇺🇸 Scrape US Superfood Export Products
                   </button>
                   <button
                     onClick={() => {
-                      setScraperForm({ keyword: "Halal Meat & Poultry", destination: "Oman", minBudget: 50000 });
+                      setScraperForm({ keyword: "Halal Meat & Poultry", destination: "Oman 🇴🇲", sourcingMode: "BOTH", minBudget: 50000 });
                       handleLaunchWebScraper();
                     }}
                     className="px-3 py-1.5 bg-slate-950 hover:bg-slate-800 border border-purple-500/30 rounded-lg text-xs font-mono text-purple-300 cursor-pointer"
@@ -1057,7 +1119,7 @@ export default function AdminDashboardPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <h4 className="text-sm font-bold text-white">Discovered Trade Opportunities ({scrapedOpportunities.length})</h4>
-                  <p className="text-xs text-slate-400">Novel products and buyer leads scraped directly from global registries</p>
+                  <p className="text-xs text-slate-400">Novel products and buyer leads scraped directly from global registries for {scraperForm.destination}</p>
                 </div>
               </div>
 
@@ -1069,8 +1131,12 @@ export default function AdminDashboardPage() {
                   >
                     <div className="space-y-2">
                       <div className="flex items-center justify-between gap-2">
-                        <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-purple-500/10 text-purple-300 border border-purple-500/30">
-                          {item.hsCode}
+                        <span className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold ${
+                          item.opportunityType === "EXPORT_PRODUCT"
+                            ? "bg-cyan-500/10 text-cyan-400 border border-cyan-500/30"
+                            : "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30"
+                        }`}>
+                          {item.opportunityType === "EXPORT_PRODUCT" ? "📦 EXPORT PRODUCT" : "🎯 IMPORT BUYER LEAD"}
                         </span>
                         <span className="text-[11px] font-mono text-cyan-400 bg-cyan-950/50 px-2 py-0.5 rounded border border-cyan-500/20">
                           {item.sourceDomain}

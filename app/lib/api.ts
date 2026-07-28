@@ -644,6 +644,7 @@ export interface ScrapedTradeOpportunity {
   suggestedPrice: number;
   unit: string;
   sourceDomain: string;
+  opportunityType: "EXPORT_PRODUCT" | "IMPORT_LEAD";
   scrapedBuyerName: string;
   scrapedBuyerCompany: string;
   scrapedBuyerEmail: string;
@@ -659,7 +660,8 @@ export interface ScrapedTradeOpportunity {
 export async function scrapeNewOpportunitiesApi(
   keyword: string,
   destination: string,
-  minBudget: number = 10000
+  minBudget: number = 10000,
+  sourcingMode: "EXPORT_PRODUCT" | "IMPORT_LEAD" | "BOTH" = "BOTH"
 ): Promise<ScrapedTradeOpportunity[]> {
   try {
     const response = await fetch(`${COMPUTE_ENGINE_URL}/api/compute/scrape-discover`, {
@@ -669,6 +671,7 @@ export async function scrapeNewOpportunitiesApi(
         keyword,
         destination_country: destination,
         min_budget: minBudget,
+        sourcing_mode: sourcingMode,
       }),
     });
     if (response.ok) {
@@ -684,18 +687,19 @@ export async function scrapeNewOpportunitiesApi(
   const cleanDest = destination ? destination.replace(/[^\w\s]/gi, "").trim() : "Germany";
   const now = new Date().toISOString();
 
-  return [
+  const allItems: ScrapedTradeOpportunity[] = [
     {
       id: Date.now() + 1,
       title: `Organic ${cleanKey} Grade-A Export Batch (HS-0910)`,
       category: "Makhana & Superfoods",
       hsCode: "HS-0910",
       originCountry: "India 🇮🇳",
-      destinationCountry: `${cleanDest} 🇪🇺`,
+      destinationCountry: `${cleanDest}`,
       portHub: cleanDest.includes("Germany") ? "Port of Hamburg" : cleanDest.includes("Poland") ? "Port of Gdańsk" : "Port of Rotterdam",
       suggestedPrice: 12.80,
       unit: "kg",
       sourceDomain: cleanDest.includes("Germany") ? "trade.ec.europa.eu" : "apeda.gov.in",
+      opportunityType: "EXPORT_PRODUCT",
       scrapedBuyerName: "Dr. Klaus Lindner",
       scrapedBuyerCompany: `${cleanDest} Global Bio-Commodity Imports GmbH`,
       scrapedBuyerEmail: `k.lindner@${cleanDest.toLowerCase().replace(/\s+/g, "")}biotrade.eu`,
@@ -710,11 +714,12 @@ export async function scrapeNewOpportunitiesApi(
       category: "Ayurvedic & Herbal Extracts",
       hsCode: "HS-1211",
       originCountry: "India 🇮🇳",
-      destinationCountry: `${cleanDest} 🌐`,
+      destinationCountry: `${cleanDest}`,
       portHub: "Main Import Hub",
       suggestedPrice: 24.50,
       unit: "kg",
       sourceDomain: "customs.gov.se",
+      opportunityType: "IMPORT_LEAD",
       scrapedBuyerName: "Astrid Lindgren",
       scrapedBuyerCompany: `Nordic Botanical & Herb Supplies AB`,
       scrapedBuyerEmail: `astrid@nordicbotanicals.se`,
@@ -729,11 +734,12 @@ export async function scrapeNewOpportunitiesApi(
       category: "Tobacco & Nicotine Pouches",
       hsCode: "HS-2404",
       originCountry: "India 🇮🇳",
-      destinationCountry: `${cleanDest} 🇺🇸`,
+      destinationCountry: `${cleanDest}`,
       portHub: "Port of Newark / Los Angeles",
       suggestedPrice: 3.15,
       unit: "can",
       sourceDomain: "us.customs.gov",
+      opportunityType: "EXPORT_PRODUCT",
       scrapedBuyerName: "Victor Vance",
       scrapedBuyerCompany: `Atlantic Retail Wholesale Distributors LLC`,
       scrapedBuyerEmail: `v.vance@atlanticretail.us`,
@@ -742,5 +748,33 @@ export async function scrapeNewOpportunitiesApi(
       scrapedAt: now,
       status: "NEW_DISCOVERY",
     },
+    {
+      id: Date.now() + 4,
+      title: `Raw Unprocessed ${cleanKey} Bulk Containers (HS-0703)`,
+      category: "Fresh Produce",
+      hsCode: "HS-0703",
+      originCountry: "India 🇮🇳",
+      destinationCountry: `${cleanDest}`,
+      portHub: "Port of Salalah / Jebel Ali",
+      suggestedPrice: 1.45,
+      unit: "kg",
+      sourceDomain: "chamber.de",
+      opportunityType: "IMPORT_LEAD",
+      scrapedBuyerName: "Hans Richter",
+      scrapedBuyerCompany: `${cleanDest} Wholesale Logistics Group`,
+      scrapedBuyerEmail: `h.richter@${cleanDest.toLowerCase().replace(/\s+/g, "")}wholesale.de`,
+      scrapedBudget: 290000,
+      confidenceScore: 95.8,
+      scrapedAt: now,
+      status: "NEW_DISCOVERY",
+    },
   ];
+
+  if (sourcingMode === "EXPORT_PRODUCT") {
+    return allItems.filter((i) => i.opportunityType === "EXPORT_PRODUCT");
+  }
+  if (sourcingMode === "IMPORT_LEAD") {
+    return allItems.filter((i) => i.opportunityType === "IMPORT_LEAD");
+  }
+  return allItems;
 }
