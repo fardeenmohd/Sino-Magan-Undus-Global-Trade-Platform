@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
-import { findLeadsCompute, fetchProductsApi, streamLeadsCompute, getSharedProductsFromDb, saveProductsToSharedDb, getSharedLeadsFromDb, saveLeadsToSharedDb, TradeLeadProspect, searchCommodityAutocomplete, AutocompleteCommodity } from "./lib/api";
+import { findLeadsCompute, fetchProductsApi, streamLeadsCompute, getSharedProductsFromDb, saveProductsToSharedDb, getSharedLeadsFromDb, saveLeadsToSharedDb, TradeLeadProspect, searchCommodityAutocomplete, AutocompleteCommodity, searchCountryAutocomplete, CountryAutocompleteEntry } from "./lib/api";
 
 export type UserRole = "BUYER" | "SUPPLIER" | "LEAD_PROSPECT" | "COMPUTE_AGENT";
 
@@ -306,6 +306,8 @@ export default function ExpandedTradeCatalogPage() {
   const [discoveredLeads, setDiscoveredLeads] = useState<TradeLeadProspect[]>([]);
   const [autocompleteSuggestions, setAutocompleteSuggestions] = useState<AutocompleteCommodity[]>([]);
   const [showAutocomplete, setShowAutocomplete] = useState(false);
+  const [countrySuggestionsRfq, setCountrySuggestionsRfq] = useState<CountryAutocompleteEntry[]>([]);
+  const [showCountryAutocompleteRfq, setShowCountryAutocompleteRfq] = useState(false);
 
   // List product form state
   const [newProductForm, setNewProductForm] = useState({
@@ -313,12 +315,12 @@ export default function ExpandedTradeCatalogPage() {
     description: "",
     category: "Makhana & Superfoods",
     customCategory: "",
-    hsCode: "HS-1904",
-    destinationCountry: "USA",
+    hsCode: "",
+    destinationCountry: "",
     customCountry: "",
     customPortHub: "",
     tariffRatePct: 3.5,
-    price: 14.5,
+    price: 0,
     unit: "kg",
     imageUrl: "https://images.unsplash.com/photo-1599488615731-7e5c2823ff28?w=600&auto=format&fit=crop&q=80",
   });
@@ -995,50 +997,78 @@ export default function ExpandedTradeCatalogPage() {
                   />
                 </div>
 
-                <div>
-                  <label className="block text-xs font-medium text-slate-400 mb-1">Target Country</label>
-                  <select
+                <div className="relative">
+                  <label className="block text-xs font-medium text-slate-400 mb-1">
+                    Target Destination Country <span className="text-[10px] text-cyan-400 font-mono">(Country Autocomplete 🌍)</span>
+                  </label>
+                  <input
+                    type="text"
+                    required
                     value={newProductForm.destinationCountry}
-                    onChange={(e) => setNewProductForm({ ...newProductForm, destinationCountry: e.target.value })}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-sm text-slate-100 focus:outline-none focus:border-cyan-500/50 cursor-pointer"
-                  >
-                    <option value="USA">United States 🇺🇸</option>
-                    <option value="Oman">Oman 🇴🇲</option>
-                    <option value="Netherlands">Netherlands 🇳🇱</option>
-                    <option value="Poland">Poland 🇵🇱</option>
-                    <option value="China">China 🇨🇳</option>
-                    <option value="Australia">Australia 🇦🇺</option>
-                    <option value="CUSTOM">✨ Custom Destination / New Country</option>
-                  </select>
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setNewProductForm({ ...newProductForm, destinationCountry: val });
+                      const matches = searchCountryAutocomplete(val);
+                      setCountrySuggestionsRfq(matches);
+                      setShowCountryAutocompleteRfq(matches.length > 0);
+                    }}
+                    onFocus={() => {
+                      const matches = searchCountryAutocomplete(newProductForm.destinationCountry);
+                      setCountrySuggestionsRfq(matches);
+                      if (matches.length > 0) setShowCountryAutocompleteRfq(true);
+                    }}
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-sm text-slate-100 focus:outline-none focus:border-cyan-500/50 font-medium"
+                    placeholder="Type country e.g. Germany 🇩🇪, Sweden 🇸🇪, USA 🇺🇸..."
+                  />
+
+                  {/* Country Autocomplete Popover Dropdown */}
+                  {showCountryAutocompleteRfq && countrySuggestionsRfq.length > 0 && (
+                    <div className="absolute left-0 right-0 top-full mt-1 bg-slate-950/95 border border-cyan-500/30 rounded-xl shadow-2xl backdrop-blur-xl z-50 overflow-hidden max-h-60 overflow-y-auto">
+                      <div className="px-3 py-1.5 bg-slate-900/80 border-b border-slate-800 text-[10px] font-mono text-cyan-400 flex items-center justify-between">
+                        <span>🌍 Select Target Destination</span>
+                        <span>Click to auto-fill Country & Port</span>
+                      </div>
+                      {countrySuggestionsRfq.map((c, idx) => (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => {
+                            setNewProductForm({
+                              ...newProductForm,
+                              destinationCountry: c.formattedName,
+                              customPortHub: c.primaryPortHub,
+                            });
+                            setShowCountryAutocompleteRfq(false);
+                          }}
+                          className="w-full px-3 py-2 text-left hover:bg-cyan-500/10 border-b border-slate-800/50 last:border-0 flex items-center justify-between transition-colors duration-150 cursor-pointer"
+                        >
+                          <div className="flex items-center gap-2">
+                            <span className="text-base">{c.flag}</span>
+                            <div>
+                              <div className="text-xs font-semibold text-slate-200">{c.formattedName}</div>
+                              <div className="text-[10px] text-slate-400 font-mono">{c.region}</div>
+                            </div>
+                          </div>
+                          <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                            {c.primaryPortHub}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
 
-              {/* Custom Destination Inputs */}
-              {newProductForm.destinationCountry === "CUSTOM" && (
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-xs font-medium text-cyan-400 mb-1">Custom Destination Country *</label>
-                    <input
-                      type="text"
-                      required
-                      value={newProductForm.customCountry}
-                      onChange={(e) => setNewProductForm({ ...newProductForm, customCountry: e.target.value })}
-                      className="w-full bg-slate-950 border border-cyan-500/40 rounded-xl px-3 py-1.5 text-sm text-slate-100 focus:outline-none focus:border-cyan-400"
-                      placeholder="e.g. Germany 🇩🇪, UAE 🇦🇪, Japan 🇯🇵"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium text-slate-400 mb-1">Sea Port Hub</label>
-                    <input
-                      type="text"
-                      value={newProductForm.customPortHub}
-                      onChange={(e) => setNewProductForm({ ...newProductForm, customPortHub: e.target.value })}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-sm text-slate-100 focus:outline-none focus:border-cyan-500/50"
-                      placeholder="e.g. Port of Hamburg, Jebel Ali Port"
-                    />
-                  </div>
-                </div>
-              )}
+              <div>
+                <label className="block text-xs font-medium text-slate-400 mb-1">Sea Port Hub</label>
+                <input
+                  type="text"
+                  value={newProductForm.customPortHub}
+                  onChange={(e) => setNewProductForm({ ...newProductForm, customPortHub: e.target.value })}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-sm text-slate-100 focus:outline-none focus:border-cyan-500/50"
+                  placeholder="Auto-filled port e.g. Port of Hamburg, Port of Rotterdam"
+                />
+              </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>

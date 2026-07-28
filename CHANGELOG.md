@@ -5,11 +5,11 @@ All notable changes to Project Antigravity will be documented in this file.
 ## [Unreleased]
 
 ### Added & Refactored
-- **🌍 Smart Country Autocomplete Engine & Clean Form Initializers ([`app/admin/page.tsx`](file:///C:/Users/fardi/Documents/antigravity/joyful-raman/app/admin/page.tsx))**:
-  - Added real-time country autocomplete dropdown popovers to both the **Python Super-Trigger** and **Web Scraper Explorer** forms.
-  - Standardized country corridors with flags and primary sea port hubs (e.g. `Germany 🇩🇪 (Port of Hamburg)`, `United States 🇺🇸 (Port of Los Angeles / Newark)`, `Sweden 🇸🇪 (Port of Gothenburg)`).
-  - Cleaned initial form states by removing hardcoded pre-filled default values and replacing them with clear user-friendly input placeholders.
-  - Removed manual `price` input fields from the Web Scraper Explorer (market benchmark prices are automatically scraped by the crawler engine).
+- **🌍 Platform-Wide Smart Country Autocomplete Engine across All User Forms ([`app/page.tsx`](file:///C:/Users/fardi/Documents/antigravity/joyful-raman/app/page.tsx), [`app/dashboard/page.tsx`](file:///C:/Users/fardi/Documents/antigravity/joyful-raman/app/dashboard/page.tsx), [`app/admin/page.tsx`](file:///C:/Users/fardi/Documents/antigravity/joyful-raman/app/admin/page.tsx))**:
+  - Integrated interactive country autocomplete popovers into the **Post Import Requirement (RFQ)** modal (`app/page.tsx`) and **Add Export Listing** modal (`app/dashboard/page.tsx`) for both buyers and exporters.
+  - Standardized destination country targets with flags (e.g., `Germany 🇩🇪`, `United States 🇺🇸`, `Sweden 🇸🇪`, `Poland 🇵🇱`) and auto-populating primary sea port hubs (e.g. `Port of Hamburg`, `Port of Los Angeles / Newark`, `Port of Gothenburg`).
+
+- **✨ Clean Initial Form States & Scraper Price Field Removal**.
 
 - **🌐 Real-Time Database Synchronization across Scraper & Python Super-Trigger**.
 

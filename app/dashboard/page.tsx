@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { getSharedProductsFromDb, saveProductsToSharedDb, getSharedLeadsFromDb, saveLeadsToSharedDb, TradeLeadProspect, searchCommodityAutocomplete, AutocompleteCommodity } from "../lib/api";
+import { getSharedProductsFromDb, saveProductsToSharedDb, getSharedLeadsFromDb, saveLeadsToSharedDb, TradeLeadProspect, searchCommodityAutocomplete, AutocompleteCommodity, searchCountryAutocomplete, CountryAutocompleteEntry } from "../lib/api";
 
 export type UserRole = "BUYER" | "SUPPLIER" | "LEAD_PROSPECT" | "COMPUTE_AGENT";
 
@@ -157,15 +157,17 @@ export default function UserDashboardPage() {
   const [isAddListingModalOpen, setIsAddListingModalOpen] = useState(false);
   const [autocompleteSuggestions, setAutocompleteSuggestions] = useState<AutocompleteCommodity[]>([]);
   const [showAutocomplete, setShowAutocomplete] = useState(false);
+  const [countrySuggestionsListing, setCountrySuggestionsListing] = useState<CountryAutocompleteEntry[]>([]);
+  const [showCountryAutocompleteListing, setShowCountryAutocompleteListing] = useState(false);
   const [newListingForm, setNewListingForm] = useState({
     title: "",
     category: "Makhana & Superfoods",
     customCategory: "",
     hsCode: "",
-    destinationCountry: "USA",
+    destinationCountry: "",
     customCountry: "",
     customPortHub: "",
-    price: 15.0,
+    price: 0,
     unit: "kg",
     description: "",
   });
@@ -787,21 +789,65 @@ export default function UserDashboardPage() {
               )}
 
               <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-medium text-slate-400 mb-1">Target Destination</label>
-                  <select
+                <div className="relative">
+                  <label className="block text-xs font-medium text-slate-400 mb-1">
+                    Target Destination Country <span className="text-[10px] text-cyan-400 font-mono">(Country Autocomplete 🌍)</span>
+                  </label>
+                  <input
+                    type="text"
+                    required
                     value={newListingForm.destinationCountry}
-                    onChange={(e) => setNewListingForm({ ...newListingForm, destinationCountry: e.target.value })}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-slate-100 focus:outline-none focus:border-cyan-500/50 cursor-pointer"
-                  >
-                    <option value="USA">United States 🇺🇸</option>
-                    <option value="Oman">Oman 🇴🇲</option>
-                    <option value="Netherlands">Netherlands 🇳🇱</option>
-                    <option value="Poland">Poland 🇵🇱</option>
-                    <option value="China">China 🇨🇳</option>
-                    <option value="Australia">Australia 🇦🇺</option>
-                    <option value="CUSTOM">✨ Custom Destination / New Country</option>
-                  </select>
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setNewListingForm({ ...newListingForm, destinationCountry: val });
+                      const matches = searchCountryAutocomplete(val);
+                      setCountrySuggestionsListing(matches);
+                      setShowCountryAutocompleteListing(matches.length > 0);
+                    }}
+                    onFocus={() => {
+                      const matches = searchCountryAutocomplete(newListingForm.destinationCountry);
+                      setCountrySuggestionsListing(matches);
+                      if (matches.length > 0) setShowCountryAutocompleteListing(true);
+                    }}
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-slate-100 focus:outline-none focus:border-cyan-500/50 font-medium"
+                    placeholder="Type country e.g. Germany 🇩🇪, Sweden 🇸🇪, USA 🇺🇸..."
+                  />
+
+                  {/* Country Autocomplete Popover Dropdown */}
+                  {showCountryAutocompleteListing && countrySuggestionsListing.length > 0 && (
+                    <div className="absolute left-0 right-0 top-full mt-1 bg-slate-950/95 border border-cyan-500/30 rounded-xl shadow-2xl backdrop-blur-xl z-50 overflow-hidden max-h-60 overflow-y-auto">
+                      <div className="px-3 py-1.5 bg-slate-900/80 border-b border-slate-800 text-[10px] font-mono text-cyan-400 flex items-center justify-between">
+                        <span>🌍 Select Target Destination</span>
+                        <span>Click to auto-fill Country & Port</span>
+                      </div>
+                      {countrySuggestionsListing.map((c, idx) => (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => {
+                            setNewListingForm({
+                              ...newListingForm,
+                              destinationCountry: c.formattedName,
+                              customPortHub: c.primaryPortHub,
+                            });
+                            setShowCountryAutocompleteListing(false);
+                          }}
+                          className="w-full px-3 py-2 text-left hover:bg-cyan-500/10 border-b border-slate-800/50 last:border-0 flex items-center justify-between transition-colors duration-150 cursor-pointer"
+                        >
+                          <div className="flex items-center gap-2">
+                            <span className="text-base">{c.flag}</span>
+                            <div>
+                              <div className="text-xs font-semibold text-slate-200">{c.formattedName}</div>
+                              <div className="text-[10px] text-slate-400 font-mono">{c.region}</div>
+                            </div>
+                          </div>
+                          <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                            {c.primaryPortHub}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 <div>
@@ -810,39 +856,24 @@ export default function UserDashboardPage() {
                     type="number"
                     step="0.01"
                     required
-                    value={newListingForm.price}
-                    onChange={(e) => setNewListingForm({ ...newListingForm, price: Number(e.target.value) })}
+                    value={newListingForm.price || ""}
+                    onChange={(e) => setNewListingForm({ ...newListingForm, price: Number(e.target.value) || 0 })}
+                    placeholder="e.g. 18.50"
                     className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-slate-100 focus:outline-none focus:border-cyan-500/50 font-mono"
                   />
                 </div>
               </div>
 
-              {/* Custom Destination Inputs */}
-              {newListingForm.destinationCountry === "CUSTOM" && (
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-xs font-medium text-cyan-400 mb-1">Custom Destination Country *</label>
-                    <input
-                      type="text"
-                      required
-                      value={newListingForm.customCountry}
-                      onChange={(e) => setNewListingForm({ ...newListingForm, customCountry: e.target.value })}
-                      className="w-full bg-slate-950 border border-cyan-500/40 rounded-xl px-3.5 py-2 text-sm text-slate-100 focus:outline-none focus:border-cyan-400"
-                      placeholder="e.g. Germany 🇩🇪, UAE 🇦🇪, Japan 🇯🇵"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium text-slate-400 mb-1">Sea Port Hub</label>
-                    <input
-                      type="text"
-                      value={newListingForm.customPortHub}
-                      onChange={(e) => setNewListingForm({ ...newListingForm, customPortHub: e.target.value })}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-slate-100 focus:outline-none focus:border-cyan-500/50"
-                      placeholder="e.g. Port of Hamburg, Jebel Ali Port"
-                    />
-                  </div>
-                </div>
-              )}
+              <div>
+                <label className="block text-xs font-medium text-slate-400 mb-1">Sea Port Hub</label>
+                <input
+                  type="text"
+                  value={newListingForm.customPortHub}
+                  onChange={(e) => setNewListingForm({ ...newListingForm, customPortHub: e.target.value })}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-slate-100 focus:outline-none focus:border-cyan-500/50"
+                  placeholder="Auto-filled port e.g. Port of Hamburg, Port of Rotterdam"
+                />
+              </div>
 
               <div>
                 <label className="block text-xs font-medium text-slate-400 mb-1">Unit of Measurement</label>
