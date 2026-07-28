@@ -606,16 +606,15 @@ export function searchCountryAutocomplete(query: string): CountryAutocompleteEnt
 const SHARED_PRODUCTS_KEY = "antigravity_shared_db_products";
 const SHARED_LEADS_KEY = "antigravity_shared_db_leads";
 
-export function getSharedProductsFromDb(fallbackDefault: any[]): any[] {
+export function getSharedProductsFromDb(fallbackDefault: any[] = []): any[] {
   if (typeof window === "undefined") return fallbackDefault;
   const saved = localStorage.getItem(SHARED_PRODUCTS_KEY) || localStorage.getItem("antigravity_global_products");
   if (saved) {
     try {
       const parsed = JSON.parse(saved);
-      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      if (Array.isArray(parsed)) return parsed;
     } catch (e) {}
   }
-  localStorage.setItem(SHARED_PRODUCTS_KEY, JSON.stringify(fallbackDefault));
   return fallbackDefault;
 }
 
@@ -628,16 +627,15 @@ export function saveProductsToSharedDb(products: any[]) {
   }
 }
 
-export function getSharedLeadsFromDb(fallbackDefault: TradeLeadProspect[]): TradeLeadProspect[] {
+export function getSharedLeadsFromDb(fallbackDefault: TradeLeadProspect[] = []): TradeLeadProspect[] {
   if (typeof window === "undefined") return fallbackDefault;
   const saved = localStorage.getItem(SHARED_LEADS_KEY) || localStorage.getItem("antigravity_global_leads") || localStorage.getItem("antigravity_imported_leads");
   if (saved) {
     try {
       const parsed = JSON.parse(saved);
-      if (Array.isArray(parsed) && parsed.length > 0) return deduplicateLeads(parsed);
+      if (Array.isArray(parsed)) return deduplicateLeads(parsed);
     } catch (e) {}
   }
-  localStorage.setItem(SHARED_LEADS_KEY, JSON.stringify(fallbackDefault));
   return fallbackDefault;
 }
 
@@ -1003,7 +1001,11 @@ export async function scrapeNewOpportunitiesApi(
 export function clearSharedProductsFromDb(): void {
   if (typeof window === "undefined") return;
   try {
-    localStorage.removeItem("antigravity_shared_products_v2");
+    localStorage.setItem(SHARED_PRODUCTS_KEY, JSON.stringify([]));
+    localStorage.setItem("antigravity_global_products", JSON.stringify([]));
+    localStorage.setItem("antigravity_shared_products_v2", JSON.stringify([]));
+    window.dispatchEvent(new Event("antigravity_db_updated"));
+    window.dispatchEvent(new Event("storage"));
   } catch (e) {
     console.error("Failed to clear shared products cache", e);
   }
@@ -1012,8 +1014,13 @@ export function clearSharedProductsFromDb(): void {
 export function clearSharedLeadsFromDb(): void {
   if (typeof window === "undefined") return;
   try {
-    localStorage.removeItem("antigravity_shared_leads_v2");
-    localStorage.removeItem("antigravity_scraped_opps");
+    localStorage.setItem(SHARED_LEADS_KEY, JSON.stringify([]));
+    localStorage.setItem("antigravity_global_leads", JSON.stringify([]));
+    localStorage.setItem("antigravity_imported_leads", JSON.stringify([]));
+    localStorage.setItem("antigravity_shared_leads_v2", JSON.stringify([]));
+    localStorage.setItem("antigravity_scraped_opps", JSON.stringify([]));
+    window.dispatchEvent(new Event("antigravity_db_updated"));
+    window.dispatchEvent(new Event("storage"));
   } catch (e) {
     console.error("Failed to clear shared leads cache", e);
   }

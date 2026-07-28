@@ -252,7 +252,7 @@ const INITIAL_TRADE_PRODUCTS: TradeProduct[] = [
 ];
 
 export default function ExpandedTradeCatalogPage() {
-  const [products, setProducts] = useState<TradeProduct[]>(INITIAL_TRADE_PRODUCTS);
+  const [products, setProducts] = useState<TradeProduct[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedDestination, setSelectedDestination] = useState("ALL");
   const [selectedCategory, setSelectedCategory] = useState("ALL");
@@ -724,8 +724,23 @@ export default function ExpandedTradeCatalogPage() {
         </div>
 
         {/* Product Cards Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-6">
-          {filteredProducts.map((product) => (
+        {filteredProducts.length === 0 ? (
+          <div className="p-12 text-center bg-slate-900/40 border border-slate-800 rounded-3xl space-y-4 max-w-xl mx-auto my-8">
+            <div className="text-4xl">📭</div>
+            <h3 className="text-lg font-bold text-white">No Export Products Listed Yet</h3>
+            <p className="text-xs text-slate-400">The platform data slate is clean. Use the Admin Control Center or Exporter Dashboard to publish authentic Indian export products or run the Super-Trigger engine.</p>
+            <div className="pt-2 flex justify-center gap-3">
+              <Link href="/admin" className="px-4 py-2 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs rounded-xl shadow-md">
+                ⚡ Go to Admin Control Center
+              </Link>
+              <Link href="/dashboard" className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs rounded-xl border border-slate-700">
+                📦 Add Product as Exporter
+              </Link>
+            </div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-6">
+            {filteredProducts.map((product) => (
             <div
               key={product.id}
               className="bg-slate-900/60 border border-slate-800/80 rounded-2xl overflow-hidden shadow-xl hover:border-slate-700/80 transition-all duration-200 flex flex-col group"
@@ -814,6 +829,7 @@ export default function ExpandedTradeCatalogPage() {
             </div>
           ))}
         </div>
+      )}
       </section>
 
       {/* --- EXPORT SUPPLIERS DIRECTORY --- */}

@@ -64,13 +64,13 @@ export default function ExporterProfilePage() {
     const details = getExporterProfileDetails(exporterId);
     setExporter(details);
 
-    const sharedProducts = getSharedProductsFromDb(INITIAL_FALLBACK_PRODUCTS);
+    const sharedProducts = getSharedProductsFromDb([]);
     const matchedProducts = sharedProducts.filter(
       (p) =>
         p.listedBy?.id === idMatches(p.listedBy?.id, exporterId) ||
         (p.listedBy?.company && details.company && p.listedBy.company.toLowerCase().includes(details.company.toLowerCase()))
     );
-    setExporterProducts(matchedProducts.length > 0 ? matchedProducts : sharedProducts.slice(0, 2));
+    setExporterProducts(matchedProducts);
   }, [exporterId]);
 
   function idMatches(pId: any, targetId: any): boolean {

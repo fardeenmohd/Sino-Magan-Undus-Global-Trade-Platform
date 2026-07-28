@@ -110,7 +110,7 @@ export default function UserDashboardPage() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<"overview" | "listings" | "profile">("overview");
   const [profile, setProfile] = useState<UserProfile>(INITIAL_PROFILE);
-  const [listings, setListings] = useState<UserListing[]>(INITIAL_MY_LISTINGS);
+  const [listings, setListings] = useState<UserListing[]>([]);
   const [savedLeads, setSavedLeads] = useState<TradeLeadProspect[]>([]);
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
@@ -119,22 +119,20 @@ export default function UserDashboardPage() {
   useEffect(() => {
     const loadSharedDb = () => {
       if (typeof window !== "undefined") {
-        const sharedProducts = getSharedProductsFromDb(INITIAL_MY_LISTINGS);
-        if (sharedProducts && sharedProducts.length > 0) {
-          setListings(sharedProducts.map((p: any) => ({
-            id: p.id,
-            title: p.title,
-            category: p.category,
-            hsCode: p.hsCode,
-            originCountry: p.originCountry || "India 🇮🇳",
-            destinationCountry: p.destinationCountry,
-            destinationFlag: p.destinationFlag || "🌐",
-            price: p.price,
-            unit: p.unit,
-            leadCount: p.leadCount || 10,
-            status: p.status || "ACTIVE",
-          })));
-        }
+        const sharedProducts = getSharedProductsFromDb([]);
+        setListings(sharedProducts.map((p: any) => ({
+          id: p.id,
+          title: p.title,
+          category: p.category,
+          hsCode: p.hsCode,
+          originCountry: p.originCountry || "India 🇮🇳",
+          destinationCountry: p.destinationCountry,
+          destinationFlag: p.destinationFlag || "🌐",
+          price: p.price,
+          unit: p.unit,
+          leadCount: p.leadCount || 0,
+          status: p.status || "ACTIVE",
+        })));
 
         const sharedLeads = getSharedLeadsFromDb([]);
         setSavedLeads(sharedLeads);

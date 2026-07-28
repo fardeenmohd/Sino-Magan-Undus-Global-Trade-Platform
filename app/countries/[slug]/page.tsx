@@ -85,14 +85,13 @@ export default function CountryCorridorPage() {
     setCountryData(details);
 
     // 1. Filter connected products
-    const sharedProducts = getSharedProductsFromDb(INITIAL_FALLBACK_PRODUCTS);
+    const sharedProducts = getSharedProductsFromDb([]);
     const matchedProducts = sharedProducts.filter(
       (p) =>
         p.destinationCountry.toLowerCase().includes(details.slug.toLowerCase()) ||
-        details.name.toLowerCase().includes(p.destinationCountry.toLowerCase()) ||
-        details.slug === "japan"
+        details.name.toLowerCase().includes(p.destinationCountry.toLowerCase())
     );
-    setCorridorProducts(matchedProducts.length > 0 ? matchedProducts : sharedProducts.slice(0, 3));
+    setCorridorProducts(matchedProducts);
 
     // 2. Filter connected leads
     const sharedLeads = getSharedLeadsFromDb([]);

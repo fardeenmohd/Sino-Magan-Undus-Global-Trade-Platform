@@ -57,111 +57,8 @@ export default function AdminDashboardPage() {
   const [showCountryAutocompleteScraper, setShowCountryAutocompleteScraper] = useState(false);
 
   // Admin Data State
-  const [products, setProducts] = useState<AdminProduct[]>([
-    {
-      id: 1,
-      title: "Bihar Premium Organic Foxnuts / Makhana",
-      category: "Makhana & Superfoods",
-      hsCode: "HS-1904",
-      destinationCountry: "United States 🇺🇸",
-      portHub: "Port of Los Angeles",
-      price: 14.5,
-      unit: "kg",
-      leadCount: 42,
-      status: "ACTIVE",
-      supplier: "Rajesh Kumar (Mithila Exim)",
-    },
-    {
-      id: 2,
-      title: "Nashik Export Grade Red Onions",
-      category: "Fresh Produce",
-      hsCode: "HS-0703",
-      destinationCountry: "Poland 🇵🇱",
-      portHub: "Port of Gdańsk",
-      price: 0.85,
-      unit: "kg",
-      leadCount: 38,
-      status: "ACTIVE",
-      supplier: "Suresh Patil (Agri Exports India)",
-    },
-    {
-      id: 3,
-      title: "Fresh White Table Eggs (30 Tray Pack)",
-      category: "Poultry & Eggs",
-      hsCode: "HS-0407",
-      destinationCountry: "Netherlands 🇳🇱",
-      portHub: "Port of Rotterdam",
-      price: 2.1,
-      unit: "pack",
-      leadCount: 29,
-      status: "ACTIVE",
-      supplier: "Anil Sharma (Namakkal Poultry)",
-    },
-    {
-      id: 4,
-      title: "High-Precision CNC Milling Machine Spare Components",
-      category: "Machinery & Engineering",
-      hsCode: "HS-8466",
-      destinationCountry: "Australia 🇦🇺",
-      portHub: "Port of Sydney",
-      price: 18500.0,
-      unit: "unit",
-      leadCount: 22,
-      status: "ACTIVE",
-      supplier: "Vikram Malhotra (Pune Precision Engineering)",
-    },
-  ]);
-
-  const [leads, setLeads] = useState<TradeLeadProspect[]>([
-    {
-      user_id: 401,
-      name: "David Miller",
-      email: "dmiller@superfoodsimporters.us",
-      company: "Organics & Superfoods USA Inc",
-      role: "LEAD_PROSPECT",
-      destination_country: "Japan 🇯🇵",
-      port_hub: "Port of Yokohama",
-      tariff_estimate_pct: 3.5,
-      match_score: 97.5,
-      confidence_reason: "MAFF & MHLW Registered Importer ready for HS-1904 ($250k annual budget)",
-    },
-    {
-      user_id: 402,
-      name: "Piotr Wisniewski",
-      email: "p.wisniewski@polandtrade.pl",
-      company: "Warsaw Fresh Produce Import Sp. z o.o.",
-      role: "LEAD_PROSPECT",
-      destination_country: "Poland 🇵🇱",
-      port_hub: "Port of Gdańsk",
-      tariff_estimate_pct: 4.0,
-      match_score: 95.8,
-      confidence_reason: "EU Phytosanitary & Eurofins Cleared ($210k annual budget)",
-    },
-    {
-      user_id: 403,
-      name: "Sophie van der Meer",
-      email: "sophie@amsterdamtrade.nl",
-      company: "Amsterdam Bakery Ingredients BV",
-      role: "LEAD_PROSPECT",
-      destination_country: "Netherlands 🇳🇱",
-      port_hub: "Port of Rotterdam",
-      tariff_estimate_pct: 2.8,
-      match_score: 94.2,
-      confidence_reason: "EU GlobalGAP & NVWA Customs Approved ($190k annual budget)",
-    },
-    {
-      user_id: 404,
-      name: "Harrison Forde",
-      email: "hforde@sydneytrade.com.au",
-      company: "Sydney Industrial Equipment Supplies Pty Ltd",
-      role: "LEAD_PROSPECT",
-      destination_country: "Australia 🇦🇺",
-      port_hub: "Port of Sydney",
-      tariff_estimate_pct: 4.0,
-      match_score: 96.1,
-      confidence_reason: "Biosecurity Australia & BICON Import Cleared ($450k annual budget)",
-    },
-  ]);
+  const [products, setProducts] = useState<AdminProduct[]>([]);
+  const [leads, setLeads] = useState<TradeLeadProspect[]>([]);
 
   // Python Compute Engine Super-Trigger Form State
   const [computeForm, setComputeForm] = useState({
@@ -311,28 +208,24 @@ export default function AdminDashboardPage() {
           setIsAdminAuthenticated(true);
         }
 
-        const sharedProducts = getSharedProductsFromDb(products);
-        if (sharedProducts && sharedProducts.length > 0) {
-          const mapped: AdminProduct[] = sharedProducts.map((p: any) => ({
-            id: p.id,
-            title: p.title,
-            category: p.category,
-            hsCode: p.hsCode,
-            destinationCountry: p.destinationCountry,
-            portHub: p.portHub || "Main Sea Port",
-            price: p.price,
-            unit: p.unit,
-            leadCount: p.leadCount || 10,
-            status: p.status || "ACTIVE",
-            supplier: p.listedBy?.company || p.listedBy?.name || p.supplier || "Exporter",
-          }));
-          setProducts(mapped);
-        }
+        const sharedProducts = getSharedProductsFromDb([]);
+        const mapped: AdminProduct[] = sharedProducts.map((p: any) => ({
+          id: p.id,
+          title: p.title,
+          category: p.category,
+          hsCode: p.hsCode,
+          destinationCountry: p.destinationCountry,
+          portHub: p.portHub || "Main Sea Port",
+          price: p.price,
+          unit: p.unit,
+          leadCount: p.leadCount || 0,
+          status: p.status || "ACTIVE",
+          supplier: p.listedBy?.company || p.listedBy?.name || p.supplier || "Exporter",
+        }));
+        setProducts(mapped);
 
-        const sharedLeads = getSharedLeadsFromDb(leads);
-        if (sharedLeads && sharedLeads.length > 0) {
-          setLeads(sharedLeads);
-        }
+        const sharedLeads = getSharedLeadsFromDb([]);
+        setLeads(sharedLeads);
       }
     };
 
