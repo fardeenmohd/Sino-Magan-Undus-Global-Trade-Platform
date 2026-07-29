@@ -33,6 +33,119 @@ export interface AdminProduct {
   supplier: string;
 }
 
+
+// ── High-Growth Sector Extension Presets ─────────────────────────────────────
+const SUGGESTED_CATALOG_EXTENSIONS = [
+  {
+    label: "☀️ Solar Modules & PV Inverters",
+    keyword: "Solar Modules & Inverters",
+    destination: "Germany 🇩🇪",
+    mode: "BOTH",
+    minBudget: 45000,
+    category: "Solar & Renewable Energy Equipment",
+    hsCode: "HS-8541",
+    price: 145,
+    unit: "unit",
+    portHub: "Port of Hamburg",
+  },
+  {
+    label: "⚡ Electric Scooters & E-Bikes",
+    keyword: "Electric Bike & EV Two-Wheeler",
+    destination: "Sweden 🇸🇪",
+    mode: "BOTH",
+    minBudget: 35000,
+    category: "Electric Vehicles & E-Mobility",
+    hsCode: "HS-8714",
+    price: 850,
+    unit: "unit",
+    portHub: "Port of Gothenburg",
+  },
+  {
+    label: "👞 Full-Grain Finished Leather Goods",
+    keyword: "Finished Leather Footwear & Boots",
+    destination: "Germany 🇩🇪",
+    mode: "EXPORT_PRODUCT",
+    minBudget: 25000,
+    category: "Leather Goods & Footwear",
+    hsCode: "HS-6403",
+    price: 38,
+    unit: "pair",
+    portHub: "Port of Hamburg",
+  },
+  {
+    label: "🛋️ Hand-Carved Sheesham Furniture",
+    keyword: "Sheesham Wooden Furniture & Decor",
+    destination: "Netherlands 🇳🇱",
+    mode: "EXPORT_PRODUCT",
+    minBudget: 30000,
+    category: "Handicrafts & Home Décor",
+    hsCode: "HS-9403",
+    price: 65,
+    unit: "piece",
+    portHub: "Port of Rotterdam",
+  },
+  {
+    label: "💄 Pure Jasmine Essential Oils & Attar",
+    keyword: "Kannauj Jasmine & Sandalwood Essential Oils",
+    destination: "Japan 🇯🇵",
+    mode: "IMPORT_LEAD",
+    minBudget: 20000,
+    category: "Cosmetics & Essential Oils",
+    hsCode: "HS-3301",
+    price: 42,
+    unit: "litre",
+    portHub: "Port of Yokohama",
+  },
+  {
+    label: "🩺 MedTech Surgical Instruments & Kits",
+    keyword: "Precision Surgical Instruments & Diagnostic Kits",
+    destination: "Germany 🇩🇪",
+    mode: "BOTH",
+    minBudget: 50000,
+    category: "Medical Devices & Surgical Equipment",
+    hsCode: "HS-9018",
+    price: 120,
+    unit: "unit",
+    portHub: "Port of Hamburg",
+  },
+  {
+    label: "🍵 Darjeeling FTGFOP-1 Organic Tea",
+    keyword: "Darjeeling First Flush Organic Tea",
+    destination: "Japan 🇯🇵",
+    mode: "IMPORT_LEAD",
+    minBudget: 18000,
+    category: "Tea & Coffee",
+    hsCode: "HS-0902",
+    price: 14.8,
+    unit: "kg",
+    portHub: "Port of Yokohama",
+  },
+  {
+    label: "💎 Surat Polished Diamonds & Gemstones",
+    keyword: "Surat Cut & Polished Diamonds",
+    destination: "Germany 🇩🇪",
+    mode: "EXPORT_PRODUCT",
+    minBudget: 60000,
+    category: "Gems & Jewellery",
+    hsCode: "HS-7102",
+    price: 350,
+    unit: "carat",
+    portHub: "Port of Hamburg",
+  },
+  {
+    label: "🦐 Kerala Vannamei White Frozen Shrimp",
+    keyword: "Vannamei White Shrimp IQF Frozen",
+    destination: "Japan 🇯🇵",
+    mode: "BOTH",
+    minBudget: 40000,
+    category: "Seafood & Marine Products",
+    hsCode: "HS-0306",
+    price: 9.5,
+    unit: "kg",
+    portHub: "Port of Yokohama",
+  },
+];
+
 export default function AdminDashboardPage() {
   // Admin Auth Guard State
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
@@ -620,128 +733,57 @@ export default function AdminDashboardPage() {
               </div>
             </div>
 
-            {/* Quick Preset Corridor Buttons */}
-            <div className="space-y-2">
-              <span className="text-xs font-mono text-slate-400">Popular Quick-Fill Trade Presets:</span>
+            {/* Quick Preset Corridor & Extension Buttons */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-mono text-slate-400 font-semibold">Quick-Fill Trade & Sector Extension Presets:</span>
+              </div>
+
               <div className="flex flex-wrap gap-2">
-                <button
-                  onClick={() =>
-                    setPresetCorridor({
-                      title: "Organic Indian KSM-66 Ashwagandha Root Extract & Powder (HS 1211)",
-                      category: "Ayurvedic & Herbal Extracts",
-                      hsCode: "HS-1211",
-                      destinationCountry: "United States 🇺🇸",
-                      portHub: "Port of Los Angeles",
-                      price: 18.5,
-                      unit: "kg",
-                    })
-                  }
-                  className="px-3 py-1.5 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded-lg text-xs font-mono text-cyan-400 cursor-pointer"
-                >
-                  🇺🇸 Organic Ashwagandha Extract
-                </button>
+                {/* Dynamic Catalog Presets */}
+                {products.slice(0, 5).map((p) => (
+                  <button
+                    key={p.id}
+                    type="button"
+                    onClick={() =>
+                      setPresetCorridor({
+                        title: p.title,
+                        category: p.category,
+                        hsCode: p.hsCode,
+                        destinationCountry: p.destinationCountry || "Germany 🇩🇪",
+                        portHub: p.portHub || "Port of Hamburg",
+                        price: p.price,
+                        unit: p.unit,
+                      })
+                    }
+                    className="px-3 py-1.5 bg-slate-950 hover:bg-slate-800 border border-cyan-500/30 rounded-lg text-xs font-mono text-cyan-300 cursor-pointer flex items-center gap-1.5"
+                  >
+                    <span>📦</span>
+                    <span className="truncate max-w-[170px]">{p.title.split(" ")[0]} ({p.destinationCountry || "EU"})</span>
+                  </button>
+                ))}
 
-                <button
-                  onClick={() =>
-                    setPresetCorridor({
-                      title: "Tobacco-Free White Nicotine Pouches & Swedish Style Snus (HS 2404)",
-                      category: "Tobacco & Nicotine Pouches",
-                      hsCode: "HS-2404",
-                      destinationCountry: "Sweden 🇸🇪",
-                      portHub: "Port of Gothenburg",
-                      price: 2.45,
-                      unit: "can",
-                    })
-                  }
-                  className="px-3 py-1.5 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded-lg text-xs font-mono text-cyan-400 cursor-pointer"
-                >
-                  🇸🇪 Swedish Nicotine Pouches & Snus
-                </button>
-
-                <button
-                  onClick={() =>
-                    setPresetCorridor({
-                      title: "Salem Nizamabad Organic Turmeric Powder (HS 0910)",
-                      category: "Makhana & Superfoods",
-                      hsCode: "HS-0910",
-                      destinationCountry: "Germany 🇩🇪",
-                      portHub: "Port of Hamburg",
-                      price: 4.8,
-                      unit: "kg",
-                    })
-                  }
-                  className="px-3 py-1.5 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded-lg text-xs font-mono text-cyan-400 cursor-pointer"
-                >
-                  🇩🇪 German Organic Spices
-                </button>
-
-                <button
-                  onClick={() =>
-                    setPresetCorridor({
-                      title: "Nashik Dehydrated White Garlic Flakes (HS 0712)",
-                      category: "Fresh Produce",
-                      hsCode: "HS-0712",
-                      destinationCountry: "Poland 🇵🇱",
-                      portHub: "Port of Gdańsk",
-                      price: 3.2,
-                      unit: "kg",
-                    })
-                  }
-                  className="px-3 py-1.5 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded-lg text-xs font-mono text-cyan-400 cursor-pointer"
-                >
-                  🇵🇱 Polish Vegetables
-                </button>
-
-                <button
-                  onClick={() =>
-                    setPresetCorridor({
-                      title: "Frozen Premium Halal Mutton Carcasses (HS 0204)",
-                      category: "Meat Exports",
-                      hsCode: "HS-0204",
-                      destinationCountry: "UAE 🇦🇪",
-                      portHub: "Jebel Ali Port",
-                      price: 8.5,
-                      unit: "kg",
-                    })
-                  }
-                  className="px-3 py-1.5 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded-lg text-xs font-mono text-cyan-400 cursor-pointer"
-                >
-                  🇦🇪 UAE Halal Meat
-                </button>
-
-                <button
-                  onClick={() =>
-                    setPresetCorridor({
-                      title: "High-Capacity Hydraulic Press Machinery (HS 8462)",
-                      category: "Machinery & Engineering",
-                      hsCode: "HS-8462",
-                      destinationCountry: "Australia 🇦🇺",
-                      portHub: "Port of Sydney",
-                      price: 24500.0,
-                      unit: "unit",
-                    })
-                  }
-                  className="px-3 py-1.5 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded-lg text-xs font-mono text-cyan-400 cursor-pointer"
-                >
-                  🇦🇺 Australian Machinery
-                </button>
-
-                <button
-                  onClick={() =>
-                    setPresetCorridor({
-                      title: "Tobacco-Free White Nicotine Pouches 12mg (HS 2404)",
-                      category: "Tobacco & Nicotine Pouches",
-                      hsCode: "HS-2404",
-                      destinationCountry: "Japan 🇯🇵",
-                      portHub: "Port of Yokohama",
-                      price: 1.85,
-                      unit: "can",
-                    })
-                  }
-                  className="px-3 py-1.5 bg-slate-950 hover:bg-slate-800 border border-purple-500/30 rounded-lg text-xs font-mono text-purple-300 cursor-pointer"
-                >
-                  🇯🇵 Japanese Pouches & Superfoods
-                </button>
+                {/* Suggested Extension Presets */}
+                {SUGGESTED_CATALOG_EXTENSIONS.map((ext, idx) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() =>
+                      setPresetCorridor({
+                        title: `${ext.keyword} (${ext.hsCode}) — Authentic Export Batch`,
+                        category: ext.category,
+                        hsCode: ext.hsCode,
+                        destinationCountry: ext.destination,
+                        portHub: ext.portHub,
+                        price: ext.price,
+                        unit: ext.unit,
+                      })
+                    }
+                    className="px-3 py-1.5 bg-slate-950 hover:bg-slate-800 border border-amber-500/30 hover:border-amber-400 rounded-lg text-xs font-mono text-amber-300 cursor-pointer transition-all duration-200 flex items-center gap-1.5"
+                  >
+                    <span>{ext.label}</span>
+                  </button>
+                ))}
               </div>
             </div>
 
@@ -1173,55 +1215,88 @@ export default function AdminDashboardPage() {
                 </div>
               </form>
 
-              {/* Scraper Presets */}
-              <div className="space-y-2">
-                <span className="text-xs font-mono text-slate-400">Target Scraper Presets:</span>
-                <div className="flex flex-wrap gap-2">
-                  <button
-                    onClick={() => {
-                      setScraperForm({ keyword: "Germany Local Distributors & Cold Storage", destination: "Germany 🇩🇪", sourcingMode: "LOCAL_VENDOR", crawlLimit: 12, minBudget: 50000 });
-                      handleLaunchWebScraper();
-                    }}
-                    className="px-3 py-1.5 bg-amber-950/60 hover:bg-amber-900 border border-amber-500/40 rounded-lg text-xs font-mono text-amber-300 cursor-pointer font-bold"
-                  >
-                    🏬 Scrape German In-Country Vendors
-                  </button>
-                  <button
-                    onClick={() => {
-                      setScraperForm({ keyword: "Ashwagandha & Herbal Extracts", destination: "Germany 🇩🇪", sourcingMode: "BOTH", crawlLimit: 12, minBudget: 35000 });
-                      handleLaunchWebScraper();
-                    }}
-                    className="px-3 py-1.5 bg-slate-950 hover:bg-slate-800 border border-purple-500/30 rounded-lg text-xs font-mono text-purple-300 cursor-pointer"
-                  >
-                    🇩🇪 Scrape EU Herbal Extract Buyers
-                  </button>
-                  <button
-                    onClick={() => {
-                      setScraperForm({ keyword: "Nicotine Pouches & Snus", destination: "Sweden 🇸🇪", sourcingMode: "IMPORT_LEAD", crawlLimit: 12, minBudget: 25000 });
-                      handleLaunchWebScraper();
-                    }}
-                    className="px-3 py-1.5 bg-slate-950 hover:bg-slate-800 border border-purple-500/30 rounded-lg text-xs font-mono text-purple-300 cursor-pointer"
-                  >
-                    🇸🇪 Scrape Swedish Tobacco Distributors
-                  </button>
-                  <button
-                    onClick={() => {
-                      setScraperForm({ keyword: "Foxnuts & Superfoods", destination: "United States 🇺🇸", sourcingMode: "EXPORT_PRODUCT", crawlLimit: 12, minBudget: 40000 });
-                      handleLaunchWebScraper();
-                    }}
-                    className="px-3 py-1.5 bg-slate-950 hover:bg-slate-800 border border-purple-500/30 rounded-lg text-xs font-mono text-purple-300 cursor-pointer"
-                  >
-                    🇺🇸 Scrape US Superfood Export Products
-                  </button>
-                  <button
-                    onClick={() => {
-                      setScraperForm({ keyword: "Halal Meat & Poultry", destination: "Oman 🇴🇲", sourcingMode: "BOTH", crawlLimit: 12, minBudget: 50000 });
-                      handleLaunchWebScraper();
-                    }}
-                    className="px-3 py-1.5 bg-slate-950 hover:bg-slate-800 border border-purple-500/30 rounded-lg text-xs font-mono text-purple-300 cursor-pointer"
-                  >
-                    🇴🇲 Scrape GCC Halal Buyers
-                  </button>
+              {/* Scraper Presets & Extensions */}
+              <div className="space-y-4 pt-2">
+                {/* 1. Dynamic Active Catalog Presets */}
+                {products.length > 0 && (
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-mono text-cyan-400 font-semibold flex items-center gap-1.5">
+                        <span className="inline-block w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+                        Active Catalog Presets ({products.length} Products):
+                      </span>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {products.slice(0, 8).map((p) => {
+                        const kw = p.category || p.title.split(" ")[0];
+                        return (
+                          <button
+                            key={p.id}
+                            type="button"
+                            onClick={() => {
+                              setScraperForm({
+                                keyword: kw,
+                                destination: p.destinationCountry || "Germany 🇩🇪",
+                                sourcingMode: "BOTH",
+                                crawlLimit: 12,
+                                minBudget: 25000,
+                              });
+                              handleLaunchWebScraper();
+                            }}
+                            className="px-3 py-1.5 bg-cyan-950/40 hover:bg-cyan-900/60 border border-cyan-500/40 rounded-lg text-xs font-mono text-cyan-300 cursor-pointer transition-all duration-200 flex items-center gap-1.5"
+                          >
+                            <span>📦</span>
+                            <span className="truncate max-w-[180px]">{p.title.split(" ")[0]} ({p.destinationCountry || "EU"})</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* 2. Suggested Portfolio Extensions */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-mono text-amber-400 font-semibold flex items-center gap-1.5">
+                      <span className="px-1.5 py-0.5 bg-amber-500/20 border border-amber-500/40 rounded text-[10px] uppercase tracking-wider text-amber-300">
+                        Suggested Portfolio Extensions
+                      </span>
+                      High-Growth Sector Presets:
+                    </span>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setScraperForm({ keyword: "Germany Local Distributors & Cold Storage", destination: "Germany 🇩🇪", sourcingMode: "LOCAL_VENDOR", crawlLimit: 12, minBudget: 50000 });
+                        handleLaunchWebScraper();
+                      }}
+                      className="px-3 py-1.5 bg-purple-950/60 hover:bg-purple-900 border border-purple-500/40 rounded-lg text-xs font-mono text-purple-300 cursor-pointer font-bold flex items-center gap-1.5"
+                    >
+                      <span>🏬</span>
+                      <span>Scrape In-Country Logistics Vendors</span>
+                    </button>
+
+                    {SUGGESTED_CATALOG_EXTENSIONS.map((ext, idx) => (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() => {
+                          setScraperForm({
+                            keyword: ext.keyword,
+                            destination: ext.destination,
+                            sourcingMode: ext.mode as any,
+                            crawlLimit: 12,
+                            minBudget: ext.minBudget,
+                          });
+                          handleLaunchWebScraper();
+                        }}
+                        className="px-3 py-1.5 bg-slate-950 hover:bg-slate-800 border border-amber-500/30 hover:border-amber-400 rounded-lg text-xs font-mono text-amber-300 cursor-pointer transition-all duration-200 flex items-center gap-1.5"
+                      >
+                        <span>{ext.label}</span>
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
 
