@@ -228,32 +228,62 @@ export default function CommodityDatalogPage() {
           </div>
         </div>
 
-        {/* SEARCH & FILTERS */}
-        <div className="flex flex-col sm:flex-row gap-3 pt-2">
-          <div className="relative flex-1">
+        {/* SEARCH & FLEXBOX CATEGORY SHOWCASE */}
+        <div className="space-y-4 pt-2">
+          <div>
             <input
               type="text"
               placeholder="Search by commodity name, HS code (e.g. HS-1211, Ashwagandha, Tomatoes)..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500/50 font-mono"
+              className="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500/50 font-mono shadow-inner"
             />
           </div>
 
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0 scrollbar-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setSelectedCategory(cat)}
-                className={`px-3.5 py-2 rounded-xl text-xs font-mono transition-all duration-200 shrink-0 cursor-pointer ${
-                  selectedCategory === cat
-                    ? "bg-cyan-500 text-slate-950 font-bold shadow-lg shadow-cyan-500/20"
-                    : "bg-slate-900 text-slate-400 border border-slate-800 hover:text-white"
-                }`}
-              >
-                {cat === "ALL" ? "🌐 All Categories" : cat}
-              </button>
-            ))}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-mono text-slate-400 font-semibold uppercase tracking-wider">
+                Filter by Sector Category:
+              </span>
+              {selectedCategory !== "ALL" && (
+                <button
+                  type="button"
+                  onClick={() => setSelectedCategory("ALL")}
+                  className="text-xs font-mono text-cyan-400 hover:underline cursor-pointer"
+                >
+                  Clear Filter (Show All)
+                </button>
+              )}
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              {categories
+                .filter((cat) => Boolean(cat && cat.trim().length > 0))
+                .map((cat) => (
+                  <button
+                    key={cat}
+                    type="button"
+                    onClick={() => setSelectedCategory(cat)}
+                    className={`px-3.5 py-2 rounded-xl text-xs font-mono transition-all duration-200 cursor-pointer flex items-center gap-1.5 ${
+                      selectedCategory === cat
+                        ? "bg-cyan-500 text-slate-950 font-extrabold shadow-lg shadow-cyan-500/25 border border-cyan-400"
+                        : "bg-slate-900/80 text-slate-300 border border-slate-800 hover:border-slate-700 hover:text-white"
+                    }`}
+                  >
+                    {cat === "ALL" ? (
+                      <>
+                        <span>🌐</span>
+                        <span>All Categories ({products.length})</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>📦</span>
+                        <span>{cat}</span>
+                      </>
+                    )}
+                  </button>
+                ))}
+            </div>
           </div>
         </div>
       </section>
