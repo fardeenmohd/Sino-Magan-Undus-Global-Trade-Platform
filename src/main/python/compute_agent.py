@@ -344,48 +344,103 @@ def scrape_discover_opportunities(req: ScrapeOpportunityRequest):
     """
     limit = req.limit_count or 12
     dest = req.destination_country or "Germany"
-    keyword = req.keyword or "Organic Commodity"
+    raw_kw = req.keyword or "Specialty Goods"
+    kw = raw_kw.lower().strip()
     mode = req.sourcing_mode or "BOTH"
     now = datetime.utcnow().isoformat()
+
+    # Dynamic Sector Classification in Python
+    title_kw = raw_kw.strip().capitalize()
+    
+    if any(k in kw for k in ["electric", "bike", "e-bike", "ev", "scooter", "battery", "solar", "inverter"]):
+        cat = "Electric Vehicles & E-Mobility"
+        hs = "HS-8714"
+        domain = "eepc.in"
+        unit = "unit"
+    elif any(k in kw for k in ["machine", "cnc", "pump", "equipment", "tool", "industrial"]):
+        cat = "Machinery & Engineering"
+        hs = "HS-8479"
+        domain = "eepc.in"
+        unit = "unit"
+    elif any(k in kw for k in ["pharma", "medicine", "drug", "api", "tablet", "surgical"]):
+        cat = "Pharmaceuticals & Medical Devices"
+        hs = "HS-3004"
+        domain = "pharmexcil.com"
+        unit = "unit"
+    elif any(k in kw for k in ["spice", "pepper", "turmeric", "cardamom", "masala"]):
+        cat = "Spices & Herbal Extracts"
+        hs = "HS-0904"
+        domain = "spicesboard.in"
+        unit = "kg"
+    elif any(k in kw for k in ["textile", "apparel", "cotton", "garment", "fabric"]):
+        cat = "Textiles & Apparel"
+        hs = "HS-6109"
+        domain = "eepcindia.org"
+        unit = "piece"
+    elif any(k in kw for k in ["makhana", "fox nut", "rice", "basmati", "grain"]):
+        cat = "Grains & Superfoods"
+        hs = "HS-0910"
+        domain = "apeda.gov.in"
+        unit = "kg"
+    elif any(k in kw for k in ["leather", "shoe", "footwear", "jacket"]):
+        cat = "Leather Goods & Footwear"
+        hs = "HS-6403"
+        domain = "clfexport.org"
+        unit = "pair"
+    elif any(k in kw for k in ["handicraft", "furniture", "wood", "brass"]):
+        cat = "Handicrafts & Home Décor"
+        hs = "HS-9403"
+        domain = "epch.in"
+        unit = "piece"
+    else:
+        cat = "Specialty Commodities & Manufactured Goods"
+        hs = "HS-9900"
+        domain = "fieo.org"
+        unit = "unit"
 
     items = []
 
     if mode in ("EXPORT_PRODUCT", "BOTH"):
-        # ── Always: Indian Supplier Entities ──────────────────────
         for i in range(min(limit, len(INDIAN_EXPORTER_REGISTRY))):
             exp = INDIAN_EXPORTER_REGISTRY[i % len(INDIAN_EXPORTER_REGISTRY)]
-            domain = INDIAN_EXPORT_DOMAINS[i % len(INDIAN_EXPORT_DOMAINS)]
             port = INDIAN_PORT_HUBS[i % len(INDIAN_PORT_HUBS)]
             items.append({
                 "id": int(datetime.utcnow().timestamp() * 1000) + 100 + i,
+                "title": f"{exp['city'].split(',')[0]} Premium {title_kw} Export Batch ({hs}) — IEC Certified",
+                "category": cat,
+                "hsCode": hs,
+                "unit": unit,
                 "opportunityType": "EXPORT_PRODUCT",
                 "originCountry": "India 🇮🇳",
                 "destinationCountry": dest,
                 "portHub": port,
                 "supplierName": exp["name"],
-                "supplierCompany": exp["company"],
+                "supplierCompany": f"{exp['company']} ({title_kw} Division)",
                 "supplierEmail": exp["email"],
                 "supplierCity": exp["city"],
                 "iecCode": exp["iec"],
                 "sourceDomain": domain,
-                "keyword": keyword,
+                "keyword": raw_kw,
                 "confidenceScore": round(98.5 - (i * 0.3), 1),
                 "scrapedAt": now,
                 "status": "NEW_DISCOVERY",
             })
 
     if mode in ("IMPORT_LEAD", "BOTH"):
-        # ── Foreign buyer leads for the destination country ────────────────
         dest_leads = generate_dynamic_leads_for_product(
             product_id=1,
-            title=keyword,
-            category="Organic Commodity",
-            hs_code="HS-0910",
+            title=f"Indian {title_kw} Import Requirement for {dest} Market",
+            category=cat,
+            hs_code=hs,
             destination=dest,
         )
         for lead in dest_leads[:min(limit, len(dest_leads))]:
             items.append({
                 "id": int(datetime.utcnow().timestamp() * 1000) + 200 + dest_leads.index(lead),
+                "title": f"{lead.get('company', 'Foreign Importer')} — Sourcing Indian {title_kw} ({hs})",
+                "category": cat,
+                "hsCode": hs,
+                "unit": unit,
                 "opportunityType": "IMPORT_LEAD",
                 "originCountry": "India 🇮🇳",
                 "destinationCountry": dest,
@@ -404,7 +459,7 @@ def scrape_discover_opportunities(req: ScrapeOpportunityRequest):
         "status": "SUCCESS",
         "total_scraped": len(items),
         "timestamp": now,
-        "keyword": keyword,
+        "keyword": raw_kw,
         "destination": dest,
         "sourcing_mode": mode,
         "india_only_export_filter": True,

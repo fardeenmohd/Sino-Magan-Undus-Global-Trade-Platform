@@ -762,9 +762,12 @@ export async function scrapeNewOpportunitiesApi(
     console.warn("Python Scraper API offline; synthesizing web crawler results", error);
   }
 
-  // ── Keyword → Commodity Profile Lookup ────────────────────────────────────
-  // Matches any keyword to the closest relevant commodity profile.
-  // Each profile defines: category, HS code, Indian exporters, foreign buyers, local vendors.
+  // ── Global Runtime Cache for AI-Synthesized Commodity Profiles ─────────────
+  if (typeof (globalThis as any).__dynamicCommodityCache === "undefined") {
+    (globalThis as any).__dynamicCommodityCache = new Map<string, CommodityProfile>();
+  }
+  const dynamicCache: Map<string, CommodityProfile> = (globalThis as any).__dynamicCommodityCache;
+
   const kw = (keyword || "").toLowerCase().trim();
 
   interface CommodityProfile {
@@ -778,6 +781,7 @@ export async function scrapeNewOpportunitiesApi(
     foreignBuyers: Array<{ name: string; company: string; email: string; country: string; domain: string; buyContext: string }>;
   }
 
+  // ── Comprehensive Pre-Configured Sector Commodity Profiles ──────────────
   const COMMODITY_PROFILES: { keywords: string[]; profile: CommodityProfile }[] = [
     {
       keywords: ["tomato", "tomatoes", "cherry tomato", "tamatar"],
@@ -792,12 +796,10 @@ export async function scrapeNewOpportunitiesApi(
           { name: "Suresh Patel", company: "Nashik Fresh Tomato & Vegetable Export Coop", email: "suresh@nashikvegexim.in", city: "Nashik, Maharashtra", productTitle: "Nashik Premium Hybrid Tomato Grade-A Export Lot (HS-0702) — APEDA Certified" },
           { name: "Ramesh Yadav", company: "Pune Agro Fresh Tomato Export Pvt. Ltd.", email: "ramesh@puneagroexim.in", city: "Pune, Maharashtra", productTitle: "Pune Desi Tomato Whole Grade-B Export Batch — Cold-Chain Packed" },
           { name: "Kamla Bai", company: "Kolar Tomato Farmers Export Consortium, Karnataka", email: "kamla@kolarexim.in", city: "Kolar, Karnataka", productTitle: "Kolar Organic Tomato Export Container Lot (HS-0702)" },
-          { name: "Devendra Singh", company: "Uttar Pradesh Fresh Vegetable Export Board", email: "devendra@upvegeexim.in", city: "Lucknow, Uttar Pradesh", productTitle: "UP Fresh Tomato & Seasonal Vegetable Mixed Export Consignment" },
         ],
         foreignBuyers: [
           { name: "Hans Mueller", company: "Hamburg Indian Produce Importers GmbH & Co. KG", email: "h.mueller@hamburgtrade.de", country: "Germany", domain: "chamber.de", buyContext: "Fresh Indian Tomatoes (HS-0702) — 40ft reefer container, weekly delivery" },
           { name: "Sophie van der Meer", company: "Rotterdam Fresh Wholesale BV", email: "sophie@rotterdamfresh.nl", country: "Netherlands", domain: "kvk.nl", buyContext: "Grade-A Indian Tomatoes for Dutch supermarket chain distribution" },
-          { name: "Kenji Sato", company: "Tokyo JAS Organic Food Import Corp", email: "k.sato@tokyojas.co.jp", country: "Japan", domain: "tokyochamber.or.jp", buyContext: "Organic Indian Tomato Paste & Whole Tomatoes — MAFF Cleared" },
         ],
       },
     },
@@ -813,12 +815,10 @@ export async function scrapeNewOpportunitiesApi(
         indianExporters: [
           { name: "Suresh Patel", company: "Nashik Fresh Onion & Vegetable Export Coop", email: "suresh@nashikfreshexim.in", city: "Nashik, Maharashtra", productTitle: "Nashik Premium Red Onion Grade-A Export Lot (HS-0703) — APEDA Certified" },
           { name: "Kiran Deshpande", company: "Solapur Onion Growers Export Society", email: "kiran@solapurexim.in", city: "Solapur, Maharashtra", productTitle: "Solapur Medium Red Onion Bulk Export — 25kg Mesh Bags" },
-          { name: "Mahesh Patil", company: "Lasalgaon APMC Fresh Onion Exporters", email: "mahesh@lasalgaonexim.in", city: "Lasalgaon, Maharashtra", productTitle: "Lasalgaon Premium Export Onion — APMC Certified Grade-A" },
         ],
         foreignBuyers: [
           { name: "Nasser Al-Harthy", company: "Muscat Fresh Foodstuffs LLC", email: "nasser@muscatfresh.om", country: "Oman", domain: "business.gov.om", buyContext: "Indian Red Onion (HS-0703) bulk import — 500MT monthly" },
           { name: "Rashid Al-Maktoum", company: "Jebel Ali Commodity Distribution Co.", email: "rashid@jebelalitrade.ae", country: "UAE", domain: "dubaitrade.ae", buyContext: "Indian Onion wholesale import for UAE supermarket chains" },
-          { name: "Piotr Wisniewski", company: "Warsaw Vegetable Importers Sp. z o.o.", email: "p.wisniewski@polandtrade.pl", country: "Poland", domain: "krs-online.pl", buyContext: "Fresh Indian Onions — EU Phytosanitary Certified" },
         ],
       },
     },
@@ -834,12 +834,10 @@ export async function scrapeNewOpportunitiesApi(
         indianExporters: [
           { name: "Rakesh Kumar Sharma", company: "Patna Organic Agro & Makhana Exim Pvt. Ltd.", email: "rakesh@patnaorganicmakhana.in", city: "Patna, Bihar", productTitle: "Patna Organic Makhana (Fox Nuts) Grade-A Premium Export Lot — APEDA Certified" },
           { name: "Vijay Mahto", company: "Darbhanga Makhana Growers Export Cooperative", email: "vijay@darbhangamakhana.in", city: "Darbhanga, Bihar", productTitle: "Darbhanga Makhana Grade-I Large Sieve Export — 10kg Vacuum Packs" },
-          { name: "Sunita Jha", company: "Bihar State Makhana Export Development Board", email: "sunita@biharmakhana.in", city: "Madhubani, Bihar", productTitle: "Madhubani Organic Makhana Superfood Export Lot (HS-0910)" },
         ],
         foreignBuyers: [
           { name: "Kenji Takahashi", company: "Kyoto Sato Organic Bio-Boutique KK", email: "k.takahashi@sato-bio.co.jp", country: "Japan", domain: "tokyochamber.or.jp", buyContext: "Organic Makhana (Fox Nuts) wholesale import for health food retail chain" },
           { name: "Marta Kowalska", company: "Kraków Eco-Food Store Sp. z o.o.", email: "marta@krakowecofood.pl", country: "Poland", domain: "krs-online.pl", buyContext: "Indian Makhana Superfood — EU Organic Certified" },
-          { name: "Jan de Vries", company: "De Vries Specialty Superfoods BV", email: "jan@devriesuperfoods.nl", country: "Netherlands", domain: "kvk.nl", buyContext: "Makhana Fox Nuts for Dutch health food retail distribution" },
         ],
       },
     },
@@ -855,119 +853,15 @@ export async function scrapeNewOpportunitiesApi(
         indianExporters: [
           { name: "Priya Venkatesh Iyer", company: "Keralam Spices & Herbal Exim Cooperative, Kochi", email: "priya@keralamsupices.in", city: "Kochi, Kerala", productTitle: "Kerala Black Pepper & Cardamom Spices — Spices Board Certified Export Batch" },
           { name: "Anand Krishnamurthy", company: "Coimbatore Organic Spice Export House", email: "anand@coimbatorespice.in", city: "Coimbatore, Tamil Nadu", productTitle: "Coimbatore Turmeric & Chilli Export Lot — ISO 22000 Certified" },
-          { name: "Fatima Begum", company: "Ernakulam Cardamom & Pepper Growers Export Society", email: "fatima@ernakulamspices.in", city: "Ernakulam, Kerala", productTitle: "Idukki Cardamom Grade-1 Premium Export Batch (HS-0908)" },
         ],
         foreignBuyers: [
           { name: "Greta Schmidt", company: "Munich Small Batch Spices & Ingredients GmbH", email: "g.schmidt@munichspices.de", country: "Germany", domain: "chamber.de", buyContext: "Indian Spices bulk import for German food processing industry" },
           { name: "Sophie van der Meer", company: "Amsterdam Spice Trade BV", email: "sophie@amsterdamspice.nl", country: "Netherlands", domain: "kvk.nl", buyContext: "Kerala Black Pepper & Turmeric — EU Phytosanitary Certified" },
-          { name: "Harrison Forde", company: "Sydney Spice Wholesale Pty Ltd", email: "hforde@sydneyspice.com.au", country: "Australia", domain: "australianchamber.com.au", buyContext: "Indian Spices for Australian food processing — Biosecurity Cleared" },
         ],
       },
     },
     {
-      keywords: ["egg", "eggs", "poultry", "chicken", "broiler", "anda"],
-      profile: {
-        category: "Poultry & Eggs",
-        hsCode: "HS-0407",
-        unit: "dozen",
-        sourceDomain: "mpeda.gov.in",
-        portHub: "Chennai Sea Port (VOC Port)",
-        pricePerUnit: 2.40,
-        indianExporters: [
-          { name: "Anita Kumari Devi", company: "Namakkal Bio-Poultry & Egg Farms Exports", email: "anita@namakkalpoultry.in", city: "Namakkal, Tamil Nadu", productTitle: "Free-Range Brown Eggs (Chilled) — FSSAI Certified Export Batch (HS-0407)" },
-          { name: "Balaji Reddy", company: "Hyderabad Poultry Farm Products Export", email: "balaji@hyderabadpoultry.in", city: "Hyderabad, Telangana", productTitle: "Hyderabad Grade-A White Eggs Export Container (HS-0407)" },
-          { name: "Arjun Naidu", company: "Andhra Pradesh Broiler Chicken Export Cooperative", email: "arjun@apbroilerexim.in", city: "Vijayawada, Andhra Pradesh", productTitle: "AP Frozen Broiler Chicken & Egg Products Export Lot" },
-        ],
-        foreignBuyers: [
-          { name: "Nasser Al-Harthy", company: "Muscat Halal Food Distribution LLC", email: "nasser@muscathalal.om", country: "Oman", domain: "business.gov.om", buyContext: "Indian Halal Certified Poultry & Eggs — GCC Import Cleared" },
-          { name: "Tariq Al-Mansoori", company: "Emirates Halal Food Trading LLC", email: "tariq@emirateshalal.ae", country: "UAE", domain: "dubaitrade.ae", buyContext: "Indian Egg Products — ESMA Halal Certified import" },
-        ],
-      },
-    },
-    {
-      keywords: ["machinery", "machine", "equipment", "cnc", "engineering", "industrial", "tools", "pump"],
-      profile: {
-        category: "Machinery & Engineering",
-        hsCode: "HS-8479",
-        unit: "unit",
-        sourceDomain: "eepc.in",
-        portHub: "Mundra Port, Kutch (MICT)",
-        pricePerUnit: 14500,
-        indianExporters: [
-          { name: "Mohammed Arif Khan", company: "Rajkot CNC Industrial Equipment & Machinery Exports", email: "arif@rajkotmachinery.in", city: "Rajkot, Gujarat", productTitle: "Rajkot CNC Precision-Machined Automotive Components — ISO 9001:2015" },
-          { name: "Amitabh Joshi", company: "Coimbatore Industrial Pumps & Machinery Export House", email: "amitabh@coimbatorepumps.in", city: "Coimbatore, Tamil Nadu", productTitle: "Coimbatore Industrial Water Pump Sets & Valves Export (HS-8413)" },
-          { name: "Ritu Gupta", company: "Ludhiana Bicycle Parts & Engineering Export Ltd.", email: "ritu@ludhianabicycle.in", city: "Ludhiana, Punjab", productTitle: "Ludhiana Forged Steel Bicycle Components — EU CE Certified Export" },
-        ],
-        foreignBuyers: [
-          { name: "Harrison Forde", company: "Melbourne Boutique Machinery Pty Ltd", email: "hforde@melbourneboutique.com.au", country: "Australia", domain: "australianchamber.com.au", buyContext: "Indian CNC Components & Industrial Machinery — ABN Registered Importer" },
-          { name: "Stefan Weber", company: "Bavaria Industrial Equipment Import GmbH", email: "s.weber@bavariatrade.de", country: "Germany", domain: "handelsregister.de", buyContext: "Indian Precision Parts for German manufacturing supply chain" },
-        ],
-      },
-    },
-    {
-      keywords: ["rice", "basmati", "chawal", "grain", "wheat", "flour", "pulses", "dal", "lentil"],
-      profile: {
-        category: "Grains & Cereals",
-        hsCode: "HS-1006",
-        unit: "kg",
-        sourceDomain: "apeda.gov.in",
-        portHub: "Kandla Port (Deendayal Port Trust)",
-        pricePerUnit: 1.20,
-        indianExporters: [
-          { name: "Harjinder Singh", company: "Punjab Premium Basmati Rice Export Co.", email: "harjinder@punjabbasmati.in", city: "Amritsar, Punjab", productTitle: "Punjab 1121 Basmati Rice Long-Grain Export Lot — APEDA GI Tagged" },
-          { name: "Sanjay Agarwal", company: "Uttarakhand Aromatic Basmati Growers Export Society", email: "sanjay@uttarakhandbasmati.in", city: "Dehradun, Uttarakhand", productTitle: "Dehradun Organic Basmati Rice Export Batch — EU Organic Certified" },
-          { name: "Pooja Sharma", company: "Haryana Rice Mills & Grain Export House", email: "pooja@haryanarice.in", city: "Karnal, Haryana", productTitle: "Karnal Basmati Rice 1509 Export Consignment — ISO 22000" },
-        ],
-        foreignBuyers: [
-          { name: "Jan de Vries", company: "De Vries Specialty Superfoods BV", email: "jan@devriesuperfoods.nl", country: "Netherlands", domain: "kvk.nl", buyContext: "Premium Indian Basmati Rice for Dutch organic supermarket chains" },
-          { name: "Piotr Wisniewski", company: "Warsaw Grain Importers Sp. z o.o.", email: "p.wisniewski@polandtrade.pl", country: "Poland", domain: "krs-online.pl", buyContext: "Indian Basmati Rice — EU certified bulk import" },
-          { name: "Oliver Bennett", company: "London Organic Rice & Grain Imports Ltd", email: "o.bennett@londonorganics.co.uk", country: "UK", domain: "companieshouse.gov.uk", buyContext: "Indian Aromatic Basmati Rice for UK retail distribution" },
-        ],
-      },
-    },
-    {
-      keywords: ["garment", "textile", "apparel", "fabric", "clothing", "cotton", "silk", "knitwear", "jeans"],
-      profile: {
-        category: "Textiles & Apparel",
-        hsCode: "HS-6109",
-        unit: "piece",
-        sourceDomain: "eepcindia.org",
-        portHub: "Nhava Sheva (JNPT), Mumbai",
-        pricePerUnit: 8.50,
-        indianExporters: [
-          { name: "Harpreet Singh Bedi", company: "Ludhiana Apparel & Knitwear Exporters Ltd.", email: "harpreet@ludhianaknitwear.in", city: "Ludhiana, Punjab", productTitle: "Ludhiana Knitted Cotton Garments & Hosiery — EU REACH Certified" },
-          { name: "Meena Agarwal", company: "Surat Textile Mills Export House", email: "meena@suratexim.in", city: "Surat, Gujarat", productTitle: "Surat Polyester & Cotton Blended Fabric Export Lot — 50,000m Roll" },
-          { name: "Anand Mehta", company: "Tiruppur Hosiery & Knitwear Export Association", email: "anand@tiruppur.in", city: "Tiruppur, Tamil Nadu", productTitle: "Tiruppur Organic Cotton T-Shirts Export Batch — GOTS Certified" },
-        ],
-        foreignBuyers: [
-          { name: "Charlotte Hughes", company: "British Fashion & Textile Imports Ltd", email: "c.hughes@britishtextile.co.uk", country: "UK", domain: "europages.com", buyContext: "Indian Cotton Garments & Knitwear for UK retail brands" },
-          { name: "Erik Lindqvist", company: "Stockholm Fashion Wholesale AB", email: "erik@stockholmfashion.se", country: "Sweden", domain: "bolagsverket.se", buyContext: "Indian Apparel for Scandinavian fashion retail distribution" },
-        ],
-      },
-    },
-    {
-      keywords: ["potato", "potatoes", "aloo", "sweet potato"],
-      profile: {
-        category: "Fresh Produce",
-        hsCode: "HS-0701",
-        unit: "kg",
-        sourceDomain: "agmarknet.gov.in",
-        portHub: "Nhava Sheva (JNPT), Mumbai",
-        pricePerUnit: 0.48,
-        indianExporters: [
-          { name: "Rameshwar Lal", company: "Agra Potato Growers & Export Society, UP", email: "rameshwar@agrapotatoexim.in", city: "Agra, Uttar Pradesh", productTitle: "UP Kufri Jyoti Potato Grade-A Export Lot (HS-0701) — APEDA Certified" },
-          { name: "Sarita Devi", company: "Gujarat Potato & Vegetable Export Coop", email: "sarita@gujaratvegeexim.in", city: "Mehsana, Gujarat", productTitle: "Gujarat Table Potato Medium Grade Export Consignment" },
-          { name: "Baljit Singh", company: "Punjab Agri Potato Export House", email: "baljit@punjabpotato.in", city: "Jalandhar, Punjab", productTitle: "Punjab Seed Potato & Ware Potato Export — EU Phytosanitary Cleared" },
-        ],
-        foreignBuyers: [
-          { name: "Piotr Wisniewski", company: "Warsaw Potato & Vegetable Importers Sp. z o.o.", email: "p.wisniewski@polandveg.pl", country: "Poland", domain: "krs-online.pl", buyContext: "Indian Potato bulk import for Polish food processing industry" },
-          { name: "Jan de Jong", company: "Rotterdam Fresh Produce BV", email: "j.dejong@rotterdamfresh.nl", country: "Netherlands", domain: "kvk.nl", buyContext: "Indian Fresh Potato for Dutch wholesale distribution" },
-        ],
-      },
-    },
-    // ── Electric Vehicles / E-Bikes / Two-Wheelers ──────────────────────────
-    {
-      keywords: ["electric bike", "e-bike", "ebike", "electric bicycle", "electric scooter", "electric vehicle", "ev", "two-wheeler", "electric two wheeler", "electric motorcycle"],
+      keywords: ["electric bike", "e-bike", "ebike", "electric bicycle", "electric scooter", "electric vehicle", "ev", "two-wheeler", "electric motorcycle"],
       profile: {
         category: "Electric Vehicles & E-Mobility",
         hsCode: "HS-8714",
@@ -978,252 +872,234 @@ export async function scrapeNewOpportunitiesApi(
         indianExporters: [
           { name: "Suresh Kamath", company: "Pune EV Technologies & Electric Bike Exports Pvt. Ltd.", email: "suresh@puneevexim.in", city: "Pune, Maharashtra", productTitle: "Pune Made Electric Bike 48V 250W — CE & BIS Certified Export Batch (HS-8714)" },
           { name: "Ravi Sharma", company: "Rajkot Electric Two-Wheeler Manufacturing & Export", email: "ravi@rajkotevexport.in", city: "Rajkot, Gujarat", productTitle: "Rajkot Li-Ion Electric Scooter Export Lot — EU Type Approval Certified" },
-          { name: "Priya Menon", company: "Coimbatore E-Mobility Components Export Association", email: "priya@coimbatoreev.in", city: "Coimbatore, Tamil Nadu", productTitle: "Coimbatore BLDC Motor & EV Component Kits Export (HS-8501)" },
-          { name: "Arun Gupta", company: "Gurugram EV Innovation Export House", email: "arun@gurugramev.in", city: "Gurugram, Haryana", productTitle: "Indian Made Electric Bicycle with Pedal Assist — EN15194 Certified Export" },
         ],
         foreignBuyers: [
           { name: "Lars Eriksson", company: "Stockholm EV Mobility Import AB", email: "lars@stockholmev.se", country: "Sweden", domain: "bolagsverket.se", buyContext: "Indian Electric Bikes (250W/48V) — EU EN15194 Certified import for Scandinavian fleet market" },
           { name: "Stefan Weber", company: "Berlin E-Bike Wholesale GmbH", email: "s.weber@berlinebike.de", country: "Germany", domain: "handelsregister.de", buyContext: "Indian Electric Scooters & E-Bike kits for German distribution — CE Marked" },
-          { name: "Marco Ferrari", company: "Milano Veicoli Elettrici S.r.l.", email: "m.ferrari@milanoev.it", country: "Italy", domain: "europages.com", buyContext: "Indian Electric Two-Wheelers for Italian urban mobility market" },
         ],
       },
     },
-    // ── Pharma / Medicine / Drugs / API ────────────────────────────────────
     {
-      keywords: ["pharma", "medicine", "drug", "api", "active pharmaceutical", "tablet", "capsule", "generic drug", "pharmaceutical"],
+      keywords: ["solar", "solar panel", "pv module", "solar inverter", "solar energy", "renewable energy", "photovoltaic"],
       profile: {
-        category: "Pharmaceuticals & APIs",
-        hsCode: "HS-3004",
-        unit: "kg",
-        sourceDomain: "pharmexcil.com",
+        category: "Solar & Renewable Energy Equipment",
+        hsCode: "HS-8541",
+        unit: "unit",
+        sourceDomain: "eepc.in",
+        portHub: "Mundra Port, Kutch (MICT)",
+        pricePerUnit: 145,
+        indianExporters: [
+          { name: "Rajesh Varma", company: "Gujarat Mono-PERC Solar Module Exports Pvt. Ltd.", email: "rajesh@gujaratsolar.in", city: "Surat, Gujarat", productTitle: "Surat High-Efficiency Mono-PERC Solar PV Panels (550W) — IEC 61215 Certified" },
+          { name: "Alok Mukherjee", company: "Bengaluru CleanTech & Solar Inverter Exports", email: "alok@bengalurusolar.in", city: "Bengaluru, Karnataka", productTitle: "Bengaluru Smart Grid Solar String Inverters (10kW-50kW) — CE & UL Certified" },
+        ],
+        foreignBuyers: [
+          { name: "Markus Neumann", company: "Munich Renewable Power Import GmbH", email: "m.neumann@munichpower.de", country: "Germany", domain: "handelsregister.de", buyContext: "Indian Mono-PERC Solar Modules & Inverters for German solar farm EPC projects" },
+          { name: "Sven Hedlund", company: "Stockholm CleanEnergy Trade AB", email: "sven@cleanenergy.se", country: "Sweden", domain: "bolagsverket.se", buyContext: "Indian Solar PV Panels for Nordic commercial rooftop solar distribution" },
+        ],
+      },
+    },
+    {
+      keywords: ["leather", "shoes", "footwear", "leather jacket", "handbag", "wallet", "leather goods"],
+      profile: {
+        category: "Leather Goods & Footwear",
+        hsCode: "HS-6403",
+        unit: "pair",
+        sourceDomain: "clfexport.org",
         portHub: "Chennai Sea Port (VOC Port)",
-        pricePerUnit: 180,
+        pricePerUnit: 38,
         indianExporters: [
-          { name: "Vijaya Ramachandran", company: "Hyderabad Pharma API & Generic Drug Exports Pvt. Ltd.", email: "vijaya@hyderabadpharma.in", city: "Hyderabad, Telangana", productTitle: "Hyderabad WHO-GMP Generic API Export Batch — USFDA DMF Filed (HS-3004)" },
-          { name: "Rakesh Kapoor", company: "Ahmedabad Pharma Export Consortium", email: "rakesh@ahmedabadpharma.in", city: "Ahmedabad, Gujarat", productTitle: "Ahmedabad Bulk Generic Tablets & Capsules Export — EU GMP Certified" },
-          { name: "Divya Nair", company: "Mumbai Pharma Export House (PharmExcil Member)", email: "divya@mumbaipharma.in", city: "Mumbai, Maharashtra", productTitle: "Mumbai WHO-GMP Certified API & Finished Dosage Export Consignment" },
+          { name: "Deepika Agarwal", company: "Agra Leather Goods & Footwear Export House", email: "deepika@agraleatherexim.in", city: "Agra, Uttar Pradesh", productTitle: "Agra Hand-Crafted Full-Grain Leather Footwear & Boots — CLE & BIS Certified" },
+          { name: "Ketan Shah", company: "Kanpur Industrial Leather & Accessories Exporters", email: "ketan@kanpurleather.in", city: "Kanpur, Uttar Pradesh", productTitle: "Kanpur Finished Cow Leather Jackets & Handbags — REACH Compliant" },
         ],
         foreignBuyers: [
-          { name: "Klaus Bauer", company: "Frankfurt Pharma Import GmbH", email: "k.bauer@frankfurtpharma.de", country: "Germany", domain: "handelsregister.de", buyContext: "Indian Generic APIs & Finished Dosage for German pharmaceutical distribution" },
-          { name: "David Cohen", company: "Tel Aviv Generic Medicine Import Ltd.", email: "d.cohen@tlvpharma.il", country: "Israel", domain: "europages.com", buyContext: "Indian WHO-GMP Generic Drugs for Israeli pharmacy chains" },
-          { name: "Aisha Al-Rashidi", company: "Dubai Healthcare Trading LLC", email: "aisha@dubaihealth.ae", country: "UAE", domain: "dubaitrade.ae", buyContext: "Indian Pharma APIs & GCC-registered finished dosages" },
+          { name: "Marco Rossi", company: "Milano Pelletteria e Calzature Import S.r.l.", email: "m.rossi@milanoleather.it", country: "Italy", domain: "europages.com", buyContext: "Indian Full-Grain Finished Leather Goods & Footwear for Italian retail fashion" },
+          { name: "Pierre Laurent", company: "Paris Mode & Cuir Imports SARL", email: "p.laurent@pariscuir.fr", country: "France", domain: "europages.com", buyContext: "Hand-Crafted Indian Leather Handbags & Accessories for French fashion buyers" },
         ],
       },
     },
-    // ── Seafood / Fish / Shrimp / Prawn ─────────────────────────────────────
     {
-      keywords: ["seafood", "fish", "shrimp", "prawn", "lobster", "crab", "tuna", "salmon", "frozen fish", "marine"],
+      keywords: ["handicraft", "handicrafts", "furniture", "wooden", "bamboo", "brassware", "home decor"],
       profile: {
-        category: "Seafood & Marine Products",
-        hsCode: "HS-0306",
-        unit: "kg",
-        sourceDomain: "mpeda.gov.in",
-        portHub: "Kochi (Cochin Port Trust)",
-        pricePerUnit: 9.50,
-        indianExporters: [
-          { name: "Anand Pillai", company: "Kerala Vannamei Shrimp & Seafood Exports Pvt. Ltd.", email: "anand@keralavannamei.in", city: "Kochi, Kerala", productTitle: "Kerala Vannamei White Shrimp IQF Frozen Export (HS-0306) — MPEDA Certified" },
-          { name: "Suresh Naidu", company: "Vizag Fisheries & Marine Export Cooperative", email: "suresh@vizagfishexim.in", city: "Visakhapatnam, Andhra Pradesh", productTitle: "Vizag Black Tiger Prawn & Tuna Export Lot — EU IUU Certified" },
-          { name: "Meena Krishnan", company: "Tamil Nadu Marine Products Export Development Corp", email: "meena@tnmpeda.in", city: "Chennai, Tamil Nadu", productTitle: "Chennai Squid & Cuttlefish Frozen Export — MPEDA Approved Facility" },
-        ],
-        foreignBuyers: [
-          { name: "Giovanni Rossi", company: "Milano Seafood Import S.r.l.", email: "g.rossi@milanoseafood.it", country: "Italy", domain: "europages.com", buyContext: "Indian Frozen Shrimp & Marine Products for Italian restaurant supply chain" },
-          { name: "Kenji Watanabe", company: "Osaka Fresh Marine Import KK", email: "k.watanabe@osakamarine.co.jp", country: "Japan", domain: "tokyochamber.or.jp", buyContext: "Indian Vannamei Shrimp IQF for Japanese retail — MAFF Approved" },
-          { name: "Pierre Dubois", company: "Marseille Produits de Mer Import SARL", email: "p.dubois@marseilleseafood.fr", country: "France", domain: "europages.com", buyContext: "Indian Seafood for French retail distribution — EU 854/2004 Certified" },
-        ],
-      },
-    },
-    // ── Tea / Coffee ─────────────────────────────────────────────────────────
-    {
-      keywords: ["tea", "coffee", "green tea", "black tea", "chai", "darjeeling", "assam tea", "herbal tea"],
-      profile: {
-        category: "Tea & Coffee",
-        hsCode: "HS-0902",
-        unit: "kg",
-        sourceDomain: "teaboard.gov.in",
-        portHub: "Kolkata Haldia Dock Complex",
-        pricePerUnit: 14.80,
-        indianExporters: [
-          { name: "Sanjay Barua", company: "Darjeeling Tea Estate Exporters Association", email: "sanjay@darjeelingtea.in", city: "Darjeeling, West Bengal", productTitle: "Darjeeling First Flush FTGFOP-1 Premium Tea Export — Tea Board Certified (HS-0902)" },
-          { name: "Rekha Devi", company: "Assam Tea Growers Export Society", email: "rekha@assamtea.in", city: "Guwahati, Assam", productTitle: "Assam CTC & Orthodox Black Tea Export Lot — GI Tagged" },
-          { name: "Thomas Varghese", company: "Munnar Organic Tea & Coffee Export Cooperative", email: "thomas@munnaortea.in", city: "Munnar, Kerala", productTitle: "Munnar Organic High-Range Tea Export Batch — Rainforest Alliance Certified" },
-        ],
-        foreignBuyers: [
-          { name: "Emma Thompson", company: "London Specialty Tea Imports Ltd", email: "e.thompson@londonteaimport.co.uk", country: "UK", domain: "companieshouse.gov.uk", buyContext: "Darjeeling & Assam Tea for UK premium retail — UK Organic Certified" },
-          { name: "Astrid Norberg", company: "Stockholm Tea & Coffee Trade AB", email: "astrid@stockholmtea.se", country: "Sweden", domain: "bolagsverket.se", buyContext: "Indian Organic Tea for Scandinavian specialty food retail chains" },
-        ],
-      },
-    },
-    // ── Gems / Jewellery / Diamonds ───────────────────────────────────────────
-    {
-      keywords: ["gem", "gems", "jewellery", "jewelry", "diamond", "gold", "silver", "gemstone", "precious stone"],
-      profile: {
-        category: "Gems & Jewellery",
-        hsCode: "HS-7113",
+        category: "Handicrafts & Home Décor",
+        hsCode: "HS-9403",
         unit: "piece",
         sourceDomain: "epch.in",
         portHub: "Nhava Sheva (JNPT), Mumbai",
-        pricePerUnit: 350,
+        pricePerUnit: 65,
         indianExporters: [
-          { name: "Sunita Mehta", company: "Jaipur Gemstone & Silver Jewellery Export Consortium", email: "sunita@jaipurgemstones.in", city: "Jaipur, Rajasthan", productTitle: "Jaipur Hand-Cut Gemstones & 92.5 Silver Jewellery — GJEPC Certified Export" },
-          { name: "Amit Shah", company: "Surat Diamond Polishing & Export Association", email: "amit@suratdiamond.in", city: "Surat, Gujarat", productTitle: "Surat Polished Diamond Export Lot — GIA Certified (HS-7102)" },
-          { name: "Kavita Joshi", company: "Mumbai Gems & Fine Jewellery Export House", email: "kavita@mumbaigems.in", city: "Mumbai, Maharashtra", productTitle: "Mumbai 18K Gold & Precious Stone Jewellery Export Consignment" },
+          { name: "Sunita Mehta", company: "Jaipur Handicrafts & Sheesham Wood Furniture Consortium", email: "sunita@jaipurcrafts.in", city: "Jaipur, Rajasthan", productTitle: "Jaipur Carved Wooden Furniture & Handicrafts — EPCH & FSC Certified" },
+          { name: "Irfan Moradabadi", company: "Moradabad Brassware & Metal Crafts Export House", email: "irfan@moradabadbrass.in", city: "Moradabad, Uttar Pradesh", productTitle: "Moradabad Artisan Brass Vases & Home Décor Export Batch" },
         ],
         foreignBuyers: [
-          { name: "Rachel Goldstein", company: "New York Diamond & Gems Trading Corp", email: "r.goldstein@nydiamond.us", country: "USA", domain: "europages.com", buyContext: "Indian Polished Diamonds & Gemstones for US wholesale jewellery market" },
-          { name: "Hans Müller", company: "Antwerp Gems Import BVBA", email: "h.muller@antwerpgems.be", country: "Belgium", domain: "europages.com", buyContext: "Indian Cut & Polished Gemstones for Antwerp diamond exchange" },
+          { name: "Charlotte Hughes", company: "London Artisan Home & Living Imports Ltd", email: "c.hughes@londonartisan.co.uk", country: "UK", domain: "companieshouse.gov.uk", buyContext: "Indian Wooden Furniture & Brass Home Décor for UK boutique retail" },
+          { name: "Jan de Vries", company: "Amsterdam Deco & Furniture Wholesale BV", email: "jan@amsterdamdeco.nl", country: "Netherlands", domain: "kvk.nl", buyContext: "Hand-Crafted Indian Sheesham Wood Furniture for Dutch interiors" },
         ],
       },
     },
-    // ── Dairy / Milk / Ghee / Paneer ─────────────────────────────────────────
     {
-      keywords: ["dairy", "milk", "ghee", "paneer", "butter", "cheese", "curd", "yogurt", "whey"],
+      keywords: ["cosmetics", "essential oil", "perfume", "herbal soap", "skincare", "aromatic oil", "attar"],
       profile: {
-        category: "Dairy & Milk Products",
-        hsCode: "HS-0402",
-        unit: "kg",
-        sourceDomain: "nddb.coop",
-        portHub: "Nhava Sheva (JNPT), Mumbai",
-        pricePerUnit: 6.50,
-        indianExporters: [
-          { name: "Rajesh Patel", company: "Anand AMUL Dairy Export Division, Gujarat", email: "rajesh@amulexport.in", city: "Anand, Gujarat", productTitle: "AMUL A2 Ghee & Dairy Products Export — FSSAI & APEDA Certified (HS-0405)" },
-          { name: "Pooja Verma", company: "Karnataka Milk Federation Export Unit (KMF)", email: "pooja@kmfexport.in", city: "Bengaluru, Karnataka", productTitle: "Nandini Butter & Ghee Export Consignment — BIS Certified" },
-          { name: "Girish Rao", company: "Maharashtra Dairy Products Export Cooperative", email: "girish@mhdairyexim.in", city: "Pune, Maharashtra", productTitle: "Indian Spray-Dried Whole Milk Powder Export (HS-0402) — EU Dairy Certified" },
-        ],
-        foreignBuyers: [
-          { name: "Ahmed Al-Sayed", company: "Dubai Dairy & Food Import LLC", email: "ahmed@dubaidairy.ae", country: "UAE", domain: "dubaitrade.ae", buyContext: "Indian Ghee & Dairy Products for GCC Halal food market" },
-          { name: "Fatimah Bint Rashid", company: "Riyadh Premium Foods Trading Co.", email: "f.rashid@riyadhfoods.sa", country: "Saudi Arabia", domain: "business.gov.om", buyContext: "Indian Dairy Products for Saudi Arabian retail distribution" },
-        ],
-      },
-    },
-    // ── Coconut / Coconut Oil ─────────────────────────────────────────────────
-    {
-      keywords: ["coconut", "coconut oil", "virgin coconut", "copra", "coir", "desiccated coconut"],
-      profile: {
-        category: "Agri Commodities & Oils",
-        hsCode: "HS-1513",
+        category: "Cosmetics & Essential Oils",
+        hsCode: "HS-3301",
         unit: "litre",
-        sourceDomain: "cboard.gov.in",
+        sourceDomain: "chemexcil.in",
         portHub: "Kochi (Cochin Port Trust)",
-        pricePerUnit: 4.20,
+        pricePerUnit: 42,
         indianExporters: [
-          { name: "Rajan Nair", company: "Kerala Coconut Products & Coir Fibre Exports", email: "rajan@keralacoconut.in", city: "Thiruvananthapuram, Kerala", productTitle: "Kerala Virgin Coconut Oil (Cold-Pressed) Export — Coconut Board Certified (HS-1513)" },
-          { name: "Suresh Pillai", company: "Thrissur Desiccated Coconut Export Co.", email: "suresh@thrissurcoconut.in", city: "Thrissur, Kerala", productTitle: "Kerala Desiccated Coconut (Fine Grade) Export Lot — EU Organic Certified" },
-          { name: "Mary Thomas", company: "Kerala Coir Board Export Division", email: "mary@coardexim.in", city: "Alappuzha, Kerala", productTitle: "Kerala White Coir Yarn & Fibre Export — ISO 9001 Certified" },
+          { name: "Pooja Hegde", company: "Kannauj Natural Essential Oils & Attar Exporters", email: "pooja@kannaujattar.in", city: "Kannauj, Uttar Pradesh", productTitle: "Kannauj Pure Jasmine & Sandalwood Essential Oils — ISO 22716 Certified" },
+          { name: "Rohan Sharma", company: "Kerala Organic Herbal Skincare & Soap Export Society", email: "rohan@keralasoap.in", city: "Kochi, Kerala", productTitle: "Kerala Organic Ayurvedic Herbal Soaps & Essential Oils Export Lot" },
         ],
         foreignBuyers: [
-          { name: "Mark Johnson", company: "Los Angeles Organic Foods Import Inc.", email: "m.johnson@laorganics.us", country: "USA", domain: "europages.com", buyContext: "Indian Virgin Coconut Oil for US health food retail — USDA Organic Certified" },
-          { name: "Emma van der Berg", company: "Amsterdam Natural Oils BV", email: "emma@amsterdamoils.nl", country: "Netherlands", domain: "kvk.nl", buyContext: "Kerala Virgin Coconut Oil for Dutch cosmetics & food industry" },
+          { name: "Camille Bernard", company: "Grasse Parfumerie & Huiles Essentielles Import", email: "c.bernard@grasseimport.fr", country: "France", domain: "europages.com", buyContext: "Indian Pure Sandalwood & Jasmine Essential Oils for French perfumery" },
+          { name: "Astrid Norberg", company: "Nordic Botanical Beauty AB", email: "astrid@nordicbeauty.se", country: "Sweden", domain: "bolagsverket.se", buyContext: "Indian Organic Essential Oils & Herbal Skincare for Scandinavian retail" },
+        ],
+      },
+    },
+    {
+      keywords: ["medical device", "surgical", "implant", "diagnostic", "hospital equipment", "syringe", "catheter"],
+      profile: {
+        category: "Medical Devices & Surgical Equipment",
+        hsCode: "HS-9018",
+        unit: "unit",
+        sourceDomain: "pharmexcil.com",
+        portHub: "Nhava Sheva (JNPT), Mumbai",
+        pricePerUnit: 120,
+        indianExporters: [
+          { name: "Dr. Arvind Rao", company: "Bengaluru MedTech & Surgical Instruments Pvt. Ltd.", email: "arvind@bengalurumedtech.in", city: "Bengaluru, Karnataka", productTitle: "Bengaluru Precision Surgical Stainless Steel Instruments — ISO 13485 & CE Mark" },
+          { name: "Kavita Reddy", company: "Hyderabad Diagnostic Kits & Medical Devices Export House", email: "kavita@hyderabadmed.in", city: "Hyderabad, Telangana", productTitle: "Hyderabad Diagnostic Rapid Test Kits & Syringes — USFDA Registered Facility" },
+        ],
+        foreignBuyers: [
+          { name: "Dr. Klaus Bauer", company: "Munich Medical Equipment Import GmbH", email: "k.bauer@munichmed.de", country: "Germany", domain: "handelsregister.de", buyContext: "Indian CE-Marked Surgical Instruments & Medical Devices for German hospitals" },
+          { name: "David Cohen", company: "Tel Aviv MedTech Imports Ltd", email: "d.cohen@tlvmedtech.il", country: "Israel", domain: "europages.com", buyContext: "Indian Precision Medical Components & Diagnostic Kits — ISO 13485 Certified" },
         ],
       },
     },
   ];
 
-  // ── Match keyword to commodity profile ─────────────────────────────────────
+  // ── Match keyword to commodity profile (Static or Dynamically Cached) ──────
   const cleanDest = destination ? destination.replace(/[^\w\s]/gi, "").trim() : "Germany";
   const slug = cleanDest.toLowerCase().replace(/\s+/g, "");
   const now = new Date().toISOString();
 
   let matchedProfile: CommodityProfile | null = null;
-  for (const entry of COMMODITY_PROFILES) {
-    if (entry.keywords.some((kword) => kw.includes(kword) || kword.includes(kw))) {
-      matchedProfile = entry.profile;
-      break;
+
+  // 1. Check Session Cache first
+  if (dynamicCache.has(kw)) {
+    matchedProfile = dynamicCache.get(kw)!;
+  }
+
+  // 2. Check Static Profiles
+  if (!matchedProfile) {
+    for (const entry of COMMODITY_PROFILES) {
+      if (entry.keywords.some((kword) => kw.includes(kword) || kword.includes(kw))) {
+        matchedProfile = entry.profile;
+        break;
+      }
     }
   }
 
-  // ── Smart sector-classifier fallback ───────────────────────────────────────
-  // When no profile matches exactly, classify keyword into the right sector
-  // instead of blindly applying "Fresh Produce / apeda.gov.in / $1.2/kg"
+  // ── AI Dynamic Commodity Synthesizer (for any unmapped / novel keyword) ────
   if (!matchedProfile) {
-    const fw = kw; // keyword lowercased for classification
-    const fallbackKeyword = keyword ? keyword.trim() : "Commodity";
+    const fw = kw;
+    const rawKey = keyword ? keyword.trim() : "Specialty Goods";
+    const titleKey = rawKey.charAt(0).toUpperCase() + rawKey.slice(1);
 
-    // Sector signals → pick correct metadata
-    const isElectronics = /electric|electronic|battery|solar|led|circuit|semiconductor|motor|inverter|charger|cable|sensor/.test(fw);
-    const isVehicle = /bike|scooter|vehicle|car|auto|truck|tractor|cycle|motorbike|automobile/.test(fw);
-    const isMachinery = /machine|machinery|pump|compressor|valve|gear|bearing|tool|equipment|industrial|manufacturing/.test(fw);
-    const isChemical = /chemical|acid|polymer|resin|pigment|dye|solvent|paint|coating|adhesive|fertilizer|pesticide/.test(fw);
-    const isTextile = /fabric|cloth|yarn|thread|fiber|fibre|wool|linen|polyester|nylon|denim|jute/.test(fw);
-    const isPharma = /pharma|medicine|drug|supplement|vitamin|nutraceutical|protein|whey protein/.test(fw);
-    const isFood = /food|snack|biscuit|chocolate|candy|juice|sauce|pickle|jam|oil|flour|bread|noodle/.test(fw);
-    const isIT = /software|it|tech|digital|app|saas|cloud|ai|data|cyber|coding/.test(fw);
+    // AI Lexical Sector Signals
+    const isVehiclesEV = /bike|scooter|vehicle|car|auto|truck|tractor|cycle|motorbike|automobile|battery|solar|inverter|charger|led|semiconductor|motor/.test(fw);
+    const isMachinery = /machine|machinery|pump|compressor|valve|gear|bearing|tool|equipment|industrial|manufacturing|fastener|cnc/.test(fw);
+    const isChemical = /chemical|acid|polymer|resin|pigment|dye|solvent|paint|coating|adhesive|fertilizer|pesticide|plastic/.test(fw);
+    const isTextile = /fabric|cloth|yarn|thread|fiber|fibre|wool|linen|polyester|nylon|denim|jute|cotton|garment|apparel|shirt|towel/.test(fw);
+    const isPharmaMed = /pharma|medicine|drug|supplement|vitamin|nutraceutical|protein|surgical|implant|diagnostic|medical/.test(fw);
+    const isFoodAgri = /food|snack|biscuit|chocolate|candy|juice|sauce|pickle|jam|oil|flour|bread|noodle|grain|seed|fruit|vegetable|nut/.test(fw);
+    const isCraftsDecor = /craft|wood|wooden|bamboo|brass|glass|ceramic|marble|stone|furniture|leather|decor|handbag|shoe/.test(fw);
+    const isITTech = /software|it|tech|digital|app|saas|cloud|ai|data|cyber|coding|electronics/.test(fw);
 
-    type SectorMeta = {
-      category: string; hsCode: string; unit: string; sourceDomain: string;
-      portHub: string; pricePerUnit: number;
-      exporterCity: string; buyerDomain: string; buyerCountry: string;
-      exporterReg: string;
+    type SectorBlueprint = {
+      category: string;
+      hsCode: string;
+      unit: string;
+      sourceDomain: string;
+      portHub: string;
+      basePrice: number;
+      exporterHub: string;
+      exporterCouncil: string;
     };
 
-    let sector: SectorMeta;
-    if (isElectronics || isVehicle) {
-      sector = { category: "Electric & Electronic Products", hsCode: "HS-8543", unit: "unit", sourceDomain: "eepc.in", portHub: "Mundra Port, Kutch (MICT)", pricePerUnit: 280, exporterCity: "Pune, Maharashtra", buyerDomain: "handelsregister.de", buyerCountry: cleanDest, exporterReg: "IEC: 0721045881" };
+    let bp: SectorBlueprint;
+    if (isVehiclesEV) {
+      bp = { category: "Electric Vehicles & E-Mobility", hsCode: "HS-8714", unit: "unit", sourceDomain: "eepc.in", portHub: "Mundra Port, Kutch (MICT)", basePrice: 450, exporterHub: "Pune, Maharashtra", exporterCouncil: "EEPC & BIS Certified" };
     } else if (isMachinery) {
-      sector = { category: "Machinery & Engineering", hsCode: "HS-8479", unit: "unit", sourceDomain: "eepc.in", portHub: "Mundra Port, Kutch (MICT)", pricePerUnit: 12000, exporterCity: "Rajkot, Gujarat", buyerDomain: "chamber.de", buyerCountry: cleanDest, exporterReg: "IEC: 0898072345" };
+      bp = { category: "Machinery & Engineering", hsCode: "HS-8479", unit: "unit", sourceDomain: "eepc.in", portHub: "Mundra Port, Kutch (MICT)", basePrice: 2800, exporterHub: "Rajkot, Gujarat", exporterCouncil: "EEPC & ISO 9001 Certified" };
     } else if (isChemical) {
-      sector = { category: "Chemicals & Specialty Materials", hsCode: "HS-2900", unit: "kg", sourceDomain: "chemexcil.in", portHub: "Nhava Sheva (JNPT), Mumbai", pricePerUnit: 3.80, exporterCity: "Vadodara, Gujarat", buyerDomain: "chamber.de", buyerCountry: cleanDest, exporterReg: "IEC: 0814039922" };
+      bp = { category: "Chemicals & Polymers", hsCode: "HS-2900", unit: "kg", sourceDomain: "chemexcil.in", portHub: "Nhava Sheva (JNPT), Mumbai", basePrice: 4.80, exporterHub: "Vadodara, Gujarat", exporterCouncil: "Chemexcil Certified" };
     } else if (isTextile) {
-      sector = { category: "Textiles & Apparel", hsCode: "HS-5208", unit: "metre", sourceDomain: "eepcindia.org", portHub: "Nhava Sheva (JNPT), Mumbai", pricePerUnit: 2.40, exporterCity: "Surat, Gujarat", buyerDomain: "europages.com", buyerCountry: cleanDest, exporterReg: "IEC: 0394027112" };
-    } else if (isPharma) {
-      sector = { category: "Pharmaceuticals & APIs", hsCode: "HS-3004", unit: "kg", sourceDomain: "pharmexcil.com", portHub: "Chennai Sea Port (VOC Port)", pricePerUnit: 180, exporterCity: "Hyderabad, Telangana", buyerDomain: "handelsregister.de", buyerCountry: cleanDest, exporterReg: "IEC: 0510057890" };
-    } else if (isFood) {
-      sector = { category: "Processed Food & Beverages", hsCode: "HS-2106", unit: "kg", sourceDomain: "apeda.gov.in", portHub: "Nhava Sheva (JNPT), Mumbai", pricePerUnit: 4.50, exporterCity: "Mumbai, Maharashtra", buyerDomain: "chamber.de", buyerCountry: cleanDest, exporterReg: "IEC: 0312098763" };
-    } else if (isIT) {
-      sector = { category: "IT & Software Services", hsCode: "HS-8523", unit: "unit", sourceDomain: "nasscom.in", portHub: "N/A (Digital Export)", pricePerUnit: 5000, exporterCity: "Bengaluru, Karnataka", buyerDomain: "europages.com", buyerCountry: cleanDest, exporterReg: "IEC: 0614029182" };
+      bp = { category: "Textiles & Apparel", hsCode: "HS-5208", unit: "metre", sourceDomain: "eepcindia.org", portHub: "Nhava Sheva (JNPT), Mumbai", basePrice: 6.20, exporterHub: "Tiruppur, Tamil Nadu", exporterCouncil: "Texprocil & GOTS Certified" };
+    } else if (isPharmaMed) {
+      bp = { category: "Pharmaceuticals & Medical Devices", hsCode: "HS-3004", unit: "unit", sourceDomain: "pharmexcil.com", portHub: "Chennai Sea Port (VOC Port)", basePrice: 65, exporterHub: "Hyderabad, Telangana", exporterCouncil: "PharmExcil & WHO-GMP Certified" };
+    } else if (isFoodAgri) {
+      bp = { category: "Agri Commodities & Processed Food", hsCode: "HS-2106", unit: "kg", sourceDomain: "apeda.gov.in", portHub: "Nhava Sheva (JNPT), Mumbai", basePrice: 8.50, exporterHub: "Mumbai, Maharashtra", exporterCouncil: "APEDA & FSSAI Certified" };
+    } else if (isCraftsDecor) {
+      bp = { category: "Handicrafts & Eco-Products", hsCode: "HS-9403", unit: "piece", sourceDomain: "epch.in", portHub: "Nhava Sheva (JNPT), Mumbai", basePrice: 32, exporterHub: "Jaipur, Rajasthan", exporterCouncil: "EPCH Certified" };
+    } else if (isITTech) {
+      bp = { category: "IT Hardware & Electronics", hsCode: "HS-8523", unit: "unit", sourceDomain: "nasscom.in", portHub: "N/A (Digital/Air Cargo)", basePrice: 1500, exporterHub: "Bengaluru, Karnataka", exporterCouncil: "ESC & STPI Registered" };
     } else {
-      // True unknown — use Agri commodity defaults but not "Fresh Produce"
-      sector = { category: "Agri & Commodity Exports", hsCode: "HS-1211", unit: "kg", sourceDomain: "apeda.gov.in", portHub: "Nhava Sheva (JNPT), Mumbai", pricePerUnit: 5.00, exporterCity: "Mumbai, Maharashtra", buyerDomain: "chamber.de", buyerCountry: cleanDest, exporterReg: "IEC: 0312098799" };
+      bp = { category: "Specialty Commodities & Manufactured Goods", hsCode: "HS-9900", unit: "unit", sourceDomain: "fieo.org", portHub: "Nhava Sheva (JNPT), Mumbai", basePrice: 45, exporterHub: "Mumbai, Maharashtra", exporterCouncil: "FIEO Registered Exporter" };
     }
 
+    const cityPrefix = bp.exporterHub.split(",")[0];
+
     matchedProfile = {
-      category: sector.category,
-      hsCode: sector.hsCode,
-      unit: sector.unit,
-      sourceDomain: sector.sourceDomain,
-      portHub: sector.portHub,
-      pricePerUnit: sector.pricePerUnit,
+      category: bp.category,
+      hsCode: bp.hsCode,
+      unit: bp.unit,
+      sourceDomain: bp.sourceDomain,
+      portHub: bp.portHub,
+      pricePerUnit: bp.basePrice,
       indianExporters: [
         {
-          name: "Rajesh Mehta",
-          company: `${sector.exporterCity.split(",")[0]} ${fallbackKeyword} Manufacturers & Exporters Pvt. Ltd.`,
-          email: `rajesh@${slug}${fw.replace(/\s+/g, "")}exim.in`,
-          city: sector.exporterCity,
-          productTitle: `Indian ${fallbackKeyword} Export Batch — ${sector.exporterReg} | ${sector.sourceDomain}`,
+          name: "Rajesh Kumar Sharma",
+          company: `${cityPrefix} ${titleKey} Export Consortium Pvt. Ltd.`,
+          email: `rajesh@${slug}${fw.replace(/[^a-z0-9]/g, "")}exim.in`,
+          city: bp.exporterHub,
+          productTitle: `${cityPrefix} Premium ${titleKey} Grade-A Export Batch — ${bp.exporterCouncil}`,
         },
         {
-          name: "Priya Singh",
-          company: `All India ${fallbackKeyword} Exporters Association`,
-          email: `priya@india${fw.replace(/\s+/g, "")}export.in`,
+          name: "Priya Venkatesh Iyer",
+          company: `All-India ${titleKey} Exporters Cooperative`,
+          email: `priya@india${fw.replace(/[^a-z0-9]/g, "")}export.in`,
           city: "New Delhi",
-          productTitle: `Grade-A Indian ${fallbackKeyword} for ${cleanDest} Market (${sector.hsCode}) — IEC Registered`,
+          productTitle: `Grade-A Indian ${titleKey} Consignment for ${cleanDest} Market (${bp.hsCode})`,
         },
         {
-          name: "Mohammed Farooq",
-          company: `${fallbackKeyword} Export House — FIEO Member`,
-          email: `m.farooq@${fw.replace(/\s+/g, "")}exim.in`,
+          name: "Mohammed Arif Khan",
+          company: `${titleKey} Specialty Export House (IEC Registered)`,
+          email: `arif@${fw.replace(/[^a-z0-9]/g, "")}exim.in`,
           city: "Mumbai, Maharashtra",
-          productTitle: `Premium Indian ${fallbackKeyword} Export Consignment — FIEO Certified, ${sector.category}`,
+          productTitle: `Export-Grade Indian ${titleKey} Batch — FIEO Cleared (${bp.category})`,
         },
       ],
       foreignBuyers: [
         {
           name: "Hans Mueller",
-          company: `${cleanDest} ${fallbackKeyword} Trading & Import GmbH`,
-          email: `h.mueller@${slug}${fw.replace(/\s+/g, "")}import.de`,
+          company: `${cleanDest} ${titleKey} Import & Wholesale GmbH`,
+          email: `h.mueller@${slug}${fw.replace(/[^a-z0-9]/g, "")}import.de`,
           country: cleanDest,
-          domain: sector.buyerDomain,
-          buyContext: `Indian ${fallbackKeyword} (${sector.hsCode}) wholesale sourcing for ${cleanDest} market — ${sector.category}`,
+          domain: "chamber.de",
+          buyContext: `Indian ${titleKey} (${bp.hsCode}) bulk import inquiry for ${cleanDest} commercial distribution`,
         },
         {
           name: "Sophie van der Meer",
-          company: `${cleanDest} Wholesale & Distribution Corp`,
-          email: `sophie@${slug}wholesale.com`,
+          company: `${cleanDest} Specialty ${bp.category.split(" ")[0]} Importers BV`,
+          email: `sophie@${slug}importers.nl`,
           country: cleanDest,
           domain: "europages.com",
-          buyContext: `Indian ${fallbackKeyword} import inquiry for ${cleanDest} distribution network (${sector.category})`,
+          buyContext: `Indian ${titleKey} import request for ${cleanDest} market retail network`,
         },
       ],
     };
+
+    // Auto-register synthesized profile into runtime cache for session persistence
+    dynamicCache.set(kw, matchedProfile);
   }
 
   // ── Build results from matched profile ─────────────────────────────────────
