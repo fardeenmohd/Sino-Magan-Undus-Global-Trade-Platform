@@ -188,6 +188,7 @@ export default function CommodityDatalogPage() {
           </Link>
 
           <div className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-400">
+            <Link href="/about" className="hover:text-cyan-400 transition-colors duration-200">About Us</Link>
             <Link href="/commodities" className="text-cyan-400 font-bold">Commodity Datalog</Link>
             <Link href="/corridors" className="hover:text-cyan-400 transition-colors duration-200">Trade Corridors</Link>
             <Link href="/exporters" className="hover:text-cyan-400 transition-colors duration-200">Indian Exporters</Link>

@@ -137,6 +137,7 @@ export default function IndianExportersPage() {
           </Link>
 
           <div className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-400">
+            <Link href="/about" className="hover:text-cyan-400 transition-colors duration-200">About Us</Link>
             <Link href="/commodities" className="hover:text-cyan-400">Commodity Datalog</Link>
             <Link href="/corridors" className="hover:text-cyan-400">Trade Corridors</Link>
             <Link href="/exporters" className="text-cyan-400 font-bold">Indian Exporters</Link>
