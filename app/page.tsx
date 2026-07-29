@@ -662,9 +662,9 @@ return (
           </div>
 
           <div className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-400">
-            <a href="#catalog" className="hover:text-cyan-400 transition-colors duration-200">Commodity Catalog</a>
-            <a href="#corridors" className="hover:text-cyan-400 transition-colors duration-200">Trade Corridors</a>
-            <a href="#suppliers" className="hover:text-cyan-400 transition-colors duration-200">Indian Exporters</a>
+            <Link href="/commodities" className="hover:text-cyan-400 transition-colors duration-200">Commodity Datalog</Link>
+            <Link href="/corridors" className="hover:text-cyan-400 transition-colors duration-200">Trade Corridors</Link>
+            <Link href="/exporters" className="hover:text-cyan-400 transition-colors duration-200">Indian Exporters</Link>
           </div>
 
           <div className="flex items-center gap-3">
