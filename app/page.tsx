@@ -415,99 +415,10 @@ export default function ExpandedTradeCatalogPage() {
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
-  
-  // ── Dynamic Verified Indian Exporters derived from Live Saved Leads & Product Catalog ──
-  const dynamicExporters = useMemo(() => {
-    const list: Array<{
-      id: string | number;
-      name: string;
-      company: string;
-      email: string;
-      location: string;
-      verification: string;
-      iecCode: string;
-      category: string;
-      avatarUrl: string;
-      rating: number;
-      destination: string;
-    }> = [];
-
-    const seenCompanies = new Set<string>();
-
-    // 1. First add saved leads from shared database
-    savedLeads.forEach((lead, idx) => {
-      const coKey = (lead.company || lead.name).toLowerCase().trim();
-      if (!seenCompanies.has(coKey)) {
-        seenCompanies.add(coKey);
-        const isIndian = lead.destination_country?.includes("India") || lead.registration_id?.includes("IEC") || lead.confidence_reason?.includes("Indian") || !lead.destination_country?.includes("GmbH");
-        list.push({
-          id: `lead-${lead.user_id || idx}`,
-          name: lead.name || "Executive Representative",
-          company: lead.company || "IEC Verified Trade House",
-          email: lead.email || `contact@${coKey.replace(/[^a-z0-9]/g, "")}.in`,
-          location: lead.destination_country?.includes("India") ? lead.destination_country : "India 🇮🇳 (Export Hub)",
-          verification: lead.verification_badge || "🛡️ IEC REGISTERED EXPORTER",
-          iecCode: lead.registration_id || `IEC: 07${190450 + idx * 137}`,
-          category: lead.confidence_reason?.split("—")[0] || "Specialty Commodities & Manufactured Goods",
-          avatarUrl: `https://images.unsplash.com/photo-${1500648767791 + (idx % 5) * 1000}?w=150&auto=format&fit=crop&q=80`,
-          rating: Number((4.8 + (idx % 3) * 0.1).toFixed(1)),
-          destination: lead.destination_country || "Global Corridors",
-        });
-      }
-    });
-
-    // 2. Add suppliers from active products catalog
-    products.forEach((prod) => {
-      if (prod.listedBy) {
-        const coKey = prod.listedBy.company.toLowerCase().trim();
-        if (!seenCompanies.has(coKey)) {
-          seenCompanies.add(coKey);
-          list.push({
-            id: `prod-supplier-${prod.listedBy.id}`,
-            name: prod.listedBy.name,
-            company: prod.listedBy.company,
-            email: prod.listedBy.email,
-            location: prod.listedBy.location,
-            verification: "🛡️ APEDA & FIEO VERIFIED EXPORTER",
-            iecCode: `IEC: 07${204890 + prod.id}`,
-            category: prod.category,
-            avatarUrl: prod.listedBy.avatarUrl,
-            rating: prod.listedBy.rating,
-            destination: prod.destinationCountry,
-          });
-        }
-      }
-    });
-
-    // 3. If list is still small, fill with INITIAL_INDIAN_SUPPLIERS
-    if (list.length < 4) {
-      INITIAL_INDIAN_SUPPLIERS.forEach((sup) => {
-        const coKey = sup.company.toLowerCase().trim();
-        if (!seenCompanies.has(coKey)) {
-          seenCompanies.add(coKey);
-          list.push({
-            id: `init-${sup.id}`,
-            name: sup.name,
-            company: sup.company,
-            email: sup.email,
-            location: sup.location,
-            verification: "🛡️ IEC REGISTERED EXPORTER",
-            iecCode: `IEC: 071890342${sup.id}`,
-            category: "Agri & Engineering Exports",
-            avatarUrl: sup.avatarUrl,
-            rating: sup.rating,
-            destination: "EU, GCC & Asia",
-          });
-        }
-      });
-    }
-
-    return list;
-  }, [savedLeads, products]);
-
-
-  return () => document.removeEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+
 
   // List product form state
   const [newProductForm, setNewProductForm] = useState({
