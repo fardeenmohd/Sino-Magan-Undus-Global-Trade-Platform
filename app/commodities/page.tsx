@@ -157,7 +157,11 @@ export default function CommodityDatalogPage() {
 
   const categories = useMemo(() => {
     const set = new Set<string>();
-    products.forEach((p) => set.add(p.category));
+    products.forEach((p) => {
+      if (p.category && p.category.trim() !== "") {
+        set.add(p.category.trim());
+      }
+    });
     return ["ALL", ...Array.from(set)];
   }, [products]);
 
@@ -236,7 +240,7 @@ export default function CommodityDatalogPage() {
             />
           </div>
 
-          <div className="flex gap-2 overflow-x-auto pb-1 sm:pb-0">
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0 scrollbar-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
             {categories.map((cat) => (
               <button
                 key={cat}
