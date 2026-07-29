@@ -272,7 +272,7 @@ export default function ExpandedTradeCatalogPage() {
           }
         }
 
-        const sharedProducts = getSharedProductsFromDb(INITIAL_TRADE_PRODUCTS);
+        const sharedProducts = getSharedProductsFromDb([]);
         if (sharedProducts && sharedProducts.length > 0) {
           setProducts(sharedProducts);
         }
@@ -356,28 +356,7 @@ export default function ExpandedTradeCatalogPage() {
       }
     });
 
-    // 3. If list is still small, fill with INITIAL_INDIAN_SUPPLIERS
-    if (list.length < 4) {
-      INITIAL_INDIAN_SUPPLIERS.forEach((sup) => {
-        const coKey = sup.company.toLowerCase().trim();
-        if (!seenCompanies.has(coKey)) {
-          seenCompanies.add(coKey);
-          list.push({
-            id: `init-${sup.id}`,
-            name: sup.name,
-            company: sup.company,
-            email: sup.email,
-            location: sup.location,
-            verification: "🛡️ IEC REGISTERED EXPORTER",
-            iecCode: `IEC: 071890342${sup.id}`,
-            category: "Agri & Engineering Exports",
-            avatarUrl: sup.avatarUrl,
-            rating: sup.rating,
-            destination: "EU, GCC & Asia",
-          });
-        }
-      });
-    }
+    // Exporters derived 100% from saved DB leads and product suppliers
 
     return list;
   }, [savedLeads, products]);
@@ -924,8 +903,8 @@ return (
               </div>
             </div>
           ))}
-        </div>
-      )}
+          </div>
+        )}
       </section>
 
       {/* --- EXPORT SUPPLIERS & VERIFIED LEADS DIRECTORY --- */}
@@ -945,8 +924,29 @@ return (
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {dynamicExporters.map((supplier) => (
+        {dynamicExporters.length === 0 ? (
+          <div className="p-8 bg-slate-900/40 border border-slate-800/80 rounded-3xl text-center space-y-4 max-w-2xl mx-auto my-6">
+            <div className="w-14 h-14 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-3xl mx-auto">
+              🏢
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-white">No Exporters in Database</h3>
+              <p className="text-xs text-slate-400 mt-1 max-w-md mx-auto">
+                No verified Indian exporters found in the database. Run the Scraper Engine to discover and save live IEC registered export entities!
+              </p>
+            </div>
+            <div className="flex items-center justify-center gap-3 pt-2">
+              <Link
+                href="/admin"
+                className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold text-xs font-mono rounded-xl shadow-lg transition-all cursor-pointer"
+              >
+                ⚡ Launch Scraper Engine to Discover Exporters
+              </Link>
+            </div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            {dynamicExporters.map((supplier) => (
             <div
               key={supplier.id}
               className="bg-slate-900/40 border border-slate-800/80 hover:border-cyan-500/40 transition-all duration-200 rounded-2xl p-4 flex flex-col justify-between space-y-3"
@@ -980,7 +980,8 @@ return (
               </a>
             </div>
           ))}
-        </div>
+          </div>
+        )}
       </section>
 
       {/* --- AI DISCOVERED LEADS MODAL --- */}

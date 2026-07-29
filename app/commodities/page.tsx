@@ -150,8 +150,8 @@ export default function CommodityDatalogPage() {
 
   React.useEffect(() => {
     if (typeof window !== "undefined") {
-      const shared = getSharedProductsFromDb(INITIAL_TRADE_PRODUCTS);
-      setProducts(shared.length > 0 ? shared : INITIAL_TRADE_PRODUCTS);
+      const shared = getSharedProductsFromDb([]);
+      setProducts(shared);
     }
   }, []);
 
@@ -290,8 +290,35 @@ export default function CommodityDatalogPage() {
 
       {/* --- COMMODITY CARDS GRID --- */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredProducts.map((p) => (
+        {filteredProducts.length === 0 ? (
+          <div className="p-10 bg-slate-900/40 border border-slate-800/80 rounded-3xl text-center space-y-4 max-w-2xl mx-auto my-8">
+            <div className="w-16 h-16 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-3xl mx-auto">
+              📊
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-white">No Commodity Specifications Found in Database</h3>
+              <p className="text-xs text-slate-400 mt-1 max-w-md mx-auto">
+                There are currently no products or commodities matching your query stored in the database. Use the AI Scraper Engine or Dashboard to discover and add new commodities!
+              </p>
+            </div>
+            <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+              <Link
+                href="/admin"
+                className="px-4 py-2.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold text-xs font-mono rounded-xl shadow-lg transition-all cursor-pointer"
+              >
+                ⚡ Launch AI Discovery Engine
+              </Link>
+              <Link
+                href="/dashboard"
+                className="px-4 py-2.5 bg-slate-950 hover:bg-slate-900 border border-slate-800 text-cyan-400 font-bold text-xs font-mono rounded-xl transition-all cursor-pointer"
+              >
+                ➕ Add Commodity in Dashboard
+              </Link>
+            </div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredProducts.map((p) => (
             <div
               key={p.id}
               className="bg-slate-900/40 border border-slate-800/80 hover:border-cyan-500/40 rounded-2xl overflow-hidden flex flex-col justify-between transition-all duration-300 group"
@@ -353,7 +380,8 @@ export default function CommodityDatalogPage() {
               </div>
             </div>
           ))}
-        </div>
+          </div>
+        )}
       </section>
     </div>
   );
