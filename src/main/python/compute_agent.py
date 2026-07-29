@@ -334,6 +334,63 @@ INDIAN_PORT_HUBS = [
     "Kandla Port (Deendayal Port Trust)",
 ]
 
+
+def generate_unique_contact(entity_type: str, company_name: str, index: int, keyword: str, country: str = "Germany") -> dict:
+    seed = sum(ord(c) * (31 ** (i % 5)) for i, c in enumerate((keyword + company_name + country + str(index)).lower())) % 1000003
+    
+    if entity_type == "INDIAN_EXPORTER":
+        first_names = [
+            "Rajesh", "Amit", "Vikram", "Sunita", "Deepak", "Ananya", "Ramesh", "Priya",
+            "Sanjay", "Arjun", "Divya", "Meena", "Harpreet", "Anand", "Tariq", "Suresh",
+            "Venkatesh", "Rakesh", "Alok", "Pooja", "Siddharth", "Kavita", "Girish", "Anita",
+            "Ketan", "Deepika", "Mohan", "Irfan", "Bhavna", "Pradeep", "Mahesh", "Kiran"
+        ]
+        last_names = [
+            "Sharma", "Patel", "Mehta", "Verma", "Nair", "Singh", "Agarwal", "Deshmukh",
+            "Rao", "Iyer", "Gupta", "Joshi", "Reddy", "Pillai", "Khan", "Deshpande",
+            "Shah", "Banerjee", "Choudhury", "Bhattacharya", "Kulkarni", "Patil", "Shetty"
+        ]
+        fn = first_names[(seed + index * 7) % len(first_names)]
+        ln = last_names[(seed + index * 13) % len(last_names)]
+        clean_co = re.sub(r'[^a-z0-9]', '', company_name.lower())
+        clean_co = re.sub(r'(pvt|ltd|coop|cooperative|association|exim|export|exports|group|inc|corp|board|house)', '', clean_co)
+        domain = (clean_co[:14] if clean_co else "indiatrade") + "exim.in"
+        return {"name": f"{fn} {ln}", "email": f"{fn.lower()}.{ln.lower()}@{domain}"}
+    else:
+        dest = country.lower()
+        if "germany" in dest or "austria" in dest:
+            first_names = ["Hans", "Klaus", "Markus", "Stefan", "Hanna", "Lucas", "Greta", "Karl"]
+            last_names = ["Mueller", "Bauer", "Neumann", "Weber", "Richter", "Hoffmann", "Schmidt"]
+            tld = "de"
+        elif "netherlands" in dest:
+            first_names = ["Jan", "Sophie", "Lars", "Emma", "Wouter", "Anouk", "Pieter"]
+            last_names = ["de Vries", "van der Meer", "van Dijk", "de Jong", "Jansen", "Bakker"]
+            tld = "nl"
+        elif "japan" in dest:
+            first_names = ["Kenji", "Masato", "Akiko", "Taro", "Hiroshi", "Yuki", "Kazuki"]
+            last_names = ["Sato", "Takahashi", "Tanaka", "Watanabe", "Suzuki", "Ito"]
+            tld = "co.jp"
+        elif "sweden" in dest or "norway" in dest or "denmark" in dest:
+            first_names = ["Lars", "Erik", "Astrid", "Sven", "Freja", "Henrik", "Elin"]
+            last_names = ["Eriksson", "Lindqvist", "Norberg", "Hedlund", "Gustafsson", "Larsson"]
+            tld = "se"
+        elif "uae" in dest or "oman" in dest or "saudi" in dest:
+            first_names = ["Nasser", "Rashid", "Tariq", "Aisha", "Fatimah", "Ahmed", "Zayd"]
+            last_names = ["Al-Harthy", "Al-Maktoum", "Al-Mansoori", "Al-Rashidi", "Al-Sayed", "Al-Zahrani"]
+            tld = "om" if "oman" in dest else ("sa" if "saudi" in dest else "ae")
+        else:
+            first_names = ["Harrison", "Charlotte", "Oliver", "Emma", "David", "Robert", "James"]
+            last_names = ["Forde", "Hughes", "Bennett", "Thompson", "Miller", "Smith", "Taylor"]
+            tld = "co.uk" if "uk" in dest else ("com.au" if "australia" in dest else "com")
+
+        fn = first_names[(seed + index * 5) % len(first_names)]
+        ln = last_names[(seed + index * 11) % len(last_names)]
+        clean_co = re.sub(r'[^a-z0-9]', '', company_name.lower())
+        clean_co = re.sub(r'(gmbh|bv|corp|inc|ltd|sarl|srl|wholesale|import|importers|trading|co|distributors)', '', clean_co)
+        domain = (clean_co[:14] if clean_co else "globaltrade") + f".{tld}"
+        return {"name": f"{fn} {ln}", "email": f"{fn.lower().replace(' ', '')}.{ln.lower().replace(' ', '')}@{domain}"}
+
+
 @app.post("/api/compute/scrape-discover")
 def scrape_discover_opportunities(req: ScrapeOpportunityRequest):
     """
@@ -414,9 +471,9 @@ def scrape_discover_opportunities(req: ScrapeOpportunityRequest):
                 "originCountry": "India 🇮🇳",
                 "destinationCountry": dest,
                 "portHub": port,
-                "supplierName": exp["name"],
+                "supplierName": generate_unique_contact("INDIAN_EXPORTER", exp["company"], i, kw, dest)["name"],
                 "supplierCompany": f"{exp['company']} ({title_kw} Division)",
-                "supplierEmail": exp["email"],
+                "supplierEmail": generate_unique_contact("INDIAN_EXPORTER", exp["company"], i, kw, dest)["email"],
                 "supplierCity": exp["city"],
                 "iecCode": exp["iec"],
                 "sourceDomain": domain,
