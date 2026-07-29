@@ -12,7 +12,7 @@ from datetime import datetime
 from typing import List, Optional
 
 app = FastAPI(
-    title="Antigravity Cross-Border Trade Compute Engine - Dynamic Web Scraper Engine",
+    title="Sino Magan Undus Global Trade Compute Engine - Dynamic Web Scraper Engine",
     description="Python FastAPI & Pandas Scraper Engine for India Import/Export lead discovery including Makhana, Onions, Eggs, Potatoes, Meat, Machinery, Spices & Textiles to global destinations",
     version="4.0.0"
 )
