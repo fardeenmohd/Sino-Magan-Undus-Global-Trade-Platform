@@ -656,7 +656,7 @@ return (
               🌏
             </div>
             <div>
-              <span className="font-extrabold text-lg tracking-tight text-white">Sino Magan Undus</span>
+              <span className="font-extrabold text-lg tracking-tight text-white">Sino Magan Indus</span>
               <span className="text-xs text-cyan-400 font-mono ml-2">Global Trade Engine</span>
             </div>
           </div>
@@ -725,11 +725,11 @@ return (
       <section className="relative overflow-hidden pt-16 pb-12 border-b border-slate-800/60 bg-gradient-to-b from-slate-900/50 via-slate-950 to-slate-950">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10 space-y-6">
           <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 text-xs font-medium">
-            <span>🌏 SINO MAGAN UNDUS GLOBAL TRADE • EXIM NETWORK</span>
+            <span>🌏 SINO MAGAN INDUS GLOBAL TRADE • EXIM NETWORK</span>
           </div>
 
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight bg-gradient-to-r from-white via-slate-100 to-slate-400 bg-clip-text text-transparent max-w-5xl mx-auto leading-tight">
-            Sino Magan Undus Global Trade
+            Sino Magan Indus Global Trade
           </h1>
 
           <p className="text-slate-400 text-base sm:text-lg max-w-3xl mx-auto">
@@ -972,7 +972,7 @@ return (
               </div>
 
               <a
-                href={`mailto:${supplier.email}?subject=Trade%20Inquiry%20from%20Sino-Magan-Undus%20Platform`}
+                href={`mailto:${supplier.email}?subject=Trade%20Inquiry%20from%20Sino-Magan-Indus%20Platform`}
                 className="w-full text-center py-1.5 bg-slate-950 hover:bg-cyan-950 border border-slate-800 hover:border-cyan-500/40 text-cyan-400 rounded-lg text-xs font-mono transition-all duration-200 cursor-pointer block"
               >
                 ✉️ Contact Exporter
@@ -1297,7 +1297,7 @@ return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <span className="text-base">🌏</span>
-            <span className="font-bold text-slate-300">Sino Magan Undus Global Trade</span>
+            <span className="font-bold text-slate-300">Sino Magan Indus Global Trade</span>
             <span className="text-slate-600">|</span>
             <span>Cross-Border ExIm Lead Engine</span>
           </div>
@@ -1305,7 +1305,7 @@ return (
             <Link href="/admin" className="text-slate-500 hover:text-cyan-400 font-mono transition-colors duration-200">
               🛡️ Admin Portal
             </Link>
-            <p>© 2026 Sino Magan Undus Global Trade. All rights reserved.</p>
+            <p>© 2026 Sino Magan Indus Global Trade. All rights reserved.</p>
           </div>
         </div>
       </footer>

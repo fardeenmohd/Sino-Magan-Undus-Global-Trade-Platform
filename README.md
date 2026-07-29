@@ -1,4 +1,4 @@
-# 🌏 Sino Magan Undus Global Trade Platform
+# 🌏 Sino Magan Indus Global Trade Platform
 
 > **Cross-Border India Export/Import Lead Discovery Engine & AI Trade Matchmaker**
 
@@ -12,7 +12,7 @@
 
 ## 📖 Overview
 
-**Sino Magan Undus Global Trade** is an enterprise-grade cross-border trade matchmaking platform linking Indian exporters with international importers across key global trade corridors (*USA 🇺🇸, Poland 🇵🇱, Netherlands 🇳🇱, Australia 🇦🇺, Oman 🇴🇲, China 🇨🇳, Germany 🇩🇪, UAE 🇦🇪, Sweden 🇸🇪, United Kingdom 🇬🇧, Japan 🇯🇵*).
+**Sino Magan Indus Global Trade** is an enterprise-grade cross-border trade matchmaking platform linking Indian exporters with international importers across key global trade corridors (*USA 🇺🇸, Poland 🇵🇱, Netherlands 🇳🇱, Australia 🇦🇺, Oman 🇴🇲, China 🇨🇳, Germany 🇩🇪, UAE 🇦🇪, Sweden 🇸🇪, United Kingdom 🇬🇧, Japan 🇯🇵*).
 
 The platform combines a **Next.js 14** web application, a **Spring Boot 3 Java API backend**, and an asynchronous **Python FastAPI Compute Engine** delivering real-time **Server-Sent Events (SSE)** AI lead discovery streaming.
 
@@ -46,7 +46,7 @@ The platform combines a **Next.js 14** web application, a **Spring Boot 3 Java A
 
 ### 4. 🔒 Protected Admin Portal & Compute Control Center (`/admin`)
 - **Route**: `http://localhost:3000/admin`
-- **Credentials**: `admin@sinomaganundus.global` / `AdminSecret2026!`
+- **Credentials**: `admin@sinomaganindus.global` / `AdminSecret2026!`
 - **Executive KPI Cards**: Total Export Goods, Importer Prospects, FOB Valuation, Python Engine Status.
 - **Master Exporting Goods & Import Leads Tables**: Complete CRUD and status management.
 - **🧹 100% Clean Slate & Seed Removal**: All hardcoded fallback seed arrays removed platform-wide. Clicking **`🧹 Reset Data Slate`** sets all platform product and lead databases to `[]` (empty list), keeping the landing page, exporter dashboard, admin tables, country pages, and exporter pages 100% clean until new authentic products are published or discovered.
@@ -115,7 +115,7 @@ mvn spring-boot:run
 
 | Role | Email | Password | Target Portal |
 | :--- | :--- | :--- | :--- |
-| **Admin Command Center** | `admin@sinomaganundus.global` | `AdminSecret2026!` | [`/admin`](http://localhost:3000/admin) |
+| **Admin Command Center** | `admin@sinomaganindus.global` | `AdminSecret2026!` | [`/admin`](http://localhost:3000/admin) |
 | **Indian Exporter (`SUPPLIER`)** | `rajesh@exim.in` | `Password123!` | [`/login`](http://localhost:3000/login) |
 | **International Importer (`BUYER`)** | `dmiller@superfoods.us` | `Password123!` | [`/login`](http://localhost:3000/login) |
 
@@ -129,4 +129,4 @@ Whenever new features, commodity lines, or architectural components are implemen
 
 ---
 
-© 2026 **Sino Magan Undus Global Trade**. All rights reserved.
+© 2026 **Sino Magan Indus Global Trade**. All rights reserved.

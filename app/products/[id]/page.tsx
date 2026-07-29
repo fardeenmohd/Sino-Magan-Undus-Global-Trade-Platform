@@ -45,7 +45,7 @@ const INITIAL_FALLBACK_PRODUCTS = [
     tariffRatePct: 2.5,
     price: 32.0,
     unit: "kg",
-    listedBy: { name: "Antigravity Global Trade Admin", company: "Sino Magan Undus Global", role: "SUPPLIER", location: "New Delhi 🇮🇳" },
+    listedBy: { name: "Antigravity Global Trade Admin", company: "Sino Magan Indus Global", role: "SUPPLIER", location: "New Delhi 🇮🇳" },
     imageUrl: "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=600&auto=format&fit=crop&q=80",
     leadCount: 18,
     status: "ACTIVE",
@@ -64,7 +64,7 @@ const INITIAL_FALLBACK_PRODUCTS = [
     tariffRatePct: 4.8,
     price: 1.85,
     unit: "can",
-    listedBy: { name: "Antigravity Global Trade Admin", company: "Sino Magan Undus Global", role: "SUPPLIER", location: "New Delhi 🇮🇳" },
+    listedBy: { name: "Antigravity Global Trade Admin", company: "Sino Magan Indus Global", role: "SUPPLIER", location: "New Delhi 🇮🇳" },
     imageUrl: "https://images.unsplash.com/photo-1527661591475-527312dd65f5?w=600&auto=format&fit=crop&q=80",
     leadCount: 22,
     status: "ACTIVE",
@@ -168,7 +168,7 @@ export default function ProductDetailPage() {
                 🌏
               </span>
               <span className="font-bold text-sm text-white tracking-wide">
-                Sino Magan Undus <span className="text-cyan-400">Trade Intelligence</span>
+                Sino Magan Indus <span className="text-cyan-400">Trade Intelligence</span>
               </span>
             </Link>
           </div>

@@ -338,7 +338,7 @@ export default function AdminDashboardPage() {
 
   const handleAdminLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (adminEmail === "admin@sinomaganundus.global" && adminPasscode === "AdminSecret2026!") {
+    if (adminEmail === "admin@sinomaganindus.global" && adminPasscode === "AdminSecret2026!") {
       setIsAdminAuthenticated(true);
       localStorage.setItem("antigravity_admin_session", "true");
       setAuthError("");
@@ -501,7 +501,7 @@ export default function AdminDashboardPage() {
               </div>
               <h2 className="text-2xl font-bold text-white tracking-tight">Admin Gateway Portal</h2>
               <p className="text-xs text-slate-400">
-                Sino Magan Undus Global Trade • Administrative Command Center
+                Sino Magan Indus Global Trade • Administrative Command Center
               </p>
             </div>
 
@@ -521,7 +521,7 @@ export default function AdminDashboardPage() {
                   required
                   value={adminEmail}
                   onChange={(e) => setAdminEmail(e.target.value)}
-                  placeholder="admin@sinomaganundus.global"
+                  placeholder="admin@sinomaganindus.global"
                   className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-cyan-500"
                 />
               </div>
@@ -544,7 +544,7 @@ export default function AdminDashboardPage() {
                 <p className="font-bold flex items-center gap-1.5">
                   <span>🔑 Demo Credentials:</span>
                 </p>
-                <p className="font-mono text-[11px]">Email: admin@sinomaganundus.global</p>
+                <p className="font-mono text-[11px]">Email: admin@sinomaganindus.global</p>
                 <p className="font-mono text-[11px]">Passcode: AdminSecret2026!</p>
               </div>
 
@@ -576,7 +576,7 @@ export default function AdminDashboardPage() {
               </div>
               <div>
                 <span className="font-bold text-white text-base tracking-tight block leading-none">
-                  Sino Magan Undus
+                  Sino Magan Indus
                 </span>
                 <span className="text-[10px] font-mono text-cyan-400">ADMIN CONTROL CENTER</span>
               </div>

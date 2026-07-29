@@ -182,7 +182,7 @@ export default function CommodityDatalogPage() {
               🌏
             </div>
             <div>
-              <span className="font-extrabold text-lg tracking-tight text-white">Sino Magan Undus</span>
+              <span className="font-extrabold text-lg tracking-tight text-white">Sino Magan Indus</span>
               <span className="text-xs text-cyan-400 font-mono ml-2">Global Trade Engine</span>
             </div>
           </Link>

@@ -2,7 +2,7 @@ import "./globals.css";
 import React from "react";
 
 export const metadata = {
-  title: "Sino Magan Undus Global Trade - Cross-Border ExIm Engine",
+  title: "Sino Magan Indus Global Trade - Cross-Border ExIm Engine",
   description: "Premier cross-border commodity trade platform connecting Indian exporters with global importers in Poland, Netherlands, Australia, Oman, China & USA.",
 };
 
