@@ -39,110 +39,92 @@ const SUGGESTED_CATALOG_EXTENSIONS = [
   {
     label: "☀️ Solar Modules & PV Inverters",
     keyword: "Solar Modules & Inverters",
-    destination: "Germany 🇩🇪",
     mode: "BOTH",
     minBudget: 45000,
     category: "Solar & Renewable Energy Equipment",
     hsCode: "HS-8541",
     price: 145,
     unit: "unit",
-    portHub: "Port of Hamburg",
   },
   {
     label: "⚡ Electric Scooters & E-Bikes",
     keyword: "Electric Bike & EV Two-Wheeler",
-    destination: "Sweden 🇸🇪",
     mode: "BOTH",
     minBudget: 35000,
     category: "Electric Vehicles & E-Mobility",
     hsCode: "HS-8714",
     price: 850,
     unit: "unit",
-    portHub: "Port of Gothenburg",
   },
   {
     label: "👞 Full-Grain Finished Leather Goods",
     keyword: "Finished Leather Footwear & Boots",
-    destination: "Germany 🇩🇪",
     mode: "EXPORT_PRODUCT",
     minBudget: 25000,
     category: "Leather Goods & Footwear",
     hsCode: "HS-6403",
     price: 38,
     unit: "pair",
-    portHub: "Port of Hamburg",
   },
   {
     label: "🛋️ Hand-Carved Sheesham Furniture",
     keyword: "Sheesham Wooden Furniture & Decor",
-    destination: "Netherlands 🇳🇱",
     mode: "EXPORT_PRODUCT",
     minBudget: 30000,
     category: "Handicrafts & Home Décor",
     hsCode: "HS-9403",
     price: 65,
     unit: "piece",
-    portHub: "Port of Rotterdam",
   },
   {
     label: "💄 Pure Jasmine Essential Oils & Attar",
     keyword: "Kannauj Jasmine & Sandalwood Essential Oils",
-    destination: "Japan 🇯🇵",
     mode: "IMPORT_LEAD",
     minBudget: 20000,
     category: "Cosmetics & Essential Oils",
     hsCode: "HS-3301",
     price: 42,
     unit: "litre",
-    portHub: "Port of Yokohama",
   },
   {
     label: "🩺 MedTech Surgical Instruments & Kits",
     keyword: "Precision Surgical Instruments & Diagnostic Kits",
-    destination: "Germany 🇩🇪",
     mode: "BOTH",
     minBudget: 50000,
     category: "Medical Devices & Surgical Equipment",
     hsCode: "HS-9018",
     price: 120,
     unit: "unit",
-    portHub: "Port of Hamburg",
   },
   {
     label: "🍵 Darjeeling FTGFOP-1 Organic Tea",
     keyword: "Darjeeling First Flush Organic Tea",
-    destination: "Japan 🇯🇵",
     mode: "IMPORT_LEAD",
     minBudget: 18000,
     category: "Tea & Coffee",
     hsCode: "HS-0902",
     price: 14.8,
     unit: "kg",
-    portHub: "Port of Yokohama",
   },
   {
     label: "💎 Surat Polished Diamonds & Gemstones",
     keyword: "Surat Cut & Polished Diamonds",
-    destination: "Germany 🇩🇪",
     mode: "EXPORT_PRODUCT",
     minBudget: 60000,
     category: "Gems & Jewellery",
     hsCode: "HS-7102",
     price: 350,
     unit: "carat",
-    portHub: "Port of Hamburg",
   },
   {
     label: "🦐 Kerala Vannamei White Frozen Shrimp",
     keyword: "Vannamei White Shrimp IQF Frozen",
-    destination: "Japan 🇯🇵",
     mode: "BOTH",
     minBudget: 40000,
     category: "Seafood & Marine Products",
     hsCode: "HS-0306",
     price: 9.5,
     unit: "kg",
-    portHub: "Port of Yokohama",
   },
 ];
 
@@ -482,14 +464,20 @@ export default function AdminDashboardPage() {
     title: string;
     category: string;
     hsCode: string;
-    destinationCountry: string;
-    portHub: string;
     price: number;
     unit: string;
+    destinationCountry?: string;
+    portHub?: string;
   }) => {
     setComputeForm((prev) => ({
       ...prev,
-      ...preset,
+      title: preset.title,
+      category: preset.category,
+      hsCode: preset.hsCode,
+      price: preset.price,
+      unit: preset.unit,
+      ...(preset.destinationCountry ? { destinationCountry: preset.destinationCountry } : {}),
+      ...(preset.portHub ? { portHub: preset.portHub } : {}),
     }));
   };
 
@@ -750,8 +738,6 @@ export default function AdminDashboardPage() {
                         title: p.title,
                         category: p.category,
                         hsCode: p.hsCode,
-                        destinationCountry: p.destinationCountry || "Germany 🇩🇪",
-                        portHub: p.portHub || "Port of Hamburg",
                         price: p.price,
                         unit: p.unit,
                       })
@@ -759,7 +745,7 @@ export default function AdminDashboardPage() {
                     className="px-3 py-1.5 bg-slate-950 hover:bg-slate-800 border border-cyan-500/30 rounded-lg text-xs font-mono text-cyan-300 cursor-pointer flex items-center gap-1.5"
                   >
                     <span>📦</span>
-                    <span className="truncate max-w-[170px]">{p.title.split(" ")[0]} ({p.destinationCountry || "EU"})</span>
+                    <span className="truncate max-w-[170px]">{p.title.split(" ")[0]} ({p.category.split(" ")[0]})</span>
                   </button>
                 ))}
 
@@ -773,8 +759,6 @@ export default function AdminDashboardPage() {
                         title: `${ext.keyword} (${ext.hsCode}) — Authentic Export Batch`,
                         category: ext.category,
                         hsCode: ext.hsCode,
-                        destinationCountry: ext.destination,
-                        portHub: ext.portHub,
                         price: ext.price,
                         unit: ext.unit,
                       })
@@ -1234,19 +1218,19 @@ export default function AdminDashboardPage() {
                             key={p.id}
                             type="button"
                             onClick={() => {
-                              setScraperForm({
+                              setScraperForm((prev) => ({
+                                ...prev,
                                 keyword: kw,
-                                destination: p.destinationCountry || "Germany 🇩🇪",
                                 sourcingMode: "BOTH",
                                 crawlLimit: 12,
                                 minBudget: 25000,
-                              });
+                              }));
                               handleLaunchWebScraper();
                             }}
                             className="px-3 py-1.5 bg-cyan-950/40 hover:bg-cyan-900/60 border border-cyan-500/40 rounded-lg text-xs font-mono text-cyan-300 cursor-pointer transition-all duration-200 flex items-center gap-1.5"
                           >
                             <span>📦</span>
-                            <span className="truncate max-w-[180px]">{p.title.split(" ")[0]} ({p.destinationCountry || "EU"})</span>
+                            <span className="truncate max-w-[180px]">{p.title.split(" ")[0]}</span>
                           </button>
                         );
                       })}
@@ -1268,7 +1252,13 @@ export default function AdminDashboardPage() {
                     <button
                       type="button"
                       onClick={() => {
-                        setScraperForm({ keyword: "Germany Local Distributors & Cold Storage", destination: "Germany 🇩🇪", sourcingMode: "LOCAL_VENDOR", crawlLimit: 12, minBudget: 50000 });
+                        setScraperForm((prev) => ({
+                          ...prev,
+                          keyword: "In-Country Distributors & Cold Storage",
+                          sourcingMode: "LOCAL_VENDOR",
+                          crawlLimit: 12,
+                          minBudget: 50000,
+                        }));
                         handleLaunchWebScraper();
                       }}
                       className="px-3 py-1.5 bg-purple-950/60 hover:bg-purple-900 border border-purple-500/40 rounded-lg text-xs font-mono text-purple-300 cursor-pointer font-bold flex items-center gap-1.5"
@@ -1282,13 +1272,13 @@ export default function AdminDashboardPage() {
                         key={idx}
                         type="button"
                         onClick={() => {
-                          setScraperForm({
+                          setScraperForm((prev) => ({
+                            ...prev,
                             keyword: ext.keyword,
-                            destination: ext.destination,
                             sourcingMode: ext.mode as any,
                             crawlLimit: 12,
                             minBudget: ext.minBudget,
-                          });
+                          }));
                           handleLaunchWebScraper();
                         }}
                         className="px-3 py-1.5 bg-slate-950 hover:bg-slate-800 border border-amber-500/30 hover:border-amber-400 rounded-lg text-xs font-mono text-amber-300 cursor-pointer transition-all duration-200 flex items-center gap-1.5"
