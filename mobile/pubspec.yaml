@@ -1,0 +1,22 @@
+name: sino_magan_mobile_companion
+description: Mobile companion application for Sino Magan Indus Global Trade platform.
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_riverpod: ^2.5.1
+  http: ^1.2.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  mockito: ^5.4.4
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true

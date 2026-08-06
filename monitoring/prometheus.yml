@@ -1,0 +1,16 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  # Prometheus scraping Java 21 Spring Boot Actuator Micrometer Metrics
+  - job_name: 'spring-boot-actuator'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['backend:8080', 'host.docker.internal:8080']
+
+  # Prometheus scraping Python FastAPI Compute Metrics
+  - job_name: 'fastapi-compute'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['compute:8000', 'host.docker.internal:8000']

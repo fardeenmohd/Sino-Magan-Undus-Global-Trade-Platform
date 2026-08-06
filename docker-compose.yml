@@ -1,0 +1,78 @@
+version: '3.8'
+
+services:
+  # Layer 4: PostgreSQL Database Engine
+  postgres:
+    image: postgres:16-alpine
+    container_name: sino_magan_postgres
+    environment:
+      POSTGRES_DB: trade_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Layer 3: Java 21 Spring Boot 3.2 Backend API (Virtual Threads)
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: sino_magan_backend
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/trade_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  # Python FastAPI Scraper & Compute Engine
+  compute:
+    build:
+      context: .
+      dockerfile: Dockerfile.compute
+    container_name: sino_magan_compute
+    ports:
+      - "8000:8000"
+
+  # Layer 1: Next.js / React Web Dashboard Frontend
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: sino_magan_frontend
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_SPRING_BOOT_URL: http://localhost:8080
+      NEXT_PUBLIC_COMPUTE_AGENT_URL: http://localhost:8000
+
+  # Layer 7: Prometheus Observability Engine
+  prometheus:
+    image: prom/prometheus:v2.45.0
+    container_name: sino_magan_prometheus
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+
+  # Layer 7: Grafana Monitoring Dashboards
+  grafana:
+    image: grafana/grafana:10.0.0
+    container_name: sino_magan_grafana
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+
+volumes:
+  postgres_data:

@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: compute-agent
+  namespace: sino-magan-trade
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: compute-agent
+  template:
+    metadata:
+      labels:
+        app: compute-agent
+    spec:
+      containers:
+        - name: fastapi-compute
+          image: sino-magan-compute:latest
+          ports:
+            - containerPort: 8000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: compute-service
+  namespace: sino-magan-trade
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8000
+      targetPort: 8000
+  selector:
+    app: compute-agent

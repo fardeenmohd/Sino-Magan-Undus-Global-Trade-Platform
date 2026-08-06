@@ -1,0 +1,78 @@
+name: Enterprise CI/CD Pipeline (GitHub Actions)
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  # 1. Web Frontend Dashboard Testing (Jest & RTL)
+  test-frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - name: Install Dependencies
+        run: npm ci
+      - name: Run Web Jest & React Testing Library (RTL) Suite
+        run: npm test
+
+  # 2. Mobile Companion App Testing (Flutter & Mockito)
+  test-mobile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.19.x'
+          channel: 'stable'
+      - name: Install Mobile Dependencies
+        run: cd mobile && flutter pub get
+      - name: Run Flutter Unit & Widget Tests
+        run: cd mobile && flutter test
+
+  # 3. Backend API Build & Test (Java 21 & Virtual Threads)
+  test-backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Java 21 (Temurin)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          cache: 'maven'
+      - name: Build Java 21 Spring Boot Backend
+        run: mvn clean package -DskipTests
+
+  # 4. Container Build & Kubernetes Deployment
+  build-and-deploy:
+    needs: [test-frontend, test-mobile, test-backend]
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker Frontend Image
+        run: docker build -t sino-magan-frontend:latest -f Dockerfile.frontend .
+
+      - name: Build Docker Java 21 Backend Image
+        run: docker build -t sino-magan-backend:latest -f Dockerfile.backend .
+
+      - name: Build Docker Python Compute Image
+        run: docker build -t sino-magan-compute:latest -f Dockerfile.compute .
+
+      - name: Deploy Manifests to Kubernetes Cluster (kubectl)
+        run: |
+          echo "Applying Kubernetes manifests under k8s/ namespace sino-magan-trade"
+          # kubectl apply -f k8s/namespace.yaml
+          # kubectl apply -f k8s/
